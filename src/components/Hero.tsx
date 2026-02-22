@@ -1,4 +1,5 @@
 import heroPhoto from "@/assets/hero-photo-dark.jpg";
+import { scrollToSession } from "@/lib/scrollToSession";
 
 const Hero = () => {
   return (
@@ -17,7 +18,7 @@ const Hero = () => {
           Помогаю найти связь между вашими симптомами и тем, что происходит в жизни — без общих фраз и бесконечных разговоров. Конкретные точки изменений. В вашем ритме.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center opacity-0 animate-[fadeUp_0.7s_0.45s_forwards]">
-          <a href="#session" className="bg-primary text-primary-foreground px-9 py-4 rounded-[10px] text-[15px] font-bold hover:bg-accent hover:translate-y-[-2px] hover:shadow-[var(--shadow-orange)] transition-all inline-flex items-center gap-2 justify-center">
+          <a href="#session" onClick={scrollToSession} className="bg-primary text-primary-foreground px-9 py-4 rounded-[10px] text-[15px] font-bold hover:bg-accent hover:translate-y-[-2px] hover:shadow-[var(--shadow-orange)] transition-all inline-flex items-center gap-2 justify-center">
             Записаться бесплатно →
           </a>
           <a href="#about" className="bg-foreground/[0.06] text-foreground px-9 py-4 rounded-[10px] text-[15px] font-semibold border border-border hover:bg-foreground/10 transition-all text-center">

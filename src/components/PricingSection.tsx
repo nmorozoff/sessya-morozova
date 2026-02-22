@@ -1,4 +1,5 @@
 import Reveal from "./Reveal";
+import { scrollToSession } from "@/lib/scrollToSession";
 
 const plans = [
   { type: "Старт", name: "Сессия-знакомство", sub: "30 минут · Онлайн", price: "Бесплатно", priceClass: "text-[#2ECC71]", desc: "Познакомимся и определим, подходим ли друг другу. Зададите любые вопросы о формате — без давления и обязательств.", hot: false },
@@ -40,6 +41,7 @@ const PricingSection = () => {
                 </div>
                 <a
                   href="#session"
+                  onClick={scrollToSession}
                   className={`block w-full mt-5 py-3 rounded-lg text-sm font-semibold text-center transition-all ${p.hot ? "bg-primary text-primary-foreground hover:bg-accent" : "bg-primary/10 border border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground"}`}
                 >
                   Записаться →
