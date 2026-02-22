@@ -25,6 +25,7 @@ const ContactForm = () => {
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [message, setMessage] = useState("");
+  const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -89,9 +90,25 @@ const ContactForm = () => {
         onChange={(e) => setMessage(e.target.value)}
         className="bg-foreground/[0.04] border border-foreground/10 rounded-[10px] text-foreground px-4 py-3.5 text-sm placeholder:text-foreground/30 focus:border-primary focus:bg-primary/[0.05] focus:outline-none transition-colors resize-none"
       />
+      <label className="flex items-start gap-3 cursor-pointer text-[13px] text-muted-foreground leading-snug mt-1">
+        <input
+          type="checkbox"
+          checked={agreed}
+          onChange={(e) => setAgreed(e.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 rounded border border-foreground/20 accent-primary"
+        />
+        <span>
+          Я согласен(-на) с{" "}
+          <a href="/privacy-policy" target="_blank" className="text-primary underline hover:text-accent">политикой конфиденциальности</a>,{" "}
+          даю своё{" "}
+          <a href="/privacy" target="_blank" className="text-primary underline hover:text-accent">согласие на обработку персональных данных</a>{" "}
+          и{" "}
+          <a href="/advertising-consent" target="_blank" className="text-primary underline hover:text-accent">согласие на получение рекламной рассылки</a>
+        </span>
+      </label>
       <button
         type="submit"
-        disabled={loading}
+        disabled={loading || !agreed}
         className="w-full bg-primary text-primary-foreground py-4 rounded-[10px] text-[15px] font-bold hover:bg-accent hover:-translate-y-0.5 transition-all mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? "Отправляю..." : "Записаться бесплатно →"}

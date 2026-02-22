@@ -5,6 +5,7 @@ const Footer = () => {
       <div className="flex items-center gap-4">
         <a href="/privacy" className="text-[12px] text-muted-foreground hover:text-foreground transition-colors underline">Согласие на обработку персональных данных</a>
         <a href="/advertising-consent" className="text-[12px] text-muted-foreground hover:text-foreground transition-colors underline">Согласие на получение рекламной рассылки</a>
+        <a href="/privacy-policy" className="text-[12px] text-muted-foreground hover:text-foreground transition-colors underline">Политика конфиденциальности</a>
         <span className="text-[13px] text-muted-foreground">Психолог · Работаю онлайн</span>
       </div>
     </footer>
