@@ -1,5 +1,5 @@
 import Reveal from "./Reveal";
-import aboutPhoto from "@/assets/about-photo.jpg";
+import aboutPhoto from "@/assets/about-photo-dark.jpg";
 
 const credentials = [
   "Финансовый менеджмент, ГУУ",
