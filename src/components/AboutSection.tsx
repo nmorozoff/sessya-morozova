@@ -6,7 +6,7 @@ const credentials = [
   "Психологическое консультирование, Институт трансперсональной психологии",
   "Психологическая работа с травматическим стрессом, ВШЭ",
   "Школа бизнес-психологов, Международный центр обучения",
-  "Бизнес-тренер, ИПО · Коуч ICF",
+  "Бизнес-тренер, ИПО",
 ];
 
 const AboutSection = () => {
@@ -17,7 +17,7 @@ const AboutSection = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
           <Reveal className="relative rounded-3xl overflow-hidden">
             <div className="absolute top-6 left-6 bg-primary text-primary-foreground text-[11px] font-bold tracking-[0.1em] uppercase px-3.5 py-1.5 rounded-full z-10">
-              Психолог · Коуч ICF
+              Психолог
             </div>
             <img src={aboutPhoto} alt="Наталья Морозова" className="w-full aspect-[3/4] object-cover object-top block" />
             <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] to-transparent" />
@@ -40,7 +40,7 @@ const AboutSection = () => {
             </Reveal>
             <Reveal>
               <p className="text-[15px] text-muted-foreground leading-[1.75] mb-3.5">
-                Я психолог, коуч ICF, предприниматель и многодетная мама. Не говорю общими фразами и не обещаю чудес. Я предлагаю пространство, где можно просто быть собой.
+                Я психолог, предприниматель и многодетная мама. Не говорю общими фразами и не обещаю чудес. Я предлагаю пространство, где можно просто быть собой.
               </p>
             </Reveal>
             <Reveal>
