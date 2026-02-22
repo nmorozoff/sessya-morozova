@@ -99,11 +99,11 @@ const ContactForm = () => {
         />
         <span>
           Я согласен(-на) с{" "}
-          <a href="/privacy-policy" target="_blank" className="text-primary underline hover:text-accent">политикой конфиденциальности</a>,{" "}
+          <a href="/privacy-policy" target="_blank" className="underline hover:text-foreground transition-colors">политикой конфиденциальности</a>,{" "}
           даю своё{" "}
-          <a href="/privacy" target="_blank" className="text-primary underline hover:text-accent">согласие на обработку персональных данных</a>{" "}
+          <a href="/privacy" target="_blank" className="underline hover:text-foreground transition-colors">согласие на обработку персональных данных</a>{" "}
           и{" "}
-          <a href="/advertising-consent" target="_blank" className="text-primary underline hover:text-accent">согласие на получение рекламной рассылки</a>
+          <a href="/advertising-consent" target="_blank" className="underline hover:text-foreground transition-colors">согласие на получение рекламной рассылки</a>
         </span>
       </label>
       <button
