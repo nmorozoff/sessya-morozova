@@ -2,7 +2,7 @@ import heroPhoto from "@/assets/hero-photo-dark.jpg";
 
 const Hero = () => {
   return (
-    <section className="min-h-screen grid grid-cols-1 lg:grid-cols-2 items-center px-6 lg:px-[60px] pt-[100px] pb-[60px] gap-10 lg:gap-[60px] relative overflow-hidden">
+    <section className="min-h-screen grid grid-cols-1 lg:grid-cols-2 items-center px-6 lg:px-[60px] pt-16 lg:pt-[100px] pb-8 lg:pb-[60px] gap-4 lg:gap-[60px] relative overflow-hidden">
       {/* Glow */}
       <div className="absolute -top-[200px] right-[300px] w-[600px] h-[600px] pointer-events-none" style={{ background: "var(--gradient-glow-orange)" }} />
 
