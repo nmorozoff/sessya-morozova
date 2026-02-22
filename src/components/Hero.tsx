@@ -28,9 +28,9 @@ const Hero = () => {
 
       {/* Photo column - on mobile first */}
       <div className="relative order-first lg:order-last">
-        <div className="relative rounded-3xl overflow-hidden opacity-0 animate-[fadeIn_1s_0.3s_forwards]">
-          <img src={heroPhoto} alt="Наталья Морозова" className="w-full aspect-[3/4] object-cover object-top block" />
-          <div className="absolute bottom-0 left-0 right-0 h-[40%] bg-gradient-to-t from-background to-transparent" />
+        <div className="relative overflow-hidden opacity-0 animate-[fadeIn_1s_0.3s_forwards]">
+          <img src={heroPhoto} alt="Наталья Морозова" className="w-full aspect-[3/4] object-cover object-[center_15%] block scale-110" />
+          <div className="absolute bottom-0 left-0 right-0 h-[30%] bg-gradient-to-t from-background to-transparent" />
           <div className="absolute bottom-8 left-8 bg-background/85 backdrop-blur-xl border border-border rounded-xl px-5 py-3.5 z-10">
             <div className="text-[11px] text-muted-foreground mb-1">Первая встреча</div>
             <div className="text-base font-bold text-primary">Бесплатно — 30 мин</div>
