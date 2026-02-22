@@ -4,6 +4,7 @@ const Footer = () => {
       <div className="text-base font-bold text-foreground">Наталья Морозова</div>
       <div className="flex items-center gap-4">
         <a href="/privacy" className="text-[12px] text-muted-foreground hover:text-foreground transition-colors underline">Согласие на обработку данных</a>
+        <a href="/advertising-consent" className="text-[12px] text-muted-foreground hover:text-foreground transition-colors underline">Согласие на рассылку</a>
         <span className="text-[13px] text-muted-foreground">Психолог · Работаю онлайн</span>
       </div>
     </footer>
