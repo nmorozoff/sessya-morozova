@@ -8,7 +8,7 @@ const Hero = () => {
 
       <div>
         <div className="inline-block bg-primary/10 border border-primary/25 text-primary text-xs font-semibold tracking-[0.12em] uppercase px-4 py-1.5 rounded-full mb-6 opacity-0 animate-[fadeUp_0.6s_0.1s_forwards]">
-          Психолог · Коуч ICF · Работаю онлайн
+          Психолог · Работаю онлайн
         </div>
         <h1 className="text-[clamp(44px,5.5vw,80px)] font-black leading-[1.05] mb-6 tracking-tight opacity-0 animate-[fadeUp_0.7s_0.2s_forwards]">
           Когда внутри<br />что-то пошло<br /><span className="text-gradient">не так</span>
