@@ -1,28 +1,82 @@
+import { useState } from "react";
 import Reveal from "./Reveal";
+import { useToast } from "@/hooks/use-toast";
 
 const ContactForm = () => {
+  const [name, setName] = useState("");
+  const [contact, setContact] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!name.trim() || !contact.trim()) {
+      toast({ title: "Заполните имя и контакт", variant: "destructive" });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/functions/v1/send-telegram`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({
+            name: name.trim(),
+            contact: contact.trim(),
+            message: message.trim(),
+          }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to send");
+
+      toast({ title: "Заявка отправлена! Свяжусь с вами в ближайшее время ✨" });
+      setName("");
+      setContact("");
+      setMessage("");
+    } catch {
+      toast({ title: "Ошибка отправки. Попробуйте позже", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <form className="flex flex-col gap-4" onSubmit={(e) => e.preventDefault()}>
+    <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
       <input
         type="text"
         placeholder="Ваше имя"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
         className="bg-foreground/[0.04] border border-foreground/10 rounded-[10px] text-foreground px-4 py-3.5 text-sm placeholder:text-foreground/30 focus:border-primary focus:bg-primary/[0.05] focus:outline-none transition-colors"
       />
       <input
         type="tel"
         placeholder="Телефон или Telegram"
+        value={contact}
+        onChange={(e) => setContact(e.target.value)}
         className="bg-foreground/[0.04] border border-foreground/10 rounded-[10px] text-foreground px-4 py-3.5 text-sm placeholder:text-foreground/30 focus:border-primary focus:bg-primary/[0.05] focus:outline-none transition-colors"
       />
       <textarea
         placeholder="Коротко опишите, что вас беспокоит (необязательно)"
         rows={3}
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
         className="bg-foreground/[0.04] border border-foreground/10 rounded-[10px] text-foreground px-4 py-3.5 text-sm placeholder:text-foreground/30 focus:border-primary focus:bg-primary/[0.05] focus:outline-none transition-colors resize-none"
       />
       <button
         type="submit"
-        className="w-full bg-primary text-primary-foreground py-4 rounded-[10px] text-[15px] font-bold hover:bg-accent hover:-translate-y-0.5 transition-all mt-2"
+        disabled={loading}
+        className="w-full bg-primary text-primary-foreground py-4 rounded-[10px] text-[15px] font-bold hover:bg-accent hover:-translate-y-0.5 transition-all mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Записаться бесплатно →
+        {loading ? "Отправляю..." : "Записаться бесплатно →"}
       </button>
     </form>
   );
