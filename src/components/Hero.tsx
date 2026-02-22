@@ -31,7 +31,7 @@ const Hero = () => {
         <div className="relative overflow-hidden opacity-0 animate-[fadeIn_1s_0.3s_forwards]">
           <img src={heroPhoto} alt="Наталья Морозова" className="w-full aspect-[3/4] lg:aspect-[3/4] object-cover object-[center_45%] block scale-125" />
           <div className="absolute bottom-0 left-0 right-0 h-[30%] bg-gradient-to-t from-background to-transparent" />
-          <div className="absolute bottom-8 left-6 lg:left-8 bg-background/85 backdrop-blur-xl border border-border rounded-xl px-5 py-3.5 z-10">
+          <div className="absolute bottom-8 left-0 lg:left-8 bg-background/85 backdrop-blur-xl border border-border rounded-xl px-5 py-3.5 z-10">
             <div className="text-[11px] text-muted-foreground mb-1">Первая встреча</div>
             <div className="text-base font-bold text-gradient">Бесплатно — 30 мин</div>
           </div>
