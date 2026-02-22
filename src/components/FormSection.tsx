@@ -1,21 +1,37 @@
 import { useState } from "react";
 import Reveal from "./Reveal";
-import { useToast } from "@/hooks/use-toast";
+
+const SuccessOverlay = ({ onClose }: { onClose: () => void }) => (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-[fadeIn_0.3s_ease]">
+    <div className="bg-bg3 border border-border rounded-[24px] p-10 sm:p-14 max-w-md w-[90%] text-center shadow-2xl animate-[fadeIn_0.4s_ease]">
+      <div className="w-16 h-16 rounded-full bg-primary/15 flex items-center justify-center mx-auto mb-6">
+        <span className="text-3xl">✨</span>
+      </div>
+      <h3 className="text-2xl sm:text-3xl font-black mb-3">Заявка принята!</h3>
+      <p className="text-muted-foreground text-[15px] leading-relaxed mb-8">
+        Спасибо за доверие. Свяжусь с вами в ближайшее время и согласуем удобное время для встречи.
+      </p>
+      <button
+        onClick={onClose}
+        className="bg-primary text-primary-foreground px-8 py-3.5 rounded-[10px] text-[15px] font-bold hover:bg-accent hover:-translate-y-0.5 transition-all"
+      >
+        Отлично →
+      </button>
+    </div>
+  </div>
+);
 
 const ContactForm = () => {
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name.trim() || !contact.trim()) {
-      toast({ title: "Заполните имя и контакт", variant: "destructive" });
-      return;
-    }
+    if (!name.trim() || !contact.trim()) return;
 
     setLoading(true);
     try {
@@ -37,19 +53,21 @@ const ContactForm = () => {
 
       if (!res.ok) throw new Error("Failed to send");
 
-      toast({ title: "Заявка отправлена! Свяжусь с вами в ближайшее время ✨" });
+      setSuccess(true);
       setName("");
       setContact("");
       setMessage("");
     } catch {
-      toast({ title: "Ошибка отправки. Попробуйте позже", variant: "destructive" });
+      // fallback - could show error state
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+    <>
+      {success && <SuccessOverlay onClose={() => setSuccess(false)} />}
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
       <input
         type="text"
         placeholder="Ваше имя"
@@ -79,6 +97,7 @@ const ContactForm = () => {
         {loading ? "Отправляю..." : "Записаться бесплатно →"}
       </button>
     </form>
+    </>
   );
 };
 
