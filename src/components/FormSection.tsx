@@ -163,7 +163,7 @@ const FormSection = () => {
             </Reveal>
           </div>
           <Reveal>
-            <div className="bg-bg3 border border-border rounded-[20px] p-6 sm:p-10">
+            <div id="session-form" className="bg-bg3 border border-border rounded-[20px] p-6 sm:p-10">
               <div className="text-2xl font-bold mb-1.5">Записаться на сессию</div>
               <div className="text-sm text-muted-foreground mb-7 leading-snug">
                 Оставьте заявку — свяжусь в течение нескольких часов и согласуем удобное время

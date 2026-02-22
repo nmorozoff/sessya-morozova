@@ -1,3 +1,5 @@
+import { scrollToSession } from "@/lib/scrollToSession";
+
 const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-6 lg:px-[60px] py-4 flex justify-between items-center bg-background/92 backdrop-blur-xl border-b border-border">
@@ -12,6 +14,7 @@ const Navbar = () => {
       </div>
       <a
         href="#session"
+        onClick={scrollToSession}
         className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg text-[13px] font-semibold hover:bg-accent hover:translate-y-[-1px] transition-all whitespace-nowrap"
       >
         Записаться →
