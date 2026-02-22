@@ -1,4 +1,31 @@
+import { useEffect, useRef } from "react";
 import Reveal from "./Reveal";
+
+const SalebotForm = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Load Salebot script
+    const script = document.createElement("script");
+    script.src = "https://salebot.pro/js/form_scripts.js";
+    script.async = true;
+    script.onload = () => {
+      if ((window as any).FormIntegration && containerRef.current) {
+        (window as any).FormIntegration.init({
+          project_id: 586176,
+          guid: "fb59af5ecaba8493a6669ce49abcd86c",
+        });
+      }
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  return <div ref={containerRef} className="form_integration_block" />;
+};
 
 const FormSection = () => {
   return (
@@ -50,29 +77,7 @@ const FormSection = () => {
               <div className="text-sm text-muted-foreground mb-7 leading-snug">
                 Оставьте заявку — свяжусь в течение нескольких часов и согласуем удобное время
               </div>
-              <form className="flex flex-col gap-4" onSubmit={(e) => e.preventDefault()}>
-                <input
-                  type="text"
-                  placeholder="Ваше имя"
-                  className="bg-foreground/[0.04] border border-foreground/10 rounded-[10px] text-foreground px-4 py-3.5 text-sm placeholder:text-foreground/30 focus:border-primary focus:bg-primary/[0.05] focus:outline-none transition-colors"
-                />
-                <input
-                  type="tel"
-                  placeholder="Телефон или Telegram"
-                  className="bg-foreground/[0.04] border border-foreground/10 rounded-[10px] text-foreground px-4 py-3.5 text-sm placeholder:text-foreground/30 focus:border-primary focus:bg-primary/[0.05] focus:outline-none transition-colors"
-                />
-                <textarea
-                  placeholder="Коротко опишите, что вас беспокоит (необязательно)"
-                  rows={3}
-                  className="bg-foreground/[0.04] border border-foreground/10 rounded-[10px] text-foreground px-4 py-3.5 text-sm placeholder:text-foreground/30 focus:border-primary focus:bg-primary/[0.05] focus:outline-none transition-colors resize-none"
-                />
-                <button
-                  type="submit"
-                  className="w-full bg-primary text-primary-foreground py-4 rounded-[10px] text-[15px] font-bold hover:bg-accent hover:-translate-y-0.5 transition-all mt-2"
-                >
-                  Записаться бесплатно →
-                </button>
-              </form>
+              <SalebotForm />
             </div>
           </Reveal>
         </div>
