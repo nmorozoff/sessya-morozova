@@ -100,6 +100,8 @@ const ContactForm = () => {
         <span>
           Я согласен(-на) с{" "}
           <a href="/privacy-policy" target="_blank" className="underline hover:text-foreground transition-colors">политикой конфиденциальности</a>,{" "}
+          с условиями{" "}
+          <a href="/offer" target="_blank" className="underline hover:text-foreground transition-colors">публичной оферты</a>,{" "}
           даю своё{" "}
           <a href="/privacy" target="_blank" className="underline hover:text-foreground transition-colors">согласие на обработку персональных данных</a>{" "}
           и{" "}
