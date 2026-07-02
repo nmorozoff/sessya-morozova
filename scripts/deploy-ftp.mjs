@@ -74,37 +74,95 @@ function collectFiles(dir, base = dir) {
   return files;
 }
 
+async function connectClient(server, user, password) {
+  const client = new Client(120_000);
+  client.ftp.verbose = false;
+
+  try {
+    await client.access({ host: server, user, password, secure: false });
+    return client;
+  } catch {
+    client.close();
+    const secureClient = new Client(120_000);
+    secureClient.ftp.verbose = false;
+    await secureClient.access({ host: server, user, password, secure: true });
+    return secureClient;
+  }
+}
+
+async function cdToDeployRoot(client, serverDir) {
+  const initialPwd = await client.pwd();
+  console.log(`[deploy] FTP: подключено, текущая папка: ${initialPwd}`);
+
+  const configured = (serverDir || "/public_html/").trim().replace(/\/+$/, "");
+  const candidates = [
+    configured,
+    configured.replace(/^\//, ""),
+    ".",
+    "public_html",
+    "/public_html",
+  ].filter((value, index, arr) => value && arr.indexOf(value) === index);
+
+  for (const candidate of candidates) {
+    try {
+      await client.cd(initialPwd);
+      if (candidate === ".") {
+        console.log(`[deploy] Используем текущую папку: ${await client.pwd()}`);
+        return;
+      }
+      await client.cd(candidate);
+      console.log(`[deploy] Перешли в: ${await client.pwd()}`);
+      return;
+    } catch {
+      // try next candidate
+    }
+  }
+
+  throw new Error(
+    `Не удалось открыть папку сайта. Проверьте FTP_SERVER_DIR в .ftp-deploy.env (сейчас: ${serverDir})`,
+  );
+}
+
+const OPTIONAL_REMOTE_FILES = new Set(["api/.htaccess"]);
+const SKIP_REMOTE_PREFIXES = ["api/"];
+
+function collectDeployFiles() {
+  return collectFiles(DIST).filter((file) => {
+    return !SKIP_REMOTE_PREFIXES.some((prefix) => file.remote.startsWith(prefix));
+  });
+}
+
 async function uploadDist({ server, user, password, serverDir }) {
   if (!existsSync(DIST)) {
     throw new Error("Папка dist/ не найдена. Сначала выполните сборку.");
   }
 
-  const remoteRoot = serverDir.endsWith("/") ? serverDir.slice(0, -1) : serverDir;
-  const files = collectFiles(DIST);
-
-  console.log(`[deploy] Загрузка ${files.length} файлов на ${server}${remoteRoot} ...`);
-
-  const client = new Client(60_000);
-  client.ftp.verbose = false;
+  const files = collectDeployFiles();
+  const client = await connectClient(server, user, password);
 
   try {
-    await client.access({
-      host: server,
-      user,
-      password,
-      secure: false,
-    });
-
-    await client.ensureDir(remoteRoot);
-    await client.cd(remoteRoot);
+    await cdToDeployRoot(client, serverDir);
+    const deployRoot = await client.pwd();
+    console.log(`[deploy] Загрузка ${files.length} файлов в ${deployRoot} ...`);
+    console.log("[deploy] Папка api/ не трогаем — config.php и форма остаются на сервере.");
 
     for (const file of files) {
+      await client.cd(deployRoot);
       const remoteDir = posix.dirname(file.remote);
       if (remoteDir !== ".") {
         await client.ensureDir(remoteDir);
+        await client.cd(deployRoot);
       }
       process.stdout.write(`[deploy] ↑ ${file.remote}\n`);
-      await client.uploadFrom(file.local, file.remote);
+      try {
+        await client.uploadFrom(file.local, file.remote);
+      } catch (err) {
+        if (OPTIONAL_REMOTE_FILES.has(file.remote)) {
+          console.warn(`[deploy] ⚠ пропущен ${file.remote}: ${err.message || err}`);
+          continue;
+        }
+        throw new Error(`${file.remote}: ${err.message || err}`);
+      }
     }
   } finally {
     client.close();
@@ -119,7 +177,11 @@ async function main() {
   const password = requireEnv(env, "FTP_PASSWORD");
   const serverDir = env.FTP_SERVER_DIR?.trim() || "/public_html/";
 
-  await runBuild(siteUrl);
+  if (process.env.SKIP_BUILD !== "1") {
+    await runBuild(siteUrl);
+  } else {
+    console.log("[deploy] Пропуск сборки (SKIP_BUILD=1)");
+  }
   await uploadDist({ server, user, password, serverDir });
 
   console.log("[deploy] Готово. Проверьте сайт и sitemap.xml");
