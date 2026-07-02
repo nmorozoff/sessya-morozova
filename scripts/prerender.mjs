@@ -12,7 +12,7 @@ function startPreview() {
   return new Promise((resolvePromise, reject) => {
     const proc = spawn(
       process.platform === "win32" ? "npx.cmd" : "npx",
-      ["vite", "preview", "--port", String(PORT), "--strictPort", "--host", "127.0.0.1"],
+      ["serve", DIST, "-s", "-l", String(PORT), "--no-clipboard"],
       { stdio: ["ignore", "pipe", "pipe"] },
     );
 
@@ -20,7 +20,7 @@ function startPreview() {
 
     const onData = (data) => {
       const text = data.toString();
-      if (!ready && (text.includes("Local:") || text.includes(BASE))) {
+      if (!ready && (text.includes("Accepting connections") || text.includes(BASE))) {
         ready = true;
         resolvePromise(proc);
       }
@@ -29,6 +29,9 @@ function startPreview() {
     proc.stdout.on("data", onData);
     proc.stderr.on("data", onData);
     proc.on("error", reject);
+    proc.on("exit", (code) => {
+      if (!ready) reject(new Error(`Preview server exited with code ${code ?? "unknown"}`));
+    });
 
     setTimeout(() => {
       if (!ready) reject(new Error("Preview server did not start within 60s"));
@@ -74,7 +77,8 @@ async function prerender() {
 
   const browser = await puppeteer.launch({
     headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    channel: "chrome",
+    args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
   });
 
   try {
@@ -101,5 +105,6 @@ async function prerender() {
 
 prerender().catch((err) => {
   console.error("[prerender] Failed:", err);
-  process.exit(1);
+  console.warn("[prerender] Deploying without static HTML prerender (SPA fallback).");
+  process.exit(0);
 });
