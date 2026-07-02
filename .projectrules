@@ -1,0 +1,14 @@
+Global Rules for React/Next.js SEO & GEO Optimization
+ARCHITECTURE: Prefer Server-Side Rendering (SSR) or Incremental Static Regeneration (ISR) using Next.js. Avoid pure Client-Side Rendering (CSR) for any public-facing pages.
+
+ROUTING: Never use hash-based routing (/#/). Every service must have a clean, unique, and static URL returning a 200 OK status code.
+
+LINKS: All internal navigation must use standard HTML <a> tags with valid href attributes. Do not rely solely on JavaScript onClick handlers for navigation.
+
+YANDEX SPECIFICS: Implement window.YandexRotorSettings with WaiterEnabled: true for any dynamically loaded content (e.g., reviews, booking widgets) to prevent the indexing of incomplete pages.
+
+PAGE STRUCTURE (GEO): Strictly follow the BLUF (Bottom Line Up Front) method. The first paragraph under the H1 must be a direct, factual answer (30-50 words) to the user's intent.
+
+SCHEMA: Use JSON-LD format exclusively. Implement Physician, MedicalCondition, PsychologicalTreatment, and FAQPage schemas strictly according to Schema.org standards.
+
+MEDIA: All images must have descriptive alt tags. Use Next-Gen formats (WebP/AVIF) with fetchpriority="high" for the Largest Contentful Paint (LCP) element.

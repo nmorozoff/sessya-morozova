@@ -2,10 +2,9 @@ import Reveal from "./Reveal";
 import { scrollToSession } from "@/lib/scrollToSession";
 
 const plans = [
-  { type: "Старт", name: "Сессия-знакомство", sub: "30 минут · Онлайн", price: "Бесплатно", priceClass: "text-[#2ECC71]", desc: "Познакомимся и определим, подходим ли друг другу. Зададите любые вопросы о формате — без давления и обязательств.", hot: false },
-  { type: "Разово", name: "Одна консультация", sub: "Стратегическая сессия", price: "5 000 ₽", priceClass: "text-gradient", desc: "Разбор конкретной ситуации или «аспириновая» консультация — когда нужно решение прямо сейчас.", hot: false },
-  { type: "Пакет", name: "5 сессий", sub: "Углублённая работа", price: "20 000 ₽", priceClass: "text-gradient", desc: "Расширенное погружение. Даёт заметные системные изменения в эмоциях, поведении и жизни.", hot: true },
-  { type: "Полный курс", name: "10+1 сессий", sub: "Системная перестройка", price: "35 000 ₽", priceClass: "text-gradient", desc: "11 встреч: 1-я — знакомство и погружение, 10 — глубокая работа с вашим запросом и системой.", hot: false },
+  { type: "Старт", name: "Пробная сессия", sub: "30 минут · Онлайн", price: "Бесплатно", priceClass: "text-[#2ECC71]", desc: "Познакомимся и определим, подходим ли друг другу. Зададите любые вопросы о формате — без давления и обязательств.", hot: false },
+  { type: "Регулярно", name: "Сессия ОНЛАЙН", sub: "90 минут (1,5 часа)", price: "5 000 ₽", priceClass: "text-gradient", desc: "Глубокая работа с вашим запросом в комфортной для вас обстановке из любой точки мира.", hot: true },
+  { type: "В кабинете", name: "Сессия ОЧНО", sub: "90 минут (1,5 часа) · Москва", price: "6 500 ₽", priceClass: "text-gradient", desc: "Личная встреча в уютном кабинете (2 мин от м. Тургеневская / Чистые пруды, или 2 мин от м. Ботанический сад МЦК).", hot: false },
 ];
 
 const PricingSection = () => {
@@ -21,7 +20,7 @@ const PricingSection = () => {
             Начните с бесплатной встречи — без обязательств и давления
           </p>
         </Reveal>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {plans.map((p, i) => (
             <Reveal key={i}>
               <div className={`relative bg-card border rounded-lg p-6 transition-all duration-300 hover:-translate-y-1 ${p.hot ? "border-primary bg-primary/[0.05] hover:border-primary" : "border-[hsl(var(--card-border))] hover:border-primary/25"}`}>
@@ -50,6 +49,43 @@ const PricingSection = () => {
             </Reveal>
           ))}
         </div>
+
+        <Reveal className="mt-[60px]">
+          <div className="bg-card border border-[hsl(var(--card-border))] rounded-2xl p-6 lg:p-10">
+            <h3 className="text-2xl font-bold mb-4">Очные сессии в Москве</h3>
+            <p className="text-muted-foreground mb-8">
+              Кабинеты находятся в пешей доступности от метро. Уютная и безопасная атмосфера для комфортной работы.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="aspect-video rounded-xl overflow-hidden relative">
+                  <img
+                    src="/images/office-1.png"
+                    alt="Интерьер кабинета психолога для очных сессий у метро Тургеневская и Чистые пруды в Москве"
+                    className="object-cover w-full h-full hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-lg">м. Тургеневская / Чистые пруды</h4>
+                  <p className="text-sm text-muted-foreground">2 минуты от метро</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="aspect-video rounded-xl overflow-hidden relative">
+                  <img
+                    src="/images/office-2.png"
+                    alt="Интерьер кабинета психолога для очных консультаций у метро Ботанический сад и МЦК в Москве"
+                    className="object-cover w-full h-full hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-lg">м. Ботанический сад (МЦК)</h4>
+                  <p className="text-sm text-muted-foreground">2 минуты от метро</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
       </section>
     </>
   );

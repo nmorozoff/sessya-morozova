@@ -1,0 +1,10 @@
+# React SPA with build-time static HTML (SSG) + client-side routing fallback
+
+RewriteEngine On
+RewriteBase /
+
+# SPA fallback: serve index.html only when no static file or directory exists
+RewriteRule ^index\.html$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]

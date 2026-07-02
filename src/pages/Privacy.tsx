@@ -1,8 +1,11 @@
+import { SiteLink } from "@/components/SiteLink";
+import { Link } from "react-router-dom";
+
 const Privacy = () => {
   return (
     <div className="min-h-screen bg-background text-foreground px-6 py-16 lg:px-[120px] lg:py-24">
       <div className="max-w-3xl mx-auto">
-        <a href="/" className="text-muted-foreground text-sm hover:text-foreground transition-colors mb-8 inline-block">← На главную</a>
+        <Link to="/" className="text-muted-foreground text-sm hover:text-foreground transition-colors mb-8 inline-block">← На главную</Link>
         <h1 className="text-2xl sm:text-3xl font-bold mb-8">Согласие на обработку персональных данных</h1>
         <div className="text-[14px] sm:text-[15px] leading-relaxed text-muted-foreground space-y-5">
           <p>
@@ -10,7 +13,7 @@ const Privacy = () => {
             <a href="https://t.me/natalyamorozovabot" className="text-foreground underline" target="_blank" rel="noopener noreferrer">https://t.me/natalyamorozovabot</a>,{" "}
             <a href="https://t.me/natamorozova_bot" className="text-foreground underline" target="_blank" rel="noopener noreferrer">https://t.me/natamorozova_bot</a>{" "}
             (далее — Боты), на сайте{" "}
-            <a href="https://sessya-morozova.lovable.app" className="text-foreground underline">https://sessya-morozova.lovable.app</a>{" "}
+            <SiteLink />{" "}
             дает свое согласие самозанятой Морозовой Наталье Андреевне ИНН 771605638595 (далее — Оператор) на обработку персональных данных в указанном в настоящем документе объеме.
           </p>
 

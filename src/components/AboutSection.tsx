@@ -1,5 +1,7 @@
 import Reveal from "./Reveal";
-import aboutPhoto from "@/assets/about-photo-dark.jpg";
+import JsonLd from "./JsonLd";
+import { physicianSchema } from "@/lib/schema";
+const aboutPhoto = "/images/about-photo-dark.jpg";
 
 const credentials = [
   "Психологическая работа с травматическим стрессом, ВШЭ",
@@ -12,6 +14,7 @@ const credentials = [
 const AboutSection = () => {
   return (
     <>
+      <JsonLd id="physician-about" data={physicianSchema} />
       <div className="glow-line mx-6 lg:mx-[60px]" />
       <section className="px-6 lg:px-[60px] py-[72px] lg:py-[100px]" id="about">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
@@ -19,7 +22,11 @@ const AboutSection = () => {
             <div className="absolute top-6 left-6 bg-primary text-primary-foreground text-[11px] font-bold tracking-[0.1em] uppercase px-3.5 py-1.5 rounded-full z-10">
               Психолог
             </div>
-            <img src={aboutPhoto} alt="Наталья Морозова" className="w-full aspect-[3/4] object-cover object-top block" />
+            <img
+              src={aboutPhoto}
+              alt="Наталья Морозова, сертифицированный психолог и EMDR-терапевт по работе с травмой, тревогой и выгоранием"
+              className="w-full aspect-[3/4] object-cover object-top block"
+            />
             <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] to-transparent" />
           </Reveal>
           <div>

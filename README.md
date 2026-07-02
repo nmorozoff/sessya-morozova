@@ -1,73 +1,78 @@
-# Welcome to your Lovable project
+# Сайт Натальи Морозовой — психолог
 
-## Project info
+Лендинг на React + Vite. Фронтенд деплоится на Timeweb, форма заявок сохраняется в MySQL и дублируется в Telegram через PHP-скрипт.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Стек
 
-## How can I edit this code?
+- React 18, TypeScript, Vite, Tailwind CSS
+- PHP + MySQL на Timeweb (форма заявок)
+- GitHub Actions → FTP деплой на Timeweb
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+## Локальная разработка
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+npm install
+cp .env.example .env
+npm run dev   # http://localhost:8080
 ```
 
-**Edit a file directly in GitHub**
+Форма на localhost не отправится без PHP-сервера — это нормально. Тестируйте форму на Timeweb после настройки.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Переменные окружения
 
-**Use GitHub Codespaces**
+| Переменная | Описание |
+|------------|----------|
+| `VITE_SITE_URL` | Публичный URL сайта |
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Настройка формы на Timeweb
 
-## What technologies are used for this project?
+### 1. Создайте базу MySQL
 
-This project is built with:
+В панели Timeweb: **Базы данных → MySQL → Создать**
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Запишите: имя базы, пользователь, пароль, хост (обычно `localhost`).
 
-## How can I deploy this project?
+### 2. Создайте таблицу
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+Откройте **phpMyAdmin** → выберите базу → вкладка **SQL** → вставьте содержимое файла `scripts/setup-database.sql` → Выполнить.
 
-## Can I connect a custom domain to my Lovable project?
+### 3. Настройте config.php
 
-Yes, you can!
+На сервере в папке `public_html/api/`:
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. Скопируйте `config.example.php` → `config.php`
+2. Заполните данные БД и Telegram
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+`config.php` не попадает в git — загружается на сервер вручную (FTP или файловый менеджер Timeweb).
+
+### 4. Telegram
+
+- Создайте бота через @BotFather → получите токен
+- Узнайте chat_id через `getUpdates` (см. инструкции в панели)
+
+## Деплой
+
+### GitHub Secrets
+
+| Secret | Описание |
+|--------|----------|
+| `VITE_SITE_URL` | URL сайта |
+| `FTP_SERVER` | Хост FTP Timeweb |
+| `FTP_USERNAME` | Логин FTP |
+| `FTP_PASSWORD` | Пароль FTP |
+| `FTP_SERVER_DIR` | Путь к сайту (`/public_html/`) |
+
+При push в `main` сайт собирается и загружается автоматически.
+
+> **Важно:** `config.php` не перезаписывается при деплое — настройте его один раз вручную на сервере.
+
+### Ручной деплой
+
+```sh
+npm run build
+# Загрузите dist/ в public_html/
+```
+
+## Просмотр заявок
+
+Заявки хранятся в таблице `form_submissions` — смотрите в phpMyAdmin на Timeweb.

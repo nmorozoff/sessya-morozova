@@ -12,7 +12,13 @@ serve(async (req) => {
   }
 
   try {
-    const { name, contact, message } = await req.json();
+    const { name, contact, message, website } = await req.json();
+
+    if (website) {
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN");
     const TELEGRAM_CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID");

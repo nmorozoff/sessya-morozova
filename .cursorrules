@@ -1,0 +1,24 @@
+Global Rules for React/Next.js SEO & GEO Optimization (Psychology Practice)
+ARCHITECTURE & RENDERING: Server-Side Rendering (SSR) or Static Site Generation (SSG) is mandatory for all public pages. Pure Client-Side Rendering (CSR) is prohibited.
+
+ROUTING: Use clean, static URLs (e.g., /panic-attacks, /phobias). Never use hash-based routing (/#/).
+
+YANDEX INDEXING: Implement window.YandexRotorSettings = { WaiterEnabled: true } in the <head>. Set IsLoaded = true only after full hydration.
+
+PAGE STRUCTURE (GEO "Слоеный пирог"):
+
+H1: Must be an intent-based question or exact solution.
+
+GEO-block: Immediately under H1, a <p> tag with exactly 30-50 words providing a direct, factual answer (BLUF - Bottom Line Up Front). No metaphors, no greetings.
+
+SEO-block: Main text (~4000-6000 chars) structured with H2/H3.
+
+Tables: At least one HTML <table> per page (e.g., comparing symptoms or treatment methods).
+
+FAQ: 5-7 questions at the bottom.
+
+SCHEMA.ORG: Exclusively use JSON-LD. Mandatory schemas: Physician (on home/about), MedicalCondition (on problem pages) linked to PsychologicalTreatment (EMDR), and FAQPage.
+
+INTERNAL LINKS: Use standard HTML <a> tags with valid href.
+
+IMAGES: All <img> tags must have descriptive alt text containing keywords for OCR parsing.

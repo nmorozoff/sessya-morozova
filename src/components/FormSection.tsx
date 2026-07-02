@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import Reveal from "./Reveal";
 
 const SuccessOverlay = ({ onClose }: { onClose: () => void }) => (
@@ -29,28 +30,28 @@ const ContactForm = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!name.trim() || !contact.trim()) return;
 
+    const honeypot = new FormData(e.currentTarget).get("website");
+    if (honeypot) return;
+
     setLoading(true);
     try {
-      const res = await fetch(
-        `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/functions/v1/send-telegram`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          },
-          body: JSON.stringify({
-            name: name.trim(),
-            contact: contact.trim(),
-            message: message.trim(),
-          }),
-        }
-      );
+      const res = await fetch("/api/send-form.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name.trim(),
+          contact: contact.trim(),
+          message: message.trim(),
+          website: "",
+        }),
+      });
 
       if (!res.ok) throw new Error("Failed to send");
 
@@ -59,7 +60,7 @@ const ContactForm = () => {
       setContact("");
       setMessage("");
     } catch {
-      // fallback - could show error state
+      toast.error("Не удалось отправить заявку. Попробуйте ещё раз или напишите в Telegram.");
     } finally {
       setLoading(false);
     }
@@ -89,6 +90,14 @@ const ContactForm = () => {
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         className="bg-foreground/[0.04] border border-foreground/10 rounded-[10px] text-foreground px-4 py-3.5 text-sm placeholder:text-foreground/30 focus:border-primary focus:bg-primary/[0.05] focus:outline-none transition-colors resize-none"
+      />
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        className="hidden"
+        aria-hidden="true"
       />
       <label className="flex items-start gap-3 cursor-pointer text-[13px] text-muted-foreground leading-snug mt-1">
         <input

@@ -1,8 +1,10 @@
+import { Link } from "react-router-dom";
+
 const AdvertisingConsent = () => {
   return (
     <div className="min-h-screen bg-background text-foreground px-6 py-16 lg:px-[120px] lg:py-24">
       <div className="max-w-3xl mx-auto">
-        <a href="/" className="text-muted-foreground text-sm hover:text-foreground transition-colors mb-8 inline-block">← На главную</a>
+        <Link to="/" className="text-muted-foreground text-sm hover:text-foreground transition-colors mb-8 inline-block">← На главную</Link>
         <h1 className="text-2xl sm:text-3xl font-bold mb-8">Согласие на получение рекламной рассылки</h1>
         <div className="text-[14px] sm:text-[15px] leading-relaxed text-muted-foreground space-y-5">
           <p>

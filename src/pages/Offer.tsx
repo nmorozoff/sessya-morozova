@@ -1,3 +1,7 @@
+import { SiteLink } from "@/components/SiteLink";
+import { SITE_URL } from "@/lib/site";
+import { Link } from "react-router-dom";
+
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <>
     <h2 className="text-lg font-bold text-foreground mt-6">{title}</h2>
@@ -9,7 +13,7 @@ const Offer = () => {
   return (
     <div className="min-h-screen bg-background text-foreground px-6 py-16 lg:px-[120px] lg:py-24">
       <div className="max-w-3xl mx-auto">
-        <a href="/" className="text-muted-foreground text-sm hover:text-foreground transition-colors mb-8 inline-block">← На главную</a>
+        <Link to="/" className="text-muted-foreground text-sm hover:text-foreground transition-colors mb-8 inline-block">← На главную</Link>
         <h1 className="text-2xl sm:text-3xl font-bold mb-2">Публичная оферта</h1>
         <p className="text-sm text-muted-foreground mb-8">на оказание психологических консультационных услуг</p>
         <div className="text-[14px] sm:text-[15px] leading-relaxed text-muted-foreground space-y-3">
@@ -21,13 +25,13 @@ const Offer = () => {
             <strong className="text-foreground">ИНН:</strong> 771605638595<br />
             <strong className="text-foreground">E-mail:</strong> help10.psy@gmail.com<br />
             <strong className="text-foreground">Телефон:</strong> +7 (929) 594-05-14<br />
-            <strong className="text-foreground">Сайт:</strong> https://sessya-morozova.lovable.app
+            <strong className="text-foreground">Сайт:</strong> <SiteLink />
           </p>
           <p>далее — «Исполнитель», адресованной совершеннолетним физическим лицам, далее — «Клиент», заключить договор на оказание психологических консультационных услуг на условиях, изложенных ниже.</p>
           <p>Настоящая оферта размещается на сайте Исполнителя и действует до момента ее изменения или отзыва.</p>
 
           <Section title="1. Термины">
-            <p>1.1. Сайт — интернет-сайт Исполнителя, расположенный по адресу: https://sessya-morozova.lovable.app.</p>
+            <p>1.1. Сайт — интернет-сайт Исполнителя, расположенный по адресу: {SITE_URL}.</p>
             <p>1.2. Услуги — психологические консультационные услуги, оказываемые Исполнителем Клиенту в индивидуальном формате очно или онлайн.</p>
             <p>1.3. Консультация — индивидуальная встреча Клиента с Исполнителем, проводимая очно или дистанционно с использованием средств связи.</p>
             <p>1.4. EMDR / ДПДГ-подход — психологический подход, который может использоваться Исполнителем в рамках консультационной работы и включает элементы переработки эмоционально значимого опыта, в том числе с применением билатеральной стимуляции, если это уместно с учетом состояния, запроса и готовности Клиента.</p>
@@ -201,7 +205,7 @@ const Offer = () => {
               <strong className="text-foreground">ИНН:</strong> 771605638595<br />
               <strong className="text-foreground">E-mail:</strong> help10.psy@gmail.com<br />
               <strong className="text-foreground">Телефон:</strong> +7 (929) 594-05-14<br />
-              <strong className="text-foreground">Сайт:</strong> https://sessya-morozova.lovable.app
+              <strong className="text-foreground">Сайт:</strong> <SiteLink />
             </p>
           </Section>
         </div>
