@@ -16,6 +16,7 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+.ftp-deploy.env
 public/api/config.php
 private/timeweb-secrets.php
 
