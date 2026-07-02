@@ -1,11 +1,9 @@
 import Reveal from "./Reveal";
-import JsonLd from "./JsonLd";
-import { faqPageSchema, homepageFaqItems } from "@/lib/schema";
+import { homepageFaqItems } from "@/lib/schema";
 
 const FaqSection = () => {
   return (
     <>
-      <JsonLd id="faq-page" data={faqPageSchema} />
       <div className="glow-line mx-6 lg:mx-[60px]" />
       <section className="px-6 lg:px-[60px] py-[72px] lg:py-[100px] bg-bg2" id="faq">
         <Reveal className="text-center max-w-[700px] mx-auto mb-[60px]">

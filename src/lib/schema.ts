@@ -33,29 +33,13 @@ export const PRICING_OFFERS = [
   },
 ];
 
-export const physicianSchema = {
+export const personSchema = {
   "@context": "https://schema.org",
-  "@type": "Physician",
+  "@type": "Person",
   name: "Наталья Морозова",
+  jobTitle: "EMDR-терапевт (ДПДГ)",
   url: SITE_URL,
   image: `${SITE_URL}/images/about-photo-dark.jpg`,
-  description:
-    "Сертифицированный психолог и EMDR-терапевт. Специализация: ПТСР, панические атаки, тревожные расстройства, выгорание у предпринимателей.",
-  jobTitle: "Психолог, EMDR-терапевт",
-  alumniOf: [
-    {
-      "@type": "CollegeOrUniversity",
-      name: "НИУ ВШЭ",
-    },
-    {
-      "@type": "EducationalOrganization",
-      name: "Академия краткосрочной стратегической психотерапии",
-    },
-    {
-      "@type": "EducationalOrganization",
-      name: "Институт трансперсональной психологии",
-    },
-  ],
   knowsAbout: [
     "EMDR-терапия",
     "ПТСР",
@@ -67,54 +51,57 @@ export const physicianSchema = {
     "бизнес-психология",
     "РПП",
     "горевание",
+    "психологическая травма",
   ],
-  availableService: [
-    {
-      "@type": "MedicalTherapy",
-      name: "EMDR-терапия",
-      description: "Десенсибилизация и переработка движением глаз (ДПДГ)",
-      offers: PRICING_OFFERS[0],
-    },
-    {
-      "@type": "MedicalTherapy",
-      name: "Психологическое консультирование",
-      offers: PRICING_OFFERS[1],
-    },
-  ],
-  makesOffer: PRICING_OFFERS,
-  workLocation: [
-    {
-      "@type": "Place",
-      name: "Кабинет психолога — м. Тургеневская / Чистые пруды",
-      description: "Очный приём, 2 мин от метро",
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: "Москва",
-        addressCountry: "RU",
-      },
-    },
-    {
-      "@type": "Place",
-      name: "Кабинет психолога — м. Ботанический сад МЦК",
-      description: "Очный приём, 2 мин от метро",
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: "Москва",
-        addressCountry: "RU",
-      },
-    },
-  ],
-  areaServed: [
-    {
-      "@type": "City",
-      name: "Москва",
-    },
-    {
-      "@type": "Country",
-      name: "Россия",
-    },
-  ],
+  sameAs: [] as string[],
 };
+
+const OFFICE_LOCATIONS = [
+  {
+    "@type": "Place" as const,
+    name: "Кабинет психолога — м. Тургеневская / Чистые пруды",
+    description: "Очный приём, 2 мин от метро",
+    address: {
+      "@type": "PostalAddress" as const,
+      addressLocality: "Москва",
+      addressCountry: "RU",
+    },
+  },
+  {
+    "@type": "Place" as const,
+    name: "Кабинет психолога — м. Ботанический сад МЦК",
+    description: "Очный приём, 2 мин от метро",
+    address: {
+      "@type": "PostalAddress" as const,
+      addressLocality: "Москва",
+      addressCountry: "RU",
+    },
+  },
+];
+
+export const professionalServiceSchema = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: "Психологическое консультирование — Наталья Морозова",
+  serviceType: "Психологическое консультирование",
+  url: SITE_URL,
+  description:
+    "EMDR-терапия (ДПДГ) и психологическое консультирование онлайн и очно в Москве. Работа с тревогой, травмой, фобиями, выгоранием.",
+  provider: {
+    "@type": "Person",
+    name: "Наталья Морозова",
+    jobTitle: "EMDR-терапевт (ДПДГ)",
+  },
+  areaServed: [
+    { "@type": "City", name: "Москва" },
+    { "@type": "Country", name: "Россия" },
+  ],
+  offers: PRICING_OFFERS,
+  location: OFFICE_LOCATIONS,
+};
+
+/** @deprecated Использовать personSchema + professionalServiceSchema */
+export const physicianSchema = personSchema;
 
 export const homepageFaqItems = [
   {
@@ -160,6 +147,28 @@ export function buildFaqPageSchema(items: { question: string; answer: string }[]
 }
 
 export const faqPageSchema = buildFaqPageSchema(homepageFaqItems);
+
+export function buildBreadcrumbSchema(pageName: string, path: string) {
+  const pageUrl = `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Главная",
+        item: `${SITE_URL}/`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: pageName,
+        item: pageUrl,
+      },
+    ],
+  };
+}
 
 export function medicalConditionSchema(
   name: string,

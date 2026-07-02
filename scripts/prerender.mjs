@@ -66,6 +66,25 @@ async function waitForPageContent(page) {
     .catch(() => {});
 }
 
+async function launchBrowser() {
+  const launchOptions = {
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage", "--disable-gpu"],
+  };
+
+  let lastError;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      return await puppeteer.launch(launchOptions);
+    } catch (err) {
+      lastError = err;
+      console.warn(`[prerender] Browser launch attempt ${attempt}/3 failed`);
+      await new Promise((r) => setTimeout(r, 2000));
+    }
+  }
+  throw lastError;
+}
+
 async function prerender() {
   if (!existsSync(DIST)) {
     console.error("[prerender] dist/ not found. Run vite build first.");
@@ -74,12 +93,9 @@ async function prerender() {
 
   console.log(`[prerender] Rendering ${SITE_ROUTES.length} routes...`);
   const server = await startPreview();
+  await new Promise((r) => setTimeout(r, 2000));
 
-  const browser = await puppeteer.launch({
-    headless: true,
-    channel: "chrome",
-    args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
-  });
+  const browser = await launchBrowser();
 
   try {
     const page = await browser.newPage();
@@ -105,6 +121,9 @@ async function prerender() {
 
 prerender().catch((err) => {
   console.error("[prerender] Failed:", err);
-  console.warn("[prerender] Deploying without static HTML prerender (SPA fallback).");
+  if (process.env.CI === "true") {
+    process.exit(1);
+  }
+  console.warn("[prerender] Local fallback: SPA mode. Fix before production sitemap submit.");
   process.exit(0);
 });

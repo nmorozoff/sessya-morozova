@@ -1,6 +1,4 @@
 import Reveal from "./Reveal";
-import JsonLd from "./JsonLd";
-import { physicianSchema } from "@/lib/schema";
 const aboutPhoto = "/images/about-photo-dark.jpg";
 
 const credentials = [
@@ -14,7 +12,6 @@ const credentials = [
 const AboutSection = () => {
   return (
     <>
-      <JsonLd id="physician-about" data={physicianSchema} />
       <div className="glow-line mx-6 lg:mx-[60px]" />
       <section className="px-6 lg:px-[60px] py-[72px] lg:py-[100px]" id="about">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">

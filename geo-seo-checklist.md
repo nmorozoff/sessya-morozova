@@ -1,59 +1,35 @@
-Чек-лист реализации GEO & SEO
+# Чек-лист GEO & SEO
 
-## Шаг 1: Базовая инфраструктура
-[x] SEO-маршрутизация: чистые URL (`/panic-attacks`, `/phobias`), навигация через `<a href>` (React Router `Link` → `<a>`).
-[x] Yandex Rotor: `window.YandexRotorSettings = { WaiterEnabled: true }` в `<head>`, `IsLoaded = true` после гидратации (`YandexRotorReady`).
-[x] JSON-LD `Physician` на главной: имя, специализация, кабинеты (м. Тургеневская, м. Ботанический сад), цены (5000 / 6500).
-[x] Файл `/llms.txt` доступен в корне сайта.
+## ЭТАП 0 — Инфраструктура и источники правды
+[x] Создана папка `docs/` (site-map, content-template, schema-templates, seo-geo-glossary, reviews-and-credentials, zen-articles-plan)
+[x] Зафиксированы эталоны: GEO 40–60 слов, SEO ≥1200 слов (метод 1500+), Person + ProfessionalService (без Physician)
+[x] `PageMeta` расширен: проп `jsonLd` (массив объектов → отдельные `<script type="application/ld+json">`)
+[x] Главная: снят Physician, подключены Person + ProfessionalService + FAQPage через PageMeta
+[ ] Prerender (SSG): починить до финальной технической проверки и отправки sitemap в Вебмастер
 
-## Техническая база
-[x] Шаг 1: Настроен build-time prerender (SSG) при сборке — статический HTML для всех маршрутов.
+## Шаг 1: Базовая инфраструктура (ранее)
+[x] SEO-маршрутизация: чистые URL, навигация через `<a href>`
+[x] Yandex Rotor: WaiterEnabled + IsLoaded после гидратации
+[x] JSON-LD на главной (обновлено: Person + ProfessionalService)
+[x] `/llms.txt` доступен
 
-[x] Шаг 1: Настроены статические URL (без #) для всех услуг.
+## Контент кластерных страниц (следующие этапы)
+[ ] Расширить опубликованные страницы до ≥1200 слов по `docs/content-template.md`
+[ ] Создать 8 новых кластеров из `docs/site-map.md` (ptsd, ocd, …)
+[ ] На новых страницах: BreadcrumbList, figcaption, два CTA, FAQPage
 
-[x] Шаг 1: Настроена кастомная страница 404.
+## Финальный технический чек-лист (перед сдачей)
+[ ] PageMeta на `/privacy` и `/offer`
+[ ] BreadcrumbList + figcaption на существующих страницах (главная, метод, сервисные)
+[ ] Prerender работает на всех маршрутах — уникальный title/description в HTML
+[ ] Sitemap переотправлен в Яндекс.Вебмастер и Google Search Console
+[ ] Убрать MedicalCondition с кластерных (заменить на WebPage) — по docs/schema-templates.md
 
-[x] Шаг 2: Внедрен скрипт window.YandexRotorSettings.
+## Опубликованные кластеры (нужно расширить)
+[ ] `/emdr-therapy` (1500+ слов)
+[ ] `/panic-attacks` `/phobias` `/anxiety` `/grief` `/divorce`
+[ ] `/sexual-abuse` `/emotional-abuse` `/eating-disorders` `/psychosomatics` `/business-psychology`
 
-[x] Шаг 2: Все элементы навигации переведены на теги <a> с href.
-
-[x] Шаг 3: Внедрена микроразметка JSON-LD Physician на главную страницу.
-
-[x] Шаг 3: Внедрена разметка MedicalCondition + possibleTreatment на страницы услуг.
-
-[x] Шаг 3: Внедрена разметка FAQPage.
-
-[x] Шаг 4: Структура страниц переделана под "Слоеный пирог" (H1 -> GEO-ответ 50 слов -> SEO-текст -> Таблицы -> FAQ).
-
-[x] Шаг 5: Создан и заполнен файл llms.txt в корне сайта.
-
-[x] Шаг 5: Изображения оптимизированы (добавлены alt теги).
-
-[x] Шаг 6: Исправлен sitemap.xml и robots.txt — домен morozovanatalia.ru.
-
-[x] Шаг 6: Уникальные title/description/canonical на каждой странице (PageMeta).
-
-## Чек-лист создания посадочных страниц (SEO + GEO)
-[x] Базовая настройка: YandexRotorSettings, llms.txt, Schema Physician.
-
-[x] Страница: Панические атаки (/panic-attacks)
-
-[x] Страница: Фобии и страхи (/phobias) - с учетом клаустрофобии, агорафобии, аэрофобии.
-
-[x] Страница: Горевание и потеря (/grief)
-
-[x] Страница: Развод и расставание (/divorce)
-
-[x] Страница: Сексуальное насилие (/sexual-abuse)
-
-[x] Страница: Эмоциональное насилие и абьюз (/emotional-abuse)
-
-[x] Страница: Тревожность и ГТР (/anxiety)
-
-[x] Страница: РПП (/eating-disorders)
-
-[x] Страница: Психосоматика и аллергии (/psychosomatics)
-
-[x] Страница: Бизнес-психология (/business-psychology) - стресс, кассовые разрывы.
-
-[x] Страница: EMDR-терапия (/emdr-therapy)
+## Планируемые кластеры
+[ ] `/ptsd` `/psychological-trauma` `/ocd` `/emigration-trauma`
+[ ] `/dissociation` `/complex-trauma` `/burnout` `/parent-relationships`

@@ -10,9 +10,8 @@ import PricingSection from "@/components/PricingSection";
 import FaqSection from "@/components/FaqSection";
 import FormSection from "@/components/FormSection";
 import Footer from "@/components/Footer";
-import JsonLd from "@/components/JsonLd";
 import PageMeta from "@/components/PageMeta";
-import { physicianSchema } from "@/lib/schema";
+import { personSchema, professionalServiceSchema, faqPageSchema } from "@/lib/schema";
 
 const Index = () => {
   const location = useLocation();
@@ -36,8 +35,8 @@ const Index = () => {
         title="Наталья Морозова — Психолог EMDR в Москве и онлайн"
         description="Психолог и EMDR-терапевт. Лечение тревоги, панических атак, фобий, ПТСР и выгорания. Онлайн и очно в Москве. Бесплатная сессия 30 минут."
         path="/"
+        jsonLd={[personSchema, professionalServiceSchema, faqPageSchema]}
       />
-      <JsonLd id="physician-home" data={physicianSchema} />
       <Navbar />
       <Hero />
       <ProblemsSection />
