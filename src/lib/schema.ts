@@ -82,6 +82,28 @@ export const physicianSchema = {
     },
   ],
   makesOffer: PRICING_OFFERS,
+  workLocation: [
+    {
+      "@type": "Place",
+      name: "Кабинет психолога — м. Тургеневская / Чистые пруды",
+      description: "Очный приём, 2 мин от метро",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Москва",
+        addressCountry: "RU",
+      },
+    },
+    {
+      "@type": "Place",
+      name: "Кабинет психолога — м. Ботанический сад МЦК",
+      description: "Очный приём, 2 мин от метро",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Москва",
+        addressCountry: "RU",
+      },
+    },
+  ],
   areaServed: [
     {
       "@type": "City",

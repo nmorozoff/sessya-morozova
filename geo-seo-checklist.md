@@ -1,4 +1,12 @@
 Чек-лист реализации GEO & SEO
+
+## Шаг 1: Базовая инфраструктура
+[x] SEO-маршрутизация: чистые URL (`/panic-attacks`, `/phobias`), навигация через `<a href>` (React Router `Link` → `<a>`).
+[x] Yandex Rotor: `window.YandexRotorSettings = { WaiterEnabled: true }` в `<head>`, `IsLoaded = true` после гидратации (`YandexRotorReady`).
+[x] JSON-LD `Physician` на главной: имя, специализация, кабинеты (м. Тургеневская, м. Ботанический сад), цены (5000 / 6500).
+[x] Файл `/llms.txt` доступен в корне сайта.
+
+## Техническая база
 [x] Шаг 1: Настроен build-time prerender (SSG) при сборке — статический HTML для всех маршрутов.
 
 [x] Шаг 1: Настроены статические URL (без #) для всех услуг.
@@ -25,7 +33,7 @@
 
 [x] Шаг 6: Уникальные title/description/canonical на каждой странице (PageMeta).
 
-Чек-лист создания посадочных страниц (SEO + GEO)
+## Чек-лист создания посадочных страниц (SEO + GEO)
 [x] Базовая настройка: YandexRotorSettings, llms.txt, Schema Physician.
 
 [x] Страница: Панические атаки (/panic-attacks)
