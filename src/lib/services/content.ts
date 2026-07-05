@@ -1,8 +1,9 @@
 import type { ServicePageConfig } from "./types";
 import { burnoutPage, ocdPage, ptsdPage } from "./ptsd-ocd-burnout-pages";
 import { complexPtsdPage, dissociationPage } from "./dissociation-complex-ptsd-pages";
+import { emigrationStressPage, parentsRelationshipPage } from "./parents-emigration-pages";
 
-export { burnoutPage, ocdPage, ptsdPage, complexPtsdPage, dissociationPage };
+export { burnoutPage, ocdPage, ptsdPage, complexPtsdPage, dissociationPage, parentsRelationshipPage, emigrationStressPage };
 
 const defaultTable = {
   headers: ["Подход", "Как работает", "Сроки"],
@@ -934,4 +935,6 @@ export const ALL_SERVICE_PAGES: ServicePageConfig[] = [
   burnoutPage,
   dissociationPage,
   complexPtsdPage,
+  parentsRelationshipPage,
+  emigrationStressPage,
 ];

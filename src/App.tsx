@@ -25,6 +25,8 @@ const Ocd = lazy(() => import("./pages/services/Ocd"));
 const Burnout = lazy(() => import("./pages/services/Burnout"));
 const Dissociation = lazy(() => import("./pages/services/Dissociation"));
 const ComplexPtsd = lazy(() => import("./pages/services/ComplexPtsd"));
+const ParentsRelationship = lazy(() => import("./pages/services/ParentsRelationship"));
+const EmigrationStress = lazy(() => import("./pages/services/EmigrationStress"));
 
 const PageLoader = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">
@@ -56,6 +58,8 @@ const App = () => (
           <Route path="/burnout" element={<Burnout />} />
           <Route path="/dissociation" element={<Dissociation />} />
           <Route path="/complex-ptsd" element={<ComplexPtsd />} />
+          <Route path="/parents-relationship" element={<ParentsRelationship />} />
+          <Route path="/emigration-stress" element={<EmigrationStress />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/advertising-consent" element={<AdvertisingConsent />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />

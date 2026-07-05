@@ -17,6 +17,8 @@ export const SITE_ROUTES = [
   "/burnout",
   "/dissociation",
   "/complex-ptsd",
+  "/parents-relationship",
+  "/emigration-stress",
   "/privacy",
   "/privacy-policy",
   "/offer",
