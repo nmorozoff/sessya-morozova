@@ -1,7 +1,6 @@
 import { spawn } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { basename, join, posix, relative, resolve } from "node:path";
-import { Client } from "basic-ftp";
 
 const ROOT = resolve(".");
 const ENV_PATH = resolve(ROOT, ".ftp-deploy.env");
@@ -74,71 +73,6 @@ function collectFiles(dir, base = dir) {
   return files;
 }
 
-async function connectClient(server, user, password) {
-  const attempts = [
-    { label: "FTP", secure: false },
-    { label: "FTPS", secure: true, secureOptions: { rejectUnauthorized: false } },
-  ];
-
-  let lastError;
-  for (const attempt of attempts) {
-    const client = new Client(120_000);
-    client.ftp.verbose = false;
-    client.ftp.ipFamily = 4;
-
-    try {
-      await client.access({
-        host: server,
-        user,
-        password,
-        secure: attempt.secure,
-        secureOptions: attempt.secureOptions,
-      });
-      console.log(`[deploy] Подключение: ${attempt.label}`);
-      return client;
-    } catch (err) {
-      lastError = err;
-      client.close();
-      await new Promise((r) => setTimeout(r, 1500));
-    }
-  }
-
-  throw lastError ?? new Error("Не удалось подключиться по FTP/FTPS");
-}
-
-async function cdToDeployRoot(client, serverDir) {
-  const initialPwd = await client.pwd();
-  console.log(`[deploy] FTP: подключено, текущая папка: ${initialPwd}`);
-
-  const configured = (serverDir || "/public_html/").trim().replace(/\/+$/, "");
-  const candidates = [
-    configured,
-    configured.replace(/^\//, ""),
-    ".",
-    "public_html",
-    "/public_html",
-  ].filter((value, index, arr) => value && arr.indexOf(value) === index);
-
-  for (const candidate of candidates) {
-    try {
-      await client.cd(initialPwd);
-      if (candidate === ".") {
-        console.log(`[deploy] Используем текущую папку: ${await client.pwd()}`);
-        return;
-      }
-      await client.cd(candidate);
-      console.log(`[deploy] Перешли в: ${await client.pwd()}`);
-      return;
-    } catch {
-      // try next candidate
-    }
-  }
-
-  throw new Error(
-    `Не удалось открыть папку сайта. Проверьте FTP_SERVER_DIR в .ftp-deploy.env (сейчас: ${serverDir})`,
-  );
-}
-
 const OPTIONAL_REMOTE_FILES = new Set(["api/.htaccess"]);
 const SKIP_REMOTE_PREFIXES = ["api/"];
 
@@ -148,36 +82,119 @@ function collectDeployFiles() {
   });
 }
 
+function ftpUrl(server, remoteDir, remotePath) {
+  const dir = remoteDir.replace(/\/+$/, "");
+  const path = remotePath.startsWith("/") ? remotePath.slice(1) : remotePath;
+  return `ftp://${server}${dir}/${path}`;
+}
+
+function curlUpload({ server, user, password, remoteDir, local, remote, passive }) {
+  const url = ftpUrl(server, remoteDir, remote);
+  const args = [
+    "--silent",
+    "--show-error",
+    "--fail",
+    "--connect-timeout",
+    "30",
+    "--retry",
+    "2",
+    "--retry-delay",
+    "2",
+    "-u",
+    `${user}:${password}`,
+    "-T",
+    local,
+  ];
+
+  if (passive) {
+    args.push("--ftp-pasv");
+  } else {
+    args.push("--ftp-port", "-");
+  }
+
+  args.push(url);
+
+  return new Promise((resolvePromise, reject) => {
+    const proc = spawn("curl", args, { stdio: ["ignore", "pipe", "pipe"] });
+    let stderr = "";
+
+    proc.stderr.on("data", (chunk) => {
+      stderr += chunk.toString();
+    });
+
+    proc.on("error", reject);
+    proc.on("exit", (code) => {
+      if (code === 0) resolvePromise();
+      else reject(new Error(stderr.trim() || `curl exit ${code}`));
+    });
+  });
+}
+
+async function ensureRemoteDir({ server, user, password, remoteDir, subdir, passive }) {
+  if (!subdir || subdir === ".") return;
+
+  const parts = subdir.split("/").filter(Boolean);
+  let current = "";
+
+  for (const part of parts) {
+    current = current ? `${current}/${part}` : part;
+    const url = ftpUrl(server, remoteDir, current);
+    const args = [
+      "--silent",
+      "--show-error",
+      "--connect-timeout",
+      "30",
+      "-u",
+      `${user}:${password}`,
+    ];
+
+    if (passive) args.push("--ftp-pasv");
+    args.push("--ftp-create-dirs", url);
+
+    await new Promise((resolvePromise, reject) => {
+      const proc = spawn("curl", args, { stdio: "ignore" });
+      proc.on("error", reject);
+      proc.on("exit", () => resolvePromise());
+    });
+  }
+}
+
 async function uploadDist({ server, user, password, serverDir }) {
   if (!existsSync(DIST)) {
     throw new Error("Папка dist/ не найдена. Сначала выполните сборку.");
   }
 
   const files = collectDeployFiles();
+  const remoteDir = (serverDir || "/public_html/").trim().replace(/\/+$/, "") || "/public_html";
   let lastError;
 
   for (const passive of [true, false]) {
-    const client = await connectClient(server, user, password);
-    client.ftp.passive = passive;
-
     try {
-      await cdToDeployRoot(client, serverDir);
-      const deployRoot = await client.pwd();
       console.log(
-        `[deploy] Загрузка ${files.length} файлов в ${deployRoot} (passive=${passive}) ...`,
+        `[deploy] Загрузка ${files.length} файлов в ${remoteDir} (curl, passive=${passive}) ...`,
       );
       console.log("[deploy] Папка api/ не трогаем — config.php и форма остаются на сервере.");
 
+      const createdDirs = new Set();
+
       for (const file of files) {
-        await client.cd(deployRoot);
-        const remoteDir = posix.dirname(file.remote);
-        if (remoteDir !== ".") {
-          await client.ensureDir(remoteDir);
-          await client.cd(deployRoot);
+        const remoteDirPart = posix.dirname(file.remote);
+        if (remoteDirPart !== "." && !createdDirs.has(remoteDirPart)) {
+          await ensureRemoteDir({ server, user, password, remoteDir, subdir: remoteDirPart, passive });
+          createdDirs.add(remoteDirPart);
         }
+
         process.stdout.write(`[deploy] ↑ ${file.remote}\n`);
         try {
-          await client.uploadFrom(file.local, file.remote);
+          await curlUpload({
+            server,
+            user,
+            password,
+            remoteDir,
+            local: file.local,
+            remote: file.remote,
+            passive,
+          });
         } catch (err) {
           if (OPTIONAL_REMOTE_FILES.has(file.remote)) {
             console.warn(`[deploy] ⚠ пропущен ${file.remote}: ${err.message || err}`);
@@ -191,8 +208,6 @@ async function uploadDist({ server, user, password, serverDir }) {
     } catch (err) {
       lastError = err;
       console.warn(`[deploy] Режим passive=${passive} не сработал: ${err.message || err}`);
-    } finally {
-      client.close();
     }
   }
 
@@ -213,7 +228,7 @@ async function main() {
     console.log("[deploy] Пропуск сборки (SKIP_BUILD=1)");
   }
 
-  const maxAttempts = 5;
+  const maxAttempts = 3;
   let lastError;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {

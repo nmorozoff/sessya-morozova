@@ -1,8 +1,8 @@
 name: Deploy to Timeweb
 
+# Автодеплой отключён: GitHub Actions требует оплату.
+# Деплой: npm run deploy (локально, через curl FTP → Timeweb)
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 jobs:

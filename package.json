@@ -12,6 +12,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "deploy": "node scripts/deploy-ftp.mjs",
     "deploy:ftp": "node scripts/deploy-ftp.mjs"
   },
   "dependencies": {
