@@ -207,16 +207,17 @@ async function main() {
   const password = requireEnv(env, "FTP_PASSWORD");
   const serverDir = env.FTP_SERVER_DIR?.trim() || "/public_html/";
 
+  if (process.env.SKIP_BUILD !== "1") {
+    await runBuild(siteUrl);
+  } else {
+    console.log("[deploy] Пропуск сборки (SKIP_BUILD=1)");
+  }
+
   const maxAttempts = 5;
   let lastError;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
-      if (process.env.SKIP_BUILD !== "1") {
-        await runBuild(siteUrl);
-      } else {
-        console.log("[deploy] Пропуск сборки (SKIP_BUILD=1)");
-      }
       await uploadDist({ server, user, password, serverDir });
       console.log("[deploy] Готово. Проверьте сайт и sitemap.xml");
       return;
