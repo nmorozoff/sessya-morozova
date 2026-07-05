@@ -4,6 +4,7 @@ export type ServiceSection = {
   h2: string;
   paragraphs?: string[];
   list?: string[];
+  trailingParagraphs?: string[];
 };
 
 export type ServiceFaqItem = {

@@ -33,7 +33,7 @@ const Index = () => {
     <div className="min-h-screen bg-background text-foreground">
       <PageMeta
         title="Наталья Морозова — Психолог EMDR в Москве и онлайн"
-        description="Психолог и EMDR-терапевт. Лечение тревоги, панических атак, фобий, ПТСР и выгорания. Онлайн и очно в Москве. Бесплатная сессия 30 минут."
+        description="Психолог и EMDR-терапевт. Работа с тревогой, паническими атаками, фобиями, ПТСР и выгоранием. Онлайн и очно в Москве. Бесплатная сессия 30 минут."
         path="/"
         jsonLd={[personSchema, professionalServiceSchema, faqPageSchema]}
       />

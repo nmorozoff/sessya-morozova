@@ -20,6 +20,11 @@ const EmotionalAbuse = lazy(() => import("./pages/services/EmotionalAbuse"));
 const EatingDisorders = lazy(() => import("./pages/services/EatingDisorders"));
 const Psychosomatics = lazy(() => import("./pages/services/Psychosomatics"));
 const BusinessPsychology = lazy(() => import("./pages/services/BusinessPsychology"));
+const Ptsd = lazy(() => import("./pages/services/Ptsd"));
+const Ocd = lazy(() => import("./pages/services/Ocd"));
+const Burnout = lazy(() => import("./pages/services/Burnout"));
+const Dissociation = lazy(() => import("./pages/services/Dissociation"));
+const ComplexPtsd = lazy(() => import("./pages/services/ComplexPtsd"));
 
 const PageLoader = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">
@@ -46,6 +51,11 @@ const App = () => (
           <Route path="/eating-disorders" element={<EatingDisorders />} />
           <Route path="/psychosomatics" element={<Psychosomatics />} />
           <Route path="/business-psychology" element={<BusinessPsychology />} />
+          <Route path="/ptsd" element={<Ptsd />} />
+          <Route path="/ocd" element={<Ocd />} />
+          <Route path="/burnout" element={<Burnout />} />
+          <Route path="/dissociation" element={<Dissociation />} />
+          <Route path="/complex-ptsd" element={<ComplexPtsd />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/advertising-consent" element={<AdvertisingConsent />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />

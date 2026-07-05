@@ -44,7 +44,7 @@ const ServiceLandingPage = ({
 
           <h1 className="text-3xl md:text-4xl font-bold mb-6">{h1}</h1>
 
-          <p className="text-lg leading-relaxed mb-5 text-foreground/90">{geoBlock}</p>
+          <p className="geo-direct-answer text-lg leading-relaxed mb-5 text-foreground/90">{geoBlock}</p>
 
           <p className="leading-relaxed mb-8 text-muted-foreground">{intro}</p>
 
@@ -63,6 +63,11 @@ const ServiceLandingPage = ({
                   ))}
                 </ul>
               )}
+              {section.trailingParagraphs?.map((paragraph) => (
+                <p key={paragraph.slice(0, 40)} className="mt-4 leading-relaxed text-muted-foreground">
+                  {paragraph}
+                </p>
+              ))}
             </section>
           ))}
 

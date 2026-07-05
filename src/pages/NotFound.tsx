@@ -32,7 +32,7 @@ const NotFound = () => {
             </li>
             <li>
               <Link to="/panic-attacks" className="text-primary underline hover:text-primary/90">
-                Лечение панических атак
+                Панические атаки — как я работаю
               </Link>
             </li>
             <li>
