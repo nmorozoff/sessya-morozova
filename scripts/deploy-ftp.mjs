@@ -75,19 +75,35 @@ function collectFiles(dir, base = dir) {
 }
 
 async function connectClient(server, user, password) {
-  const client = new Client(120_000);
-  client.ftp.verbose = false;
+  const attempts = [
+    { label: "FTP", secure: false },
+    { label: "FTPS", secure: true, secureOptions: { rejectUnauthorized: false } },
+  ];
 
-  try {
-    await client.access({ host: server, user, password, secure: false });
-    return client;
-  } catch {
-    client.close();
-    const secureClient = new Client(120_000);
-    secureClient.ftp.verbose = false;
-    await secureClient.access({ host: server, user, password, secure: true });
-    return secureClient;
+  let lastError;
+  for (const attempt of attempts) {
+    const client = new Client(120_000);
+    client.ftp.verbose = false;
+    client.ftp.ipFamily = 4;
+
+    try {
+      await client.access({
+        host: server,
+        user,
+        password,
+        secure: attempt.secure,
+        secureOptions: attempt.secureOptions,
+      });
+      console.log(`[deploy] Подключение: ${attempt.label}`);
+      return client;
+    } catch (err) {
+      lastError = err;
+      client.close();
+      await new Promise((r) => setTimeout(r, 1500));
+    }
   }
+
+  throw lastError ?? new Error("Не удалось подключиться по FTP/FTPS");
 }
 
 async function cdToDeployRoot(client, serverDir) {
@@ -138,35 +154,49 @@ async function uploadDist({ server, user, password, serverDir }) {
   }
 
   const files = collectDeployFiles();
-  const client = await connectClient(server, user, password);
+  let lastError;
 
-  try {
-    await cdToDeployRoot(client, serverDir);
-    const deployRoot = await client.pwd();
-    console.log(`[deploy] Загрузка ${files.length} файлов в ${deployRoot} ...`);
-    console.log("[deploy] Папка api/ не трогаем — config.php и форма остаются на сервере.");
+  for (const passive of [true, false]) {
+    const client = await connectClient(server, user, password);
+    client.ftp.passive = passive;
 
-    for (const file of files) {
-      await client.cd(deployRoot);
-      const remoteDir = posix.dirname(file.remote);
-      if (remoteDir !== ".") {
-        await client.ensureDir(remoteDir);
+    try {
+      await cdToDeployRoot(client, serverDir);
+      const deployRoot = await client.pwd();
+      console.log(
+        `[deploy] Загрузка ${files.length} файлов в ${deployRoot} (passive=${passive}) ...`,
+      );
+      console.log("[deploy] Папка api/ не трогаем — config.php и форма остаются на сервере.");
+
+      for (const file of files) {
         await client.cd(deployRoot);
-      }
-      process.stdout.write(`[deploy] ↑ ${file.remote}\n`);
-      try {
-        await client.uploadFrom(file.local, file.remote);
-      } catch (err) {
-        if (OPTIONAL_REMOTE_FILES.has(file.remote)) {
-          console.warn(`[deploy] ⚠ пропущен ${file.remote}: ${err.message || err}`);
-          continue;
+        const remoteDir = posix.dirname(file.remote);
+        if (remoteDir !== ".") {
+          await client.ensureDir(remoteDir);
+          await client.cd(deployRoot);
         }
-        throw new Error(`${file.remote}: ${err.message || err}`);
+        process.stdout.write(`[deploy] ↑ ${file.remote}\n`);
+        try {
+          await client.uploadFrom(file.local, file.remote);
+        } catch (err) {
+          if (OPTIONAL_REMOTE_FILES.has(file.remote)) {
+            console.warn(`[deploy] ⚠ пропущен ${file.remote}: ${err.message || err}`);
+            continue;
+          }
+          throw new Error(`${file.remote}: ${err.message || err}`);
+        }
       }
+
+      return;
+    } catch (err) {
+      lastError = err;
+      console.warn(`[deploy] Режим passive=${passive} не сработал: ${err.message || err}`);
+    } finally {
+      client.close();
     }
-  } finally {
-    client.close();
   }
+
+  throw lastError ?? new Error("Не удалось загрузить файлы по FTP");
 }
 
 async function main() {
@@ -177,14 +207,29 @@ async function main() {
   const password = requireEnv(env, "FTP_PASSWORD");
   const serverDir = env.FTP_SERVER_DIR?.trim() || "/public_html/";
 
-  if (process.env.SKIP_BUILD !== "1") {
-    await runBuild(siteUrl);
-  } else {
-    console.log("[deploy] Пропуск сборки (SKIP_BUILD=1)");
-  }
-  await uploadDist({ server, user, password, serverDir });
+  const maxAttempts = 5;
+  let lastError;
 
-  console.log("[deploy] Готово. Проверьте сайт и sitemap.xml");
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      if (process.env.SKIP_BUILD !== "1") {
+        await runBuild(siteUrl);
+      } else {
+        console.log("[deploy] Пропуск сборки (SKIP_BUILD=1)");
+      }
+      await uploadDist({ server, user, password, serverDir });
+      console.log("[deploy] Готово. Проверьте сайт и sitemap.xml");
+      return;
+    } catch (err) {
+      lastError = err;
+      if (attempt < maxAttempts) {
+        console.warn(`[deploy] Попытка ${attempt}/${maxAttempts} не удалась, повтор через 3 с...`);
+        await new Promise((r) => setTimeout(r, 3000));
+      }
+    }
+  }
+
+  throw lastError ?? new Error("Деплой не удался");
 }
 
 main().catch((err) => {
