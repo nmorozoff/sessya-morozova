@@ -49,6 +49,9 @@ const Navbar = () => {
         <Link to="/#pricing" className={navLinkClass}>
           Форматы
         </Link>
+        <Link to="/blog" className={navLinkClass}>
+          Блог
+        </Link>
 
         <div className="relative">
           <button
