@@ -116,7 +116,13 @@ function syncPublicAssets(posts) {
     const schemaPath = resolve(post.contentDir, "schema.jsonld");
     const coverDir = resolve(post.contentDir, "cover");
 
-    writeFileSync(resolve(targetDir, "body.html"), readFileSync(htmlPath, "utf8"), "utf8");
+    let bodyHtml = readFileSync(htmlPath, "utf8");
+    // Make relative cover/inline paths absolute so they resolve from /blog/<slug>/.
+    bodyHtml = bodyHtml.replace(
+      new RegExp(`(src=["'])cover/`, "g"),
+      `$1/blog-assets/${slug}/cover/`,
+    );
+    writeFileSync(resolve(targetDir, "body.html"), bodyHtml, "utf8");
 
     const publicMeta = { ...post };
     delete publicMeta.contentDir;
