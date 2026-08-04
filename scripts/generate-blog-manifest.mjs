@@ -138,6 +138,11 @@ function syncPublicAssets(posts) {
           cpSync(src, dst, { recursive: true });
         }
       }
+      // Keep the canonical cover at the asset root for the manifest coverImage path.
+      const rootCover = resolve(coverDir, "cover.png");
+      if (existsSync(rootCover)) {
+        cpSync(rootCover, resolve(targetDir, "cover.png"));
+      }
     }
   }
 }
