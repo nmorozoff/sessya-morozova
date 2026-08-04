@@ -1,0 +1,121 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://morozova-natalya.ru/blog/gore-i-poterya-podderzhka/#article",
+      "headline": "Как пройти через горе и утрату близкого с поддержкой психолога",
+      "description": "Горе после утраты – нормальная реакция, не слабость. Когда идти к психологу, чем стадии отличаются от экзамена и как EMDR помогает при травматической утрате.",
+      "datePublished": "2026-07-25",
+      "dateModified": "2026-07-25",
+      "inLanguage": "ru",
+      "url": "https://morozova-natalya.ru/blog/gore-i-poterya-podderzhka/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://morozova-natalya.ru/blog/gore-i-poterya-podderzhka/"
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://morozova-natalya.ru/wp-content/uploads/2026/07/cover-3.png",
+        "width": 1200,
+        "height": 675
+      },
+      "author": {
+        "@type": "Person",
+        "@id": "https://morozova-natalya.ru/#author-natalya-morozova",
+        "name": "Наталья Морозова",
+        "jobTitle": "Психолог, EMDR-терапевт",
+        "description": "Сертифицированный психолог и EMDR-терапевт. Работа с тревогой, паническими атаками, фобиями, ПТСР, травматическим опытом, горем, выгоранием и психосоматикой. Москва и онлайн.",
+        "image": "https://www.morozovanatalia.ru/images/hero-photo-dark.jpg",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Наталья Морозова — психолог EMDR",
+          "url": "https://morozova-natalya.ru/"
+        },
+        "sameAs": [
+          "https://www.morozovanatalia.ru/",
+          "https://morozova-natalya.ru/",
+          "https://www.b17.ru/morozova_natalia/",
+          "https://t.me/morozova_emdr",
+          "https://dzen.ru/morozova_emdr",
+          "https://vk.com/natalyamorozovapsy"
+        ]
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Наталья Морозова — психолог EMDR",
+        "url": "https://morozova-natalya.ru/"
+      },
+      "keywords": "горе утрата психолог, как пережить потерю близкого, психолог при горе",
+      "wordCount": 9491,
+      "articleSection": "Горе",
+      "isPartOf": {
+        "@type": "Blog",
+        "name": "Блог Натальи Морозовой",
+        "url": "https://morozova-natalya.ru/blog/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://morozova-natalya.ru/blog/gore-i-poterya-podderzhka/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Пора ли \"отпустить\" близкого?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Нет давления отпускать по чужому календарю. Связь меняет форму: из \"звоню каждый день\" в \"помню, говорю, живу дальше\". Это не предательство. Это продолжение любви без адресата."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Сколько длится горе?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Острая фаза у многих – от года до полутора. Всплески на годовщинах и праздниках – норма. Если через полгода боль только растёт и нет сил на базовые дела – обсудите с психологом, не ждите \"ещё год\"."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Чем EMDR отличается от \"просто поговорить\"?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Разговор помогает назвать чувства и снизить одиночество. EMDR дополнительно работает с телесным зарядом тяжёлого воспоминания. Память остаётся. Меняется реакция тела на неё."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Можно ли идти в терапию всей семьёй?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Да. Иногда нужна и личная сессия, и семейная – чтобы перестать ранить друг друга фразами \"соберись\". Детям после утраты тоже нужен свой язык поддержки. Отдельно от взрослых."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Я боюсь, что психолог поставит диагноз",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Горе – не ярлык. На первой встрече мы говорим о вашей истории, не о \"правильности\" чувств. Диагноз, если он вообще обсуждается, – инструмент для плана помощи. Не приговор."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Онлайн-консультация при горе – это серьёзно?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Да. Нужны приватное место, стабильная связь, возможность поплакать без страха, что вас услышат соседи. Многие после утраты как раз не хотят ехать через весь город. Онлайн снижает барьер."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Когда срочно к врачу, а не только к психологу?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "При мыслях о самоповреждении, планах уйти из жизни, полной неспособности есть и спать несколько дней, тяжёлой интоксикации алкоголем или таблетками. Психолог – сопровождение горя. Врач – когда вопрос о безопасности и медикаментах."
+          }
+        }
+      ]
+    }
+  ]
+}

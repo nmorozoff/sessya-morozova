@@ -1,0 +1,105 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "__SITE_BASE__/blog/ptsr-simptomy-i-podderzhka-psihologa/#article",
+      "headline": "ПТСР — не только про катастрофы: признаки посттравматического стресса и когда идти к психологу",
+      "description": "Разбираем простыми словами симптомы ПТСР (посттравматического стрессового расстройства) у взрослых. 4 группы признаков и чек-лист для самонаблюдения.",
+      "datePublished": "2026-08-03",
+      "dateModified": "2026-08-03",
+      "inLanguage": "ru",
+      "url": "__SITE_BASE__/blog/ptsr-simptomy-i-podderzhka-psihologa/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "__SITE_BASE__/blog/ptsr-simptomy-i-podderzhka-psihologa/"
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": "__SITE_BASE__/wp-content/uploads/blog/ptsr-simptomy-i-podderzhka-psihologa-cover.png",
+        "width": 1200,
+        "height": 675
+      },
+      "author": {
+        "@type": "Person",
+        "@id": "__SITE_BASE__/#author-natalya-morozova",
+        "name": "Наталья Морозова",
+        "jobTitle": "Психолог, EMDR-терапевт",
+        "description": "Сертифицированный психолог и EMDR-терапевт. Работа с тревогой, паническими атаками, фобиями, ПТСР, травматическим опытом, горем, выгоранием и психосоматикой. Москва и онлайн.",
+        "image": "__SITE_BASE__/images/hero-photo-dark.jpg",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Наталья Морозова — психолог EMDR",
+          "url": "__SITE_BASE__/"
+        },
+        "sameAs": [
+          "__SITE_BASE__/",
+          "https://morozovanatalia.ru/",
+          "https://www.b17.ru/morozova_natalia/",
+          "https://t.me/natalyamorozovaa",
+          "https://dzen.ru/natalyamorozovapsy",
+          "https://vk.com/natalyamorozovapsy"
+        ]
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Наталья Морозова — психолог EMDR",
+        "url": "__SITE_BASE__/"
+      },
+      "keywords": "птср, птср симптомы, посттравматическое стрессовое расстройство, птср признаки, симптомы птср у взрослых, как понять что у меня птср, психолог при птср",
+      "wordCount": 9210,
+      "articleSection": "ПТСР",
+      "isPartOf": {
+        "@type": "Blog",
+        "name": "Блог Натальи Морозовой",
+        "url": "__SITE_BASE__/blog/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "__SITE_BASE__/blog/ptsr-simptomy-i-podderzhka-psihologa/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Как точно понять, есть ли у меня ПТСР?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Точный диагноз ставит врач-психиатр или клинический психолог после беседы. Тесты в интернете не заменят профессиональной оценки, так как симптомы могут пересекаться с тревожным расстройством или депрессией."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Флешбеки — это как галлюцинации? Я схожу с ума?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Нет, это не сумасшествие. Флешбек — это интенсивное вторжение памяти, когда мозг верит, что угроза вернулась. Тело реагирует выбросом адреналина. Это пугает, но это естественный механизм памяти при травме."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Можно ли работать с травмой в EMDR онлайн?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Да, метод эффективно работает в онлайн-формате. Мы используем специальные программы или движения, которые вы делаете перед экраном. Главное условие — стабильный интернет и безопасное, тихое место на время сессии."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Чем последствия стресса отличаются от обычной травмы?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Травма как событие оставляет глубокий след, но со временем человек адаптируется. О расстройстве (ПТСР) мы говорим тогда, когда симптомы не уходят со временем, интенсивность страданий остается высокой и человек начинает избегать нормальной жизни."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "В каких случаях нужно срочно обращаться к врачу?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Если вы чувствуете, что не можете контролировать свои импульсы, если пропал сон на несколько суток, появились мысли о нежелании жить или вы злоупотребляете алкоголем. В этих случаях необходима очная консультация психиатра или звонок в кризисную службу."
+          }
+        }
+      ]
+    }
+  ]
+}

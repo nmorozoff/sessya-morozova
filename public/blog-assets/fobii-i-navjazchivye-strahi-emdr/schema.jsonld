@@ -1,0 +1,121 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://morozova-natalya.ru/fobii-i-navjazchivye-strahi-emdr/#article",
+      "headline": "Как справиться со страхами и фобиями: когда тревога привязана к конкретной ситуации",
+      "description": "Фобия – стойкий страх конкретной ситуации с избеганием. Как отличить от тревоги, почему обход стороной усиливает страх, когда к психологу и как EMDR помогает при травматическом корне.",
+      "datePublished": "2026-07-17",
+      "dateModified": "2026-07-20",
+      "inLanguage": "ru",
+      "url": "https://morozova-natalya.ru/fobii-i-navjazchivye-strahi-emdr/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://morozova-natalya.ru/fobii-i-navjazchivye-strahi-emdr/"
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://morozova-natalya.ru/wp-content/uploads/blog/fobii-i-navjazchivye-strahi-emdr-cover.png",
+        "width": 1200,
+        "height": 675
+      },
+      "author": {
+        "@type": "Person",
+        "@id": "https://morozova-natalya.ru/#author-natalya-morozova",
+        "name": "Наталья Морозова",
+        "jobTitle": "Психолог, EMDR-терапевт",
+        "description": "Сертифицированный психолог и EMDR-терапевт. Работа с тревогой, паническими атаками, фобиями, ПТСР, травматическим опытом, выгоранием и психосоматикой. Москва и онлайн.",
+        "image": "https://www.morozovanatalia.ru/images/hero-photo-dark.jpg",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Наталья Морозова — психолог EMDR",
+          "url": "https://morozova-natalya.ru/"
+        },
+        "sameAs": [
+          "https://www.morozovanatalia.ru/",
+          "https://morozova-natalya.ru/",
+          "https://www.b17.ru/morozova_natalia/",
+          "https://t.me/morozova_emdr",
+          "https://dzen.ru/morozova_emdr",
+          "https://vk.com/natalyamorozovapsy"
+        ]
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Наталья Морозова — психолог EMDR",
+        "url": "https://morozova-natalya.ru/"
+      },
+      "keywords": "фобия что это, как избавиться от фобии, страх полетов, клаустрофобия, агорафобия психолог",
+      "wordCount": 8952,
+      "articleSection": "Фобии",
+      "isPartOf": {
+        "@type": "Blog",
+        "name": "Блог Натальи Морозовой",
+        "url": "https://morozova-natalya.ru/blog/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://morozova-natalya.ru/fobii-i-navjazchivye-strahi-emdr/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Чем фобия отличается от тревожного расстройства?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Тревожное расстройство шире. Напряжение «ни о чём». Паника без ясного триггера. Фобия привязана к одной сцене и держится с избеганием. Диагноз ставит специалист. Не статья в блоге."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Можно ли работать с фобией онлайн?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Да. Дневник. Разбор избегания. Подготовка к встрече со страхом в безопасном темпе. EMDR в адаптированном формате. Нужны стабильная связь и приватное место. Пробная 30-минутная встреча – чтобы проверить, комфортно ли вам со мной и с форматом."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Чем EMDR отличается от \"просто поговорить\"?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Разговор помогает понять логику страха. EMDR дополнительно работает с телесным зарядом воспоминания. Структурированный протокол. Билатеральная стимуляция. Память не стирается – меняется интенсивность реакции."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Нужно ли специально встречаться со страхом, чтобы стало легче?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Иногда да – но не в одиночку и не через силу. Со специалистом можно выстроить план: от маленьких шагов к более сложным. EMDR может облегчить путь, если страшный образ или травматический эпизод «застрял» в теле. Самостоятельно устраивать жёсткие «проверки на прочность» не рекомендую."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Клаустрофобия – это всегда страх лифта?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Нет. Это страх замкнутых пространств: лифт, МРТ, маленькая комната без окна. В поиске слово часто ведёт на квесты – не путайте игру с запросом о здоровье. Если избегаете реальных закрытых пространств полгода и больше – обсудите с психологом."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Когда срочно к врачу, а не только к психологу?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "При мыслях о самоповреждении. Галлюцинациях. Полной неспособности есть или спать несколько дней. Тяжёлых навязчивостях с ритуалами на часы. Психолог работает с тревогой и фобиями. Психиатр нужен, когда вопрос о медикаментозной поддержке и острой безопасности."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Детский страх и фобия – одно и то же?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Страх темноты у ребёнка часто проходит. Фобия мешает школе, сну, визитам к врачу. \"Не бойся\" редко помогает – лучше обсудить с детским психологом, если страх держится и сужает жизнь."
+          }
+        }
+      ]
+    }
+  ]
+}
