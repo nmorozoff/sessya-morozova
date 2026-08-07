@@ -138,7 +138,7 @@ async function ensureRemoteDir({ server, user, password, remoteDir, subdir, pass
 
   for (const part of parts) {
     current = current ? `${current}/${part}` : part;
-    const url = ftpUrl(server, remoteDir, current);
+    const url = `${ftpUrl(server, remoteDir, current)}/`;
     const args = [
       "--silent",
       "--show-error",
@@ -152,9 +152,17 @@ async function ensureRemoteDir({ server, user, password, remoteDir, subdir, pass
     args.push("--ftp-create-dirs", url);
 
     await new Promise((resolvePromise, reject) => {
-      const proc = spawn("curl", args, { stdio: "ignore" });
+      const proc = spawn("curl", args, { stdio: ["ignore", "pipe", "pipe"] });
+      let stderr = "";
+      proc.stderr?.on("data", (chunk) => {
+        stderr += chunk.toString();
+      });
       proc.on("error", reject);
-      proc.on("exit", () => resolvePromise());
+      proc.on("exit", (code) => {
+        // Timeweb: 9 = directory exists or CWD ok — не фейлим MKD
+        if (code === 0 || code === 9) resolvePromise();
+        else reject(new Error(stderr.trim() || `mkdir ${current} exit ${code}`));
+      });
     });
   }
 }
@@ -179,9 +187,15 @@ async function uploadDist({ server, user, password, serverDir }) {
 
       for (const file of files) {
         const remoteDirPart = posix.dirname(file.remote);
-        if (remoteDirPart !== "." && !createdDirs.has(remoteDirPart)) {
-          await ensureRemoteDir({ server, user, password, remoteDir, subdir: remoteDirPart, passive });
-          createdDirs.add(remoteDirPart);
+        if (remoteDirPart !== ".") {
+          const parts = remoteDirPart.split("/").filter(Boolean);
+          for (let i = 1; i <= parts.length; i++) {
+            const partial = parts.slice(0, i).join("/");
+            if (!createdDirs.has(partial)) {
+              await ensureRemoteDir({ server, user, password, remoteDir, subdir: partial, passive });
+              createdDirs.add(partial);
+            }
+          }
         }
 
         process.stdout.write(`[deploy] ↑ ${file.remote}\n`);

@@ -1,8 +1,12 @@
 import { spawn } from "node:child_process";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
-import puppeteer from "puppeteer";
 import { SITE_ROUTES } from "./routes.mjs";
+
+if (process.env.SKIP_PRERENDER === "1" || process.env.EXCALIBUR_REACT_SKIP_PRERENDER === "yes") {
+  console.log("[prerender] SKIP_PRERENDER — пропуск (vite dist без puppeteer)");
+  process.exit(0);
+}
 
 const DIST = resolve("dist");
 const PORT = 4173;
@@ -66,7 +70,7 @@ async function waitForPageContent(page) {
     .catch(() => {});
 }
 
-async function launchBrowser() {
+async function launchBrowser(puppeteer) {
   const launchOptions = {
     headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage", "--disable-gpu"],
@@ -91,11 +95,13 @@ async function prerender() {
     process.exit(1);
   }
 
+  const { default: puppeteer } = await import("puppeteer");
+
   console.log(`[prerender] Rendering ${SITE_ROUTES.length} routes...`);
   const server = await startPreview();
   await new Promise((r) => setTimeout(r, 2000));
 
-  const browser = await launchBrowser();
+  const browser = await launchBrowser(puppeteer);
 
   try {
     const page = await browser.newPage();
