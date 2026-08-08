@@ -1,0 +1,113 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "__SITE_BASE__/blog/ipohondriya-trevoga-za-zdorove-psiholog/#article",
+      "headline": "Ипохондрия и тревога за здоровье: чек-лист признаков и когда идти к психологу",
+      "description": "Ипохондрия – не каприз, а тревожный круг проверок. Чек-лист из 6 признаков, разница с психосоматикой, киберхондрия, 4 шага на сутки и когда к психологу.",
+      "datePublished": "2026-08-08",
+      "dateModified": "2026-08-08",
+      "inLanguage": "ru",
+      "url": "__SITE_BASE__/blog/ipohondriya-trevoga-za-zdorove-psiholog/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "__SITE_BASE__/blog/ipohondriya-trevoga-za-zdorove-psiholog/"
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": "__SITE_BASE__/wp-content/uploads/blog/ipohondriya-trevoga-za-zdorove-psiholog-cover.png",
+        "width": 1200,
+        "height": 675
+      },
+      "author": {
+        "@type": "Person",
+        "@id": "__SITE_BASE__/#author-natalya-morozova",
+        "name": "Наталья Морозова",
+        "jobTitle": "Психолог, EMDR-терапевт",
+        "description": "Сертифицированный психолог и EMDR-терапевт. Работа с тревогой, паническими атаками, фобиями, ПТСР, травматическим опытом, выгоранием и психосоматикой. Москва и онлайн.",
+        "image": "__SITE_BASE__/images/hero-photo-dark.jpg",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Наталья Морозова — психолог EMDR",
+          "url": "__SITE_BASE__/"
+        },
+        "sameAs": [
+          "__SITE_BASE__/",
+          "https://morozovanatalia.ru/",
+          "https://www.b17.ru/morozova_natalia/",
+          "https://t.me/natalyamorozovaa",
+          "https://dzen.ru/natalyamorozovapsy",
+          "https://vk.com/natalyamorozovapsy"
+        ]
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Наталья Морозова — психолог EMDR",
+        "url": "__SITE_BASE__/"
+      },
+      "keywords": "ипохондрия, ипохондрия это простыми словами, тревога за здоровье, ипохондрия симптомы",
+      "wordCount": 8506,
+      "articleSection": "Ипохондрия и тревога за здоровье",
+      "isPartOf": {
+        "@type": "Blog",
+        "name": "Блог Натальи Морозовой",
+        "url": "__SITE_BASE__/blog/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "__SITE_BASE__/blog/ipohondriya-trevoga-za-zdorove-psiholog/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Ипохондрия – это ОКР?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "В МКБ-11 – обсессивно-компульсивный спектр. Механизм похож: навязчивая мысль (страх болезни) и ритуал (проверки тела, гугление, визиты к врачам). Это не значит, что вам «поставили ОКР» по статье – диагноз ставит только врач-психиатр. Но понимание механизма снимает стыд: вы не капризничаете, ваша психика застряла в цикле проверок."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Поможет ли EMDR?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Если тревога запустилась после травмы – операции, потери близкого – EMDR снимает эмоциональный заряд с воспоминания."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Это психосоматика?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Не совсем. При психосоматике тело выдает реальный симптом от стресса. При тревоге за здоровье симптома может не быть – есть страх его найти."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Как перестать гуглить?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Резко сложно. Увеличивайте паузу между импульсом и браузером. «Ипохондрия симптомы» ищут сотни людей ежемесячно – вы не одиноки."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Психолог отменит визиты к врачу?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Нет. Диспансеризация раз в год – норма. Беготня по пяти онкологам за месяц – мишень для терапии."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Близкие говорят: «Ты привлекаешь внимание»",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Это обесценивание. Вы не выбирали бояться. Семье стоит спросить: «Как поддержать, не подпитывая тревогу?»"
+          }
+        }
+      ]
+    }
+  ]
+}
