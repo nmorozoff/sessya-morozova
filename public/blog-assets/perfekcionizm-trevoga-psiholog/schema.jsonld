@@ -1,0 +1,113 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "__SITE_BASE__/blog/perfekcionizm-trevoga-psiholog/#article",
+      "headline": "Перфекционизм и тревога: когда стремление к идеалу истощает — и когда идти к психологу",
+      "description": "Перфекционизм простыми словами: адаптивный vs деструктивный, связь с тревогой и прокрастинацией. Правило 2 минут, «достаточно хорошо», когда к психологу.",
+      "datePublished": "2026-08-10",
+      "dateModified": "2026-08-10",
+      "inLanguage": "ru",
+      "url": "__SITE_BASE__/blog/perfekcionizm-trevoga-psiholog/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "__SITE_BASE__/blog/perfekcionizm-trevoga-psiholog/"
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": "__SITE_BASE__/wp-content/uploads/blog/perfekcionizm-trevoga-psiholog-cover.png",
+        "width": 1200,
+        "height": 675
+      },
+      "author": {
+        "@type": "Person",
+        "@id": "__SITE_BASE__/#author-natalya-morozova",
+        "name": "Наталья Морозова",
+        "jobTitle": "Психолог, EMDR-терапевт",
+        "description": "Сертифицированный психолог и EMDR-терапевт. Работа с тревогой, паническими атаками, фобиями, ПТСР, травматическим опытом, выгоранием и психосоматикой. Москва и онлайн.",
+        "image": "__SITE_BASE__/images/hero-photo-dark.jpg",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Наталья Морозова — психолог EMDR",
+          "url": "__SITE_BASE__/"
+        },
+        "sameAs": [
+          "__SITE_BASE__/",
+          "https://morozovanatalia.ru/",
+          "https://www.b17.ru/morozova_natalia/",
+          "https://t.me/natalyamorozovaa",
+          "https://dzen.ru/natalyamorozovapsy",
+          "https://vk.com/natalyamorozovapsy"
+        ]
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Наталья Морозова — психолог EMDR",
+        "url": "__SITE_BASE__/"
+      },
+      "keywords": "перфекционизм, перфекционизм что это такое простыми словами, деструктивный перфекционизм, перфекционизм психология, перфекционизм и прокрастинация",
+      "wordCount": 8800,
+      "articleSection": "Перфекционизм и тревога",
+      "isPartOf": {
+        "@type": "Blog",
+        "name": "Блог Натальи Морозовой",
+        "url": "__SITE_BASE__/blog/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "__SITE_BASE__/blog/perfekcionizm-trevoga-psiholog/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Перфекционизм что это такое простыми словами?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Это жесткая установка, при которой идеальный результат - единственно приемлемый. Любое отклонение от идеала воспринимается как личный провал, доказывающий собственную никчемность, и вызывает сильную тревогу."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Как связаны перфекционизм и тревога?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Напрямую. Перфекционист постоянно сканирует будущее на предмет возможных ошибок. Этот непрерывный контроль создает фоновое напряжение, истощающее нервную систему."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Почему перфекционизм приводит к прокрастинации?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Начать новое - значит рискнуть сделать неидеально. Психика защищается от потенциального стыда и критики, заставляя откладывать задачу до последнего, создавая «паралич»."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Можно ли пройти тест на перфекционизм в интернете?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Да, существуют опросники (Фроста, Хьюитта-Флетта). Но любой тест - это лишь ориентир для размышлений, а не клинический диагноз. Он подсвечивает проблемные зоны."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Когда точно нужно обращаться к психологу?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Когда стремление к идеалу разрушает повседневную жизнь: вы теряете сон, отказываетесь от возможностей, страх ошибки парализует действия и приводит к истощению."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Поможет ли EMDR при тревоге из-за ошибок?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Да, если страх связан с прошлым негативным опытом (жесткой критикой в детстве). EMDR бережно перерабатывает воспоминания, чтобы они не запускали тревогу в настоящем."
+          }
+        }
+      ]
+    }
+  ]
+}
