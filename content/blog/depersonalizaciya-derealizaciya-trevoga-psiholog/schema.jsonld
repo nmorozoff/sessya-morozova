@@ -1,0 +1,113 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "__SITE_BASE__/blog/depersonalizaciya-derealizaciya-trevoga-psiholog/#article",
+      "headline": "Деперсонализация и дереализация: почему мир «как во сне» и когда идти к психологу",
+      "description": "Деперсонализация и дереализация при тревоге – не психоз: критика сохранена. Заземление 5-4-3-2-1, развилка психиатр/психолог, когда мир «как во сне» после паники.",
+      "datePublished": "2026-08-10",
+      "dateModified": "2026-08-10",
+      "inLanguage": "ru",
+      "url": "__SITE_BASE__/blog/depersonalizaciya-derealizaciya-trevoga-psiholog/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "__SITE_BASE__/blog/depersonalizaciya-derealizaciya-trevoga-psiholog/"
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": "__SITE_BASE__/wp-content/uploads/blog/depersonalizaciya-derealizaciya-trevoga-psiholog-cover.png",
+        "width": 1200,
+        "height": 675
+      },
+      "author": {
+        "@type": "Person",
+        "@id": "__SITE_BASE__/#author-natalya-morozova",
+        "name": "Наталья Морозова",
+        "jobTitle": "Психолог, EMDR-терапевт",
+        "description": "Сертифицированный психолог и EMDR-терапевт. Работа с тревогой, паническими атаками, фобиями, ПТСР, травматическим опытом, выгоранием и психосоматикой. Москва и онлайн.",
+        "image": "__SITE_BASE__/images/hero-photo-dark.jpg",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Наталья Морозова — психолог EMDR",
+          "url": "__SITE_BASE__/"
+        },
+        "sameAs": [
+          "__SITE_BASE__/",
+          "https://morozovanatalia.ru/",
+          "https://www.b17.ru/morozova_natalia/",
+          "https://t.me/natalyamorozovaa",
+          "https://dzen.ru/natalyamorozovapsy",
+          "https://vk.com/natalyamorozovapsy"
+        ]
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Наталья Морозова — психолог EMDR",
+        "url": "__SITE_BASE__/"
+      },
+      "keywords": "деперсонализация, дереализация, деперсонализация это простыми словами, дереализация это простыми словами, деперсонализация при тревоге, мир как во сне, после панической атаки",
+      "wordCount": 8968,
+      "articleSection": "Деперсонализация и дереализация",
+      "isPartOf": {
+        "@type": "Blog",
+        "name": "Блог Натальи Морозовой",
+        "url": "__SITE_BASE__/blog/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "__SITE_BASE__/blog/depersonalizaciya-derealizaciya-trevoga-psiholog/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Пройдет ли это само?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Если это разовый эпизод от усталости - да, обычно он проходит после отдыха. Но если состояние длится неделями и подпитывается страхом сойти с ума - само оно не рассосется. Нужен навык работы с тревогой."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Это точно не шизофрения?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Точно. При шизофрении человек не сомневается в реальности искаженных восприятий. При деперсонализации вы пугаетесь своих ощущений и ищете подтверждения, что с вами все в порядке."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Почему это началось после паники?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Паническая атака - это запредельный стресс. Нервная система перегрузилась от избытка адреналина и включила жесткий режим \"энергосбережения\" и отчуждения, чтобы выжить."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Существует ли тест на деперсонализацию?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "В клинической практике используют специальные шкалы. Но для вас при поиске в интернете любой тест - это лишь примерный ориентир. Окончательный вердикт выносит только специалист."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Нужен ли мне психиатр?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Если симптомы становятся невыносимыми, нарушен сон и аппетит - консультация психиатра не будет лишней. Врач может назначить медикаментозную поддержку, чтобы снизить остроту состояния."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Как вернуться в реальность прямо сейчас?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Перестаньте сканировать тело на предмет \"странностей\". Сместите фокус вовне: умойтесь ледяной водой, начните считать красные предметы в комнате, поговорите с близким на бытовую тему."
+          }
+        }
+      ]
+    }
+  ]
+}
