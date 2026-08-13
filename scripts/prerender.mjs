@@ -128,7 +128,7 @@ async function prerender() {
     for (const route of SITE_ROUTES) {
       const url = `${BASE}${route}`;
       console.log(`[prerender] ${route}`);
-      await page.goto(url, { waitUntil: "networkidle0", timeout: 60_000 });
+      await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60_000 });
       await waitForPageContent(page, route);
 
       const html = await page.content();
