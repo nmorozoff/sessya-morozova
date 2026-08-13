@@ -48,7 +48,7 @@ function outputPath(route) {
   return resolve(DIST, route.slice(1), "index.html");
 }
 
-async function waitForPageContent(page) {
+async function waitForPageContent(page, route) {
   await page.waitForSelector("h1", { timeout: 30_000 });
   await page
     .waitForFunction(
@@ -56,6 +56,25 @@ async function waitForPageContent(page) {
       { timeout: 30_000 },
     )
     .catch(() => {});
+
+  const isBlogPost =
+    route.startsWith("/blog/") && route !== "/blog" && !route.startsWith("/blog/page/");
+
+  if (isBlogPost) {
+    await page
+      .waitForSelector("[data-blog-article-body]", { timeout: 60_000 })
+      .catch(() => {});
+    await page
+      .waitForFunction(
+        () => {
+          const el = document.querySelector("[data-blog-article-body]");
+          return el && (el.textContent?.trim().length ?? 0) > 200;
+        },
+        { timeout: 60_000 },
+      )
+      .catch(() => {});
+  }
+
   await page
     .waitForSelector('script[type="application/ld+json"]', { timeout: 30_000 })
     .catch(() => {});
@@ -110,7 +129,7 @@ async function prerender() {
       const url = `${BASE}${route}`;
       console.log(`[prerender] ${route}`);
       await page.goto(url, { waitUntil: "networkidle0", timeout: 60_000 });
-      await waitForPageContent(page);
+      await waitForPageContent(page, route);
 
       const html = await page.content();
       const out = outputPath(route);

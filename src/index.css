@@ -1,4 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap');
+
+@font-face {
+  font-family: 'Bebas Neue Cyrillic';
+  src: url('/fonts/BebasNeueCyrillic.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
@@ -6,52 +14,52 @@
 
 @layer base {
   :root {
-    --background: 0 0% 5.9%;
-    --foreground: 0 0% 96.1%;
+    /* Light green palette — morozovanatalia.ru phase 2 */
+    --background: 45 33% 95%;
+    --foreground: 72 13% 14%;
 
-    --card: 0 0% 10.9%;
-    --card-foreground: 0 0% 96.1%;
+    --card: 48 18% 92%;
+    --card-foreground: 72 13% 14%;
 
-    --popover: 0 0% 10.9%;
-    --popover-foreground: 0 0% 96.1%;
+    --popover: 48 18% 92%;
+    --popover-foreground: 72 13% 14%;
 
-    --primary: 18 100% 58%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 93 37% 26%;
+    --primary-foreground: 45 33% 97%;
 
-    --secondary: 0 0% 10.2%;
-    --secondary-foreground: 0 0% 96.1%;
+    --secondary: 48 18% 90%;
+    --secondary-foreground: 72 13% 14%;
 
-    --muted: 0 0% 13.3%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 48 14% 88%;
+    --muted-foreground: 57 9% 35%;
 
-    --accent: 25 100% 63%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 93 32% 32%;
+    --accent-foreground: 45 33% 97%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 100% / 0.08;
-    --input: 0 0% 100% / 0.1;
-    --ring: 18 100% 58%;
+    --border: 72 16% 85%;
+    --input: 72 16% 82%;
+    --ring: 93 37% 26%;
 
     --radius: 16px;
 
-    --sidebar-background: 0 0% 10.2%;
-    --sidebar-foreground: 0 0% 96.1%;
-    --sidebar-primary: 18 100% 58%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 13.3%;
-    --sidebar-accent-foreground: 0 0% 96.1%;
-    --sidebar-border: 0 0% 100% / 0.06;
-    --sidebar-ring: 18 100% 58%;
+    --sidebar-background: 48 18% 92%;
+    --sidebar-foreground: 72 13% 14%;
+    --sidebar-primary: 93 37% 26%;
+    --sidebar-primary-foreground: 45 33% 97%;
+    --sidebar-accent: 48 14% 88%;
+    --sidebar-accent-foreground: 72 13% 14%;
+    --sidebar-border: 72 16% 85%;
+    --sidebar-ring: 93 37% 26%;
 
-    /* Custom tokens */
-    --bg2: 0 0% 10.2%;
-    --bg3: 0 0% 13.3%;
-    --card-border: 0 0% 100% / 0.06;
-    --gradient-primary: linear-gradient(135deg, hsl(18, 100%, 58%), hsl(0, 72%, 46%), hsl(282, 44%, 47%));
-    --gradient-glow-orange: radial-gradient(circle, hsla(18, 100%, 58%, 0.08) 0%, transparent 65%);
-    --shadow-orange: 0 12px 36px hsla(18, 100%, 58%, 0.35);
+    --bg2: 48 22% 93%;
+    --bg3: 45 28% 91%;
+    --card-border: 72 16% 82%;
+    --gradient-primary: linear-gradient(135deg, hsl(93, 37%, 26%), hsl(93, 32%, 35%), hsl(72, 13%, 22%));
+    --gradient-glow: radial-gradient(circle, hsla(93, 37%, 26%, 0.08) 0%, transparent 65%);
+    --shadow-primary: 0 12px 36px hsla(93, 37%, 26%, 0.2);
   }
 }
 
@@ -69,6 +77,33 @@
   html {
     scroll-behavior: smooth;
   }
+
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+}
+
+@layer components {
+  .blog-article table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+  }
+  .blog-article th,
+  .blog-article td {
+    color: hsl(72, 13%, 14%) !important;
+    border: 1px solid hsl(72, 16%, 85%) !important;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 500;
+  }
+  .blog-article th {
+    background: hsl(48, 14%, 88%) !important;
+    font-weight: 700;
+  }
 }
 
 @layer utilities {
@@ -79,9 +114,13 @@
     background-clip: text;
   }
 
+  .font-bebas {
+    font-family: 'Bebas Neue Cyrillic', 'Bebas Neue', sans-serif;
+  }
+
   .glow-line {
     height: 1px;
-    background: linear-gradient(to right, transparent, hsla(18, 100%, 58%, 0.3), transparent);
+    background: linear-gradient(to right, transparent, hsla(93, 37%, 26%, 0.25), transparent);
   }
 }
 

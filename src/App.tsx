@@ -27,8 +27,8 @@ const Dissociation = lazy(() => import("./pages/services/Dissociation"));
 const ComplexPtsd = lazy(() => import("./pages/services/ComplexPtsd"));
 const ParentsRelationship = lazy(() => import("./pages/services/ParentsRelationship"));
 const EmigrationStress = lazy(() => import("./pages/services/EmigrationStress"));
-const BlogIndex = lazy(() => import("./pages/BlogIndex"));
-const BlogPost = lazy(() => import("./pages/BlogPost"));
+const BlogIndex = lazy(() => import("./pages/blog/BlogIndex"));
+const BlogPost = lazy(() => import("./pages/blog/BlogPost"));
 
 const PageLoader = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">
@@ -63,6 +63,7 @@ const App = () => (
           <Route path="/parents-relationship" element={<ParentsRelationship />} />
           <Route path="/emigration-stress" element={<EmigrationStress />} />
           <Route path="/blog" element={<BlogIndex />} />
+          <Route path="/blog/page/:pageNum" element={<BlogIndex />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/advertising-consent" element={<AdvertisingConsent />} />

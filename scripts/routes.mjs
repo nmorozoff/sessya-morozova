@@ -1,5 +1,6 @@
 import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
+import { getBlogRoutes } from "./blog-routes.mjs";
 
 /** Shared route list for sitemap generation and build-time prerender. */
 export const STATIC_SITE_ROUTES = [
@@ -28,16 +29,18 @@ export const STATIC_SITE_ROUTES = [
   "/advertising-consent",
 ];
 
-function blogRoutes() {
-  const manifestPath = resolve("content/blog/manifest.json");
-  if (!existsSync(manifestPath)) return ["/blog"];
-  try {
-    const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
-    const slugs = (manifest.posts || []).map((item) => `/blog/${item.slug}`);
-    return ["/blog", ...slugs];
-  } catch {
-    return ["/blog"];
+const MANIFEST_PATH = resolve("src/generated/blog-manifest.json");
+
+export function loadBlogManifest() {
+  if (!existsSync(MANIFEST_PATH)) {
+    return { generatedAt: "", postsPerPage: 24, posts: [] };
   }
+
+  return JSON.parse(readFileSync(MANIFEST_PATH, "utf8"));
+}
+
+function blogRoutes() {
+  return getBlogRoutes(loadBlogManifest());
 }
 
 export const SITE_ROUTES = [...STATIC_SITE_ROUTES, ...blogRoutes()];
