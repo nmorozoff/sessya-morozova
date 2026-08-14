@@ -1,18 +1,23 @@
-name: Deploy to Timeweb
+name: Deploy blog to Timeweb
 
-# Cloud Excalibur: git push в main → деплой на Timeweb.
-# cancel-in-progress: новый push (статья) не ждёт часами в очереди за старым deploy.
+# Быстрый deploy только при изменениях блога (Excalibur syndicate react).
 on:
   push:
     branches: [main]
+    paths:
+      - "content/blog/**"
+      - "public/blog-assets/**"
+      - "src/generated/**"
+      - "scripts/generate-blog-manifest.mjs"
+      - "scripts/blog-routes.mjs"
   workflow_dispatch:
 
 concurrency:
-  group: deploy-timeweb
+  group: deploy-timeweb-blog
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  build-and-deploy-blog:
     runs-on: ubuntu-latest
 
     steps:
@@ -31,6 +36,7 @@ jobs:
       - name: Build
         env:
           VITE_SITE_URL: ${{ secrets.VITE_SITE_URL || 'https://www.morozovanatalia.ru' }}
+          SKIP_PRERENDER: "1"
         run: npm run build
 
       - name: Deploy to Timeweb via FTP
