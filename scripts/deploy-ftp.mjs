@@ -73,11 +73,16 @@ function collectFiles(dir, base = dir) {
   return files;
 }
 
-const OPTIONAL_REMOTE_FILES = new Set(["api/.htaccess"]);
+const OPTIONAL_REMOTE_FILES = new Set(["api/.htaccess", "api/logs/.htaccess"]);
+const ALLOWED_API_REMOTE_FILES = new Set([
+  "api/send-form.php",
+  "api/logs/.htaccess",
+]);
 const SKIP_REMOTE_PREFIXES = ["api/"];
 
 function collectDeployFiles() {
   return collectFiles(DIST).filter((file) => {
+    if (ALLOWED_API_REMOTE_FILES.has(file.remote)) return true;
     return !SKIP_REMOTE_PREFIXES.some((prefix) => file.remote.startsWith(prefix));
   });
 }
@@ -181,7 +186,9 @@ async function uploadDist({ server, user, password, serverDir }) {
       console.log(
         `[deploy] Загрузка ${files.length} файлов в ${remoteDir} (curl, passive=${passive}) ...`,
       );
-      console.log("[deploy] Папка api/ не трогаем — config.php и форма остаются на сервере.");
+      console.log(
+        "[deploy] api/: загружаем send-form.php и logs/.htaccess — config.php на сервере не трогаем.",
+      );
 
       const createdDirs = new Set();
 

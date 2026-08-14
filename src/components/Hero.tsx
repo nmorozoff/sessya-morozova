@@ -3,9 +3,9 @@ import { scrollToSession } from "@/lib/scrollToSession";
 
 const Hero = () => {
   return (
-    <section className="min-h-screen grid grid-cols-1 lg:grid-cols-2 items-center px-6 lg:px-[60px] pt-16 lg:pt-[100px] pb-8 lg:pb-[60px] gap-4 lg:gap-[60px] relative overflow-hidden">
+    <section data-hero-section className="min-h-screen grid grid-cols-1 lg:grid-cols-2 items-center px-6 lg:px-[60px] pt-16 lg:pt-[100px] pb-8 lg:pb-[60px] gap-4 lg:gap-[60px] relative overflow-hidden">
       {/* Glow */}
-      <div className="absolute -top-[200px] right-[300px] w-[600px] h-[600px] pointer-events-none" style={{ background: "var(--gradient-glow-orange)" }} />
+      <div className="absolute -top-[200px] right-[300px] w-[600px] h-[600px] pointer-events-none" style={{ background: "var(--gradient-glow)" }} />
 
       <div>
         <div className="inline-block bg-primary/10 border border-primary/25 text-primary text-xs font-semibold tracking-[0.12em] uppercase px-4 py-1.5 rounded-full mb-6 opacity-0 animate-[fadeUp_0.6s_0.1s_forwards]">
@@ -29,7 +29,7 @@ const Hero = () => {
           Помогаю найти связь между вашими симптомами и тем, что происходит в жизни — без общих фраз и бесконечных разговоров. Конкретные точки изменений. В вашем ритме.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center opacity-0 animate-[fadeUp_0.7s_0.45s_forwards]">
-          <a href="#session" onClick={scrollToSession} className="bg-primary text-primary-foreground px-9 py-4 rounded-[10px] text-[15px] font-bold hover:bg-accent hover:translate-y-[-2px] hover:shadow-[var(--shadow-orange)] transition-all inline-flex items-center gap-2 justify-center">
+          <a href="#session" onClick={scrollToSession} className="bg-primary text-primary-foreground px-9 py-4 rounded-[10px] text-[15px] font-bold hover:bg-accent hover:translate-y-[-2px] hover:shadow-[var(--shadow-primary)] transition-all inline-flex items-center gap-2 justify-center">
             Записаться на бесплатную 30 минутную пробную сессию
           </a>
           <a href="#about" className="bg-foreground/[0.06] text-foreground px-9 py-4 rounded-[10px] text-[15px] font-semibold border border-border hover:bg-foreground/10 transition-all text-center">

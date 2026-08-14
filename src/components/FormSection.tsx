@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { getStoredUtm } from "@/lib/utm";
 import Reveal from "./Reveal";
 
 const SuccessOverlay = ({ onClose }: { onClose: () => void }) => (
@@ -50,6 +51,7 @@ const ContactForm = () => {
           contact: contact.trim(),
           message: message.trim(),
           website: "",
+          ...getStoredUtm(),
         }),
       });
 
@@ -78,8 +80,10 @@ const ContactForm = () => {
         className="bg-foreground/[0.04] border border-foreground/10 rounded-[10px] text-foreground px-4 py-3.5 text-sm placeholder:text-foreground/30 focus:border-primary focus:bg-primary/[0.05] focus:outline-none transition-colors"
       />
       <input
-        type="tel"
-        placeholder="Телефон или Telegram"
+        type="text"
+        inputMode="text"
+        autoComplete="tel"
+        placeholder="Телефон или Telegram (@username)"
         value={contact}
         onChange={(e) => setContact(e.target.value)}
         className="bg-foreground/[0.04] border border-foreground/10 rounded-[10px] text-foreground px-4 py-3.5 text-sm placeholder:text-foreground/30 focus:border-primary focus:bg-primary/[0.05] focus:outline-none transition-colors"
@@ -134,7 +138,7 @@ const FormSection = () => {
     <>
       <div className="glow-line mx-6 lg:mx-[60px]" />
       <section className="px-6 lg:px-[60px] py-[72px] lg:py-[100px] bg-bg2 relative overflow-hidden" id="session">
-        <div className="absolute -top-[300px] -left-[200px] w-[700px] h-[700px] pointer-events-none" style={{ background: "radial-gradient(circle, hsla(18, 100%, 58%, 0.06) 0%, transparent 60%)" }} />
+        <div className="absolute -top-[300px] -left-[200px] w-[700px] h-[700px] pointer-events-none" style={{ background: "var(--gradient-glow)" }} />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center relative">
           <div>
             <Reveal>

@@ -4,29 +4,49 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Наталья Морозова — Психолог EMDR в Москве и онлайн</title>
-    <meta name="description" content="Психолог и EMDR-терапевт. Лечение тревоги, панических атак, фобий, ПТСР и выгорания. Онлайн и очно в Москве. Бесплатная сессия 30 минут.">
+    <meta name="description" content="Психолог и EMDR-терапевт. Работа с тревогой, паническими атаками, фобиями, ПТСР и выгоранием. Онлайн и очно в Москве. Бесплатная сессия 30 минут." />
     <meta name="author" content="Наталья Морозова" />
     <meta name="yandex-verification" content="733122740395f47e" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="canonical" href="%VITE_SITE_URL%/" />
 
     <meta property="og:type" content="website" />
     <meta property="og:url" content="%VITE_SITE_URL%/" />
     <meta property="og:title" content="Наталья Морозова — Психолог EMDR в Москве и онлайн" />
-    <meta property="og:description" content="Психолог и EMDR-терапевт. Лечение тревоги, панических атак, фобий, ПТСР и выгорания. Онлайн и очно в Москве." />
+    <meta property="og:description" content="Психолог и EMDR-терапевт. Работа с тревогой, паническими атаками, фобиями, ПТСР и выгоранием. Онлайн и очно в Москве." />
     <meta property="og:image" content="%VITE_SITE_URL%/og-image.jpg" />
     <meta property="og:locale" content="ru_RU" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Наталья Морозова — Психолог" />
-    <meta name="twitter:description" content="Психолог, коуч ICF. Помогаю с тревогой, выгоранием, кризисами и психосоматикой. Онлайн консультации." />
+    <meta name="twitter:title" content="Наталья Морозова — Психолог EMDR" />
+    <meta name="twitter:description" content="EMDR-терапия и психологическое консультирование. Тревога, паника, травма, выгорание. Онлайн и очно в Москве." />
     <meta name="twitter:image" content="%VITE_SITE_URL%/og-image.jpg" />
 
     <script>
       window.YandexRotorSettings = { WaiterEnabled: true };
+    </script>
+    <script>
+      (function () {
+        try {
+          var key = "morozova_utm_v1";
+          var params = new URLSearchParams(location.search);
+          var source = (params.get("utm_source") || "").trim().slice(0, 128);
+          var campaign = (params.get("utm_campaign") || "").trim().slice(0, 128);
+          var medium = (params.get("utm_medium") || "").trim().slice(0, 128);
+          if (!source && !campaign && !medium) return;
+          var payload = JSON.stringify({
+            utm_source: source || undefined,
+            utm_campaign: campaign || undefined,
+            utm_medium: medium || undefined,
+            landing_path: location.pathname,
+            captured_at: Date.now(),
+          });
+          try { sessionStorage.setItem(key, payload); } catch (e) {}
+          try { localStorage.setItem(key, payload); } catch (e) {}
+        } catch (e) {}
+      })();
     </script>
   </head>
 

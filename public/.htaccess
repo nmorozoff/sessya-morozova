@@ -1,9 +1,12 @@
-# React SPA with build-time static HTML (SSG) + client-side routing fallback
-
+# HTTPS + canonical www host
 RewriteEngine On
 RewriteBase /
 
-# SPA fallback: serve index.html only when no static file or directory exists
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} !^www\.morozovanatalia\.ru$ [NC]
+RewriteRule ^(.*)$ https://www.morozovanatalia.ru/$1 [R=301,L,QSA]
+
+# React SPA with build-time static HTML (SSG) + client-side routing fallback
 RewriteRule ^index\.html$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
