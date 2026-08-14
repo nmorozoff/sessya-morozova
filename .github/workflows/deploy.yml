@@ -1,7 +1,6 @@
 name: Deploy to Timeweb
 
-# Cloud Excalibur: git push в main → деплой на Timeweb.
-# cancel-in-progress: новый push (статья) не ждёт часами в очереди за старым deploy.
+# Cloud Excalibur делает только git push в main; деплой на Timeweb — здесь.
 on:
   push:
     branches: [main]
@@ -9,7 +8,7 @@ on:
 
 concurrency:
   group: deploy-timeweb
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
