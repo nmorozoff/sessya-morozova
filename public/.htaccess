@@ -1,9 +1,8 @@
-# HTTPS + canonical www host
+# Canonical www host (HTTPS terminates at Timeweb nginx — do not check %{HTTPS} here)
 RewriteEngine On
 RewriteBase /
 
-RewriteCond %{HTTPS} off [OR]
-RewriteCond %{HTTP_HOST} !^www\.morozovanatalia\.ru$ [NC]
+RewriteCond %{HTTP_HOST} ^morozovanatalia\.ru$ [NC]
 RewriteRule ^(.*)$ https://www.morozovanatalia.ru/$1 [R=301,L,QSA]
 
 # React SPA with build-time static HTML (SSG) + client-side routing fallback
