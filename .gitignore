@@ -19,6 +19,7 @@ dist-ssr
 .env.*.local
 .ftp-deploy.env
 public/api/config.php
+public/api/max.config.php
 private/timeweb-secrets.php
 
 # Editor directories and files

@@ -135,6 +135,44 @@ function morozova_crm_lead_source(string $utmSource): string
     return 'Сайт';
 }
 
+function morozova_build_notify_text(
+    string $siteDomain,
+    string $name,
+    string $contact,
+    string $message,
+    bool $preferMessaging,
+    string $utmSource,
+    string $utmCampaign,
+    string $utmMedium,
+    string $landingPath,
+): string {
+    $sourceLabel = morozova_notify_source_label($utmSource);
+    $lines = [
+        '📩 ' . $siteDomain . ' · ' . $sourceLabel,
+        '',
+        "👤 Имя: {$name}",
+        "📱 Контакт: {$contact}",
+    ];
+
+    if ($preferMessaging) {
+        $lines[] = '💬 Предпочитает переписку, а не звонок';
+    }
+    if ($message !== '') {
+        $lines[] = "💬 Сообщение: {$message}";
+    }
+    if ($utmCampaign !== '') {
+        $lines[] = '🎯 Кампания: ' . $utmCampaign;
+    }
+    if ($utmMedium !== '') {
+        $lines[] = '📣 Канал: ' . $utmMedium;
+    }
+    if ($landingPath !== '') {
+        $lines[] = '🔗 Страница: ' . $landingPath;
+    }
+
+    return implode("\n", $lines);
+}
+
 $raw = file_get_contents('php://input');
 $data = json_decode($raw ?: '', true);
 
@@ -148,6 +186,7 @@ $name = trim((string)($data['name'] ?? ''));
 $contact = trim((string)($data['contact'] ?? ''));
 $message = trim((string)($data['message'] ?? ''));
 $website = trim((string)($data['website'] ?? ''));
+$preferMessaging = !empty($data['preferMessaging']);
 $utmSource = morozova_trim_field((string)($data['utm_source'] ?? ''), 64);
 $utmCampaign = morozova_trim_field((string)($data['utm_campaign'] ?? ''), 128);
 $utmMedium = morozova_trim_field((string)($data['utm_medium'] ?? ''), 64);
@@ -217,59 +256,63 @@ try {
     error_log('DB error: ' . $e->getMessage());
 }
 
-$sourceLines = ['📍 Источник: ' . morozova_notify_source_label($utmSource)];
-if ($utmCampaign !== '') {
-    $sourceLines[] = '🎯 Кампания: ' . $utmCampaign;
-}
-if ($utmMedium !== '') {
-    $sourceLines[] = '📣 Канал: ' . $utmMedium;
-}
-if ($landingPath !== '') {
-    $sourceLines[] = '🔗 Страница: ' . $landingPath;
-}
-
-$telegramText = implode("\n", array_filter([
-    '📩 Новая заявка с сайта',
-    '',
-    ...$sourceLines,
-    '',
-    "👤 Имя: {$name}",
-    "📱 Контакт: {$contact}",
-    $message !== '' ? "💬 Сообщение: {$message}" : '',
-]));
-
-$telegramUrl = sprintf(
-    'https://api.telegram.org/bot%s/sendMessage',
-    $config['telegram_bot_token']
+$siteDomain = trim((string)($config['site_domain'] ?? 'morozovanatalia.ru'));
+$notifyText = morozova_build_notify_text(
+    $siteDomain,
+    $name,
+    $contact,
+    $message,
+    $preferMessaging,
+    $utmSource,
+    $utmCampaign,
+    $utmMedium,
+    $landingPath,
 );
 
-$ch = curl_init($telegramUrl);
-curl_setopt_array($ch, [
-    CURLOPT_POST => true,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
-    CURLOPT_POSTFIELDS => json_encode([
-        'chat_id' => $config['telegram_chat_id'],
-        'text' => $telegramText,
-    ]),
-    CURLOPT_TIMEOUT => 10,
-]);
+$maxOk = false;
+$maxNotifyPath = __DIR__ . '/max-notify.php';
+if (file_exists($maxNotifyPath)) {
+    require_once $maxNotifyPath;
+    $maxConfig = morozova_max_load_config($config);
+    $maxOk = morozova_max_send_message($maxConfig, $notifyText);
+    if (!$maxOk) {
+        morozova_form_log('warn', 'max_send_failed', ['context' => $logContext]);
+    }
+}
 
-$telegramResponse = curl_exec($ch);
-$httpCode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curlError = curl_error($ch);
-curl_close($ch);
-
-$telegramOk = $httpCode >= 200 && $httpCode < 300;
-
-if (!$telegramOk) {
-    morozova_form_log('error', 'telegram_send_failed', [
-        'http_code' => $httpCode,
-        'curl_error' => $curlError,
-        'response' => is_string($telegramResponse) ? mb_substr($telegramResponse, 0, 500) : null,
-        'context' => $logContext,
+$telegramOk = false;
+$telegramToken = trim((string)($config['telegram_bot_token'] ?? ''));
+$telegramChatId = trim((string)($config['telegram_chat_id'] ?? ''));
+if ($telegramToken !== '' && $telegramChatId !== '') {
+    $telegramUrl = sprintf('https://api.telegram.org/bot%s/sendMessage', $telegramToken);
+    $ch = curl_init($telegramUrl);
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+        CURLOPT_POSTFIELDS => json_encode([
+            'chat_id' => $telegramChatId,
+            'text' => $notifyText,
+        ]),
+        CURLOPT_TIMEOUT => 10,
     ]);
-    error_log('Telegram error: ' . (string)$telegramResponse);
+
+    $telegramResponse = curl_exec($ch);
+    $httpCode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
+    curl_close($ch);
+
+    $telegramOk = $httpCode >= 200 && $httpCode < 300;
+
+    if (!$telegramOk) {
+        morozova_form_log('error', 'telegram_send_failed', [
+            'http_code' => $httpCode,
+            'curl_error' => $curlError,
+            'response' => is_string($telegramResponse) ? mb_substr($telegramResponse, 0, 500) : null,
+            'context' => $logContext,
+        ]);
+        error_log('Telegram error: ' . (string)$telegramResponse);
+    }
 }
 
 $crmOk = false;
@@ -278,6 +321,13 @@ if (file_exists($crmWebhookPath)) {
     require_once $crmWebhookPath;
 
     $crmMessageParts = [];
+    if ($utmSource !== '') {
+        $crmMessageParts[] = 'utm_source: ' . morozova_notify_source_label($utmSource);
+        $meta = morozova_utm_source_meta($utmSource);
+        if ($meta['account'] !== '') {
+            $crmMessageParts[] = 'аккаунт: ' . $meta['account'];
+        }
+    }
     if ($utmCampaign !== '') {
         $crmMessageParts[] = 'utm_campaign: ' . $utmCampaign;
     }
@@ -298,30 +348,43 @@ if (file_exists($crmWebhookPath)) {
             'name' => $name,
             'contact' => $contact,
             'message' => implode("\n", $crmMessageParts),
-            'source_site' => 'morozovanatalia.ru',
-            'prefer_messaging' => false,
+            'source_site' => $siteDomain,
+            'prefer_messaging' => $preferMessaging,
             'lead_source' => morozova_crm_lead_source($utmSource),
+            'preferred_channel' => $preferMessaging ? 'Telegram' : null,
+            'utm_source' => $utmSource !== '' ? $utmSource : null,
         ]);
 
         if (!$crmOk) {
             morozova_form_log('warn', 'crm_webhook_failed', ['context' => $logContext]);
         }
+    } else {
+        morozova_form_log('warn', 'crm_not_configured', ['context' => $logContext]);
     }
 }
 
-if (!$dbOk && !$telegramOk) {
+if (!$dbOk && !$maxOk && !$telegramOk && !$crmOk) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Submission failed']);
     exit;
 }
 
-if (!$dbOk || !$telegramOk) {
+if (!$dbOk || !$maxOk || !$telegramOk || !$crmOk) {
     morozova_form_log('warn', 'partial_submission', [
         'db_ok' => $dbOk,
+        'max_ok' => $maxOk,
         'telegram_ok' => $telegramOk,
         'crm_ok' => $crmOk,
         'context' => $logContext,
     ]);
 }
 
-echo json_encode(['success' => true]);
+echo json_encode([
+    'success' => true,
+    'saved' => [
+        'database' => $dbOk,
+        'max' => $maxOk,
+        'telegram' => $telegramOk,
+        'crm' => $crmOk,
+    ],
+]);

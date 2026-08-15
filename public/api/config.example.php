@@ -12,4 +12,9 @@ return [
 
     'telegram_bot_token' => '123456789:ABCdefGHIjklMNOpqrsTUVwxyz',
     'telegram_chat_id' => '123456789',
+
+    'site_domain' => 'morozovanatalia.ru',
+
+    'crm_webhook_url' => 'https://api.morozova-emdr.ru/webhooks/lead',
+    'crm_webhook_secret' => 'your_WEBHOOK_SECRET_from_CRM_env',
 ];

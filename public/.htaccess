@@ -6,6 +6,9 @@ RewriteCond %{HTTP_HOST} ^morozovanatalia\.ru$ [NC]
 RewriteRule ^(.*)$ https://www.morozovanatalia.ru/$1 [R=301,L,QSA]
 
 # React SPA with build-time static HTML (SSG) + client-side routing fallback
+# API routes are real PHP files — never rewrite them to index.html
+RewriteRule ^api/ - [L]
+
 RewriteRule ^index\.html$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

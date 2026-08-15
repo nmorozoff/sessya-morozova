@@ -27,6 +27,7 @@ const ContactForm = () => {
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [message, setMessage] = useState("");
+  const [preferMessaging, setPreferMessaging] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -50,17 +51,23 @@ const ContactForm = () => {
           name: name.trim(),
           contact: contact.trim(),
           message: message.trim(),
+          preferMessaging,
           website: "",
           ...getStoredUtm(),
         }),
       });
 
-      if (!res.ok) throw new Error("Failed to send");
+      const data = (await res.json().catch(() => null)) as { success?: boolean; error?: string } | null;
+
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || "Failed to send");
+      }
 
       setSuccess(true);
       setName("");
       setContact("");
       setMessage("");
+      setPreferMessaging(false);
     } catch {
       toast.error("Не удалось отправить заявку. Попробуйте ещё раз или напишите в Telegram.");
     } finally {
@@ -103,6 +110,15 @@ const ContactForm = () => {
         className="hidden"
         aria-hidden="true"
       />
+      <label className="flex items-start gap-3 cursor-pointer text-[13px] text-muted-foreground leading-snug">
+        <input
+          type="checkbox"
+          checked={preferMessaging}
+          onChange={(e) => setPreferMessaging(e.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 rounded border border-foreground/20 accent-primary"
+        />
+        <span>Предпочитаю переписку, а не звонок</span>
+      </label>
       <label className="flex items-start gap-3 cursor-pointer text-[13px] text-muted-foreground leading-snug mt-1">
         <input
           type="checkbox"

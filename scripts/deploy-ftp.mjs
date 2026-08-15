@@ -76,6 +76,8 @@ function collectFiles(dir, base = dir) {
 const OPTIONAL_REMOTE_FILES = new Set(["api/.htaccess", "api/logs/.htaccess"]);
 const ALLOWED_API_REMOTE_FILES = new Set([
   "api/send-form.php",
+  "api/crm-webhook.php",
+  "api/max-notify.php",
   "api/logs/.htaccess",
 ]);
 const SKIP_REMOTE_PREFIXES = ["api/"];
