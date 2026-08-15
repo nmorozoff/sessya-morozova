@@ -44,10 +44,16 @@
       "publisher": {
         "@type": "Organization",
         "name": "Наталья Морозова — психолог EMDR",
-        "url": "https://morozova-natalya.ru/"
+        "url": "https://morozova-natalya.ru/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.morozovanatalia.ru/favicon.png",
+          "width": 192,
+          "height": 192
+        }
       },
       "keywords": "горе утрата психолог, как пережить потерю близкого, психолог при горе",
-      "wordCount": 9491,
+      "wordCount": 1484,
       "articleSection": "Горе",
       "isPartOf": {
         "@type": "Blog",

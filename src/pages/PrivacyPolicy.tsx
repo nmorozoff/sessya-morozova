@@ -1,9 +1,15 @@
 import { SiteLink } from "@/components/SiteLink";
 import { Link } from "react-router-dom";
+import PageMeta from "@/components/PageMeta";
 
 const PrivacyPolicy = () => {
   return (
     <div className="min-h-screen bg-background text-foreground px-6 py-16 lg:px-[120px] lg:py-24">
+      <PageMeta
+        title="Политика конфиденциальности | Наталья Морозова"
+        description="Политика обработки персональных данных на сайте morozovanatalia.ru и в Telegram-ботах."
+        path="/privacy-policy"
+      />
       <div className="max-w-3xl mx-auto">
         <Link to="/" className="text-muted-foreground text-sm hover:text-foreground transition-colors mb-8 inline-block">← На главную</Link>
         <h1 className="text-2xl sm:text-3xl font-bold mb-8">Политика конфиденциальности</h1>

@@ -11,6 +11,14 @@ if (process.env.SKIP_PRERENDER === "1" || process.env.EXCALIBUR_REACT_SKIP_PRERE
 const DIST = resolve("dist");
 const PORT = 4173;
 const BASE = `http://127.0.0.1:${PORT}`;
+const SITE_URL = (process.env.VITE_SITE_URL || "https://www.morozovanatalia.ru")
+  .replace(/\/$/, "")
+  .replace(/^http:\/\//i, "https://")
+  .replace(/^https:\/\/morozovanatalia\.ru$/i, "https://www.morozovanatalia.ru");
+
+function canonicalForRoute(route) {
+  return route === "/" ? `${SITE_URL}/` : `${SITE_URL}${route}`;
+}
 
 function startPreview() {
   return new Promise((resolvePromise, reject) => {
@@ -49,20 +57,17 @@ function outputPath(route) {
 }
 
 async function waitForPageContent(page, route) {
-  await page.waitForSelector("h1", { timeout: 30_000 });
-  await page
-    .waitForFunction(
-      () => !document.body?.innerText?.includes("Загрузка..."),
-      { timeout: 30_000 },
-    )
-    .catch(() => {});
+  const expectedCanonical = canonicalForRoute(route);
 
   const isBlogPost =
     route.startsWith("/blog/") && route !== "/blog" && !route.startsWith("/blog/page/");
 
-  if (isBlogPost) {
+  if (route === "/") {
+    await page.waitForSelector("#session, [data-hero-section]", { timeout: 60_000 }).catch(() => {});
+    await page.waitForSelector("h1", { timeout: 60_000 });
+  } else if (isBlogPost) {
     await page
-      .waitForSelector("[data-blog-article-body]", { timeout: 60_000 })
+      .waitForSelector("[data-blog-article-body]", { timeout: 90_000 })
       .catch(() => {});
     await page
       .waitForFunction(
@@ -70,23 +75,39 @@ async function waitForPageContent(page, route) {
           const el = document.querySelector("[data-blog-article-body]");
           return el && (el.textContent?.trim().length ?? 0) > 200;
         },
-        { timeout: 60_000 },
+        { timeout: 90_000 },
       )
       .catch(() => {});
+    await page.waitForSelector("article h1", { timeout: 60_000 }).catch(() => {});
+  } else {
+    await page.waitForSelector("h1", { timeout: 60_000 });
   }
+
+  await page
+    .waitForFunction(
+      () => !document.body?.innerText?.includes("Загрузка..."),
+      { timeout: 30_000 },
+    )
+    .catch(() => {});
 
   await page
     .waitForSelector('script[type="application/ld+json"]', { timeout: 30_000 })
     .catch(() => {});
+
   await page
     .waitForFunction(
-      () => {
-        const canonical = document.querySelector('link[rel="canonical"]');
-        return canonical && !canonical.getAttribute("href")?.includes("your-domain");
+      (canonicalUrl) => {
+        const link = document.querySelector('link[rel="canonical"]');
+        return link?.getAttribute("href") === canonicalUrl;
       },
-      { timeout: 30_000 },
+      { timeout: 45_000 },
+      expectedCanonical,
     )
-    .catch(() => {});
+    .catch(() => {
+      console.warn(`[prerender] Canonical mismatch on ${route}, expected ${expectedCanonical}`);
+    });
+
+  await new Promise((r) => setTimeout(r, 500));
 }
 
 async function launchBrowser(puppeteer) {
@@ -116,29 +137,42 @@ async function prerender() {
 
   const { default: puppeteer } = await import("puppeteer");
 
-  console.log(`[prerender] Rendering ${SITE_ROUTES.length} routes...`);
+  const routes = process.env.PRERENDER_ONLY
+    ? process.env.PRERENDER_ONLY.split(",").map((route) => route.trim()).filter(Boolean)
+    : SITE_ROUTES;
+
+  console.log(`[prerender] Rendering ${routes.length} routes...`);
   const server = await startPreview();
   await new Promise((r) => setTimeout(r, 2000));
 
   const browser = await launchBrowser(puppeteer);
 
   try {
-    const page = await browser.newPage();
-
-    for (const route of SITE_ROUTES) {
+    for (const route of routes) {
       const url = `${BASE}${route}`;
       console.log(`[prerender] ${route}`);
-      await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60_000 });
-      await waitForPageContent(page, route);
+      const page = await browser.newPage();
+      try {
+        await page.goto(url, { waitUntil: "domcontentloaded", timeout: 90_000 });
+        await waitForPageContent(page, route);
 
-      const html = await page.content();
-      const out = outputPath(route);
-      mkdirSync(dirname(out), { recursive: true });
-      writeFileSync(out, html, "utf-8");
+        const html = await page.content();
+        const out = outputPath(route);
+        mkdirSync(dirname(out), { recursive: true });
+        writeFileSync(out, html, "utf-8");
+      } catch (err) {
+        console.warn(`[prerender] Failed ${route}:`, err instanceof Error ? err.message : err);
+      } finally {
+        await page.close();
+      }
     }
-  } finally {
+
     await browser.close();
     server.kill("SIGTERM");
+  } catch (err) {
+    await browser?.close?.();
+    server.kill("SIGTERM");
+    throw err;
   }
 
   console.log("[prerender] Done.");

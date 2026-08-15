@@ -1,6 +1,7 @@
 import { SiteLink } from "@/components/SiteLink";
 import { SITE_URL } from "@/lib/site";
 import { Link } from "react-router-dom";
+import PageMeta from "@/components/PageMeta";
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <>
@@ -12,6 +13,11 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
 const Offer = () => {
   return (
     <div className="min-h-screen bg-background text-foreground px-6 py-16 lg:px-[120px] lg:py-24">
+      <PageMeta
+        title="Публичная оферта | Наталья Морозова"
+        description="Публичная оферта на оказание психологических консультационных услуг. Условия записи и оплаты."
+        path="/offer"
+      />
       <div className="max-w-3xl mx-auto">
         <Link to="/" className="text-muted-foreground text-sm hover:text-foreground transition-colors mb-8 inline-block">← На главную</Link>
         <h1 className="text-2xl sm:text-3xl font-bold mb-2">Публичная оферта</h1>

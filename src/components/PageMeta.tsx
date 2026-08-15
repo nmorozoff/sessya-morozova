@@ -9,24 +9,15 @@ export type PageSeo = {
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 };
 
-function upsertMeta(attr: "name" | "property", key: string, content: string) {
-  let el = document.querySelector(`meta[${attr}="${key}"]`) as HTMLMetaElement | null;
+function setMeta(attr: "name" | "property", key: string, content: string) {
+  const selector = `meta[${attr}="${key}"]`;
+  let el = document.head.querySelector(selector) as HTMLMetaElement | null;
   if (!el) {
     el = document.createElement("meta");
     el.setAttribute(attr, key);
     document.head.appendChild(el);
   }
-  el.content = content;
-}
-
-function upsertLink(rel: string, href: string) {
-  let el = document.querySelector(`link[rel="${rel}"]`) as HTMLLinkElement | null;
-  if (!el) {
-    el = document.createElement("link");
-    el.rel = rel;
-    document.head.appendChild(el);
-  }
-  el.href = href;
+  el.setAttribute("content", content);
 }
 
 const PageMeta = ({ title, description, path, ogImage = "/og-image.jpg", jsonLd }: PageSeo) => {
@@ -36,18 +27,26 @@ const PageMeta = ({ title, description, path, ogImage = "/og-image.jpg", jsonLd 
 
   useLayoutEffect(() => {
     document.title = title;
-    upsertLink("canonical", canonical);
-    upsertMeta("name", "description", description);
-    upsertMeta("property", "og:type", "website");
-    upsertMeta("property", "og:url", canonical);
-    upsertMeta("property", "og:title", title);
-    upsertMeta("property", "og:description", description);
-    upsertMeta("property", "og:image", image);
-    upsertMeta("property", "og:locale", "ru_RU");
-    upsertMeta("name", "twitter:card", "summary_large_image");
-    upsertMeta("name", "twitter:title", title);
-    upsertMeta("name", "twitter:description", description);
-    upsertMeta("name", "twitter:image", image);
+
+    let link = document.head.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "canonical";
+      document.head.appendChild(link);
+    }
+    link.href = canonical;
+
+    setMeta("name", "description", description);
+    setMeta("property", "og:type", "website");
+    setMeta("property", "og:url", canonical);
+    setMeta("property", "og:title", title);
+    setMeta("property", "og:description", description);
+    setMeta("property", "og:image", image);
+    setMeta("property", "og:locale", "ru_RU");
+    setMeta("name", "twitter:card", "summary_large_image");
+    setMeta("name", "twitter:title", title);
+    setMeta("name", "twitter:description", description);
+    setMeta("name", "twitter:image", image);
   }, [title, description, canonical, image]);
 
   return (

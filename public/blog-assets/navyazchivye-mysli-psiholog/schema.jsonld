@@ -3,37 +3,37 @@
   "@graph": [
     {
       "@type": "BlogPosting",
-      "@id": "__SITE_BASE__/blog/navyazchivye-mysli-psiholog/#article",
+      "@id": "https://www.morozovanatalia.ru/blog/navyazchivye-mysli-psiholog/#article",
       "headline": "Навязчивые мысли: почему голова «не отпускает» и когда имеет смысл идти к психологу",
       "description": "Навязчивые мысли – не приговор и не доказательство намерения. Почему борьба усиливает цикл, как отличить стресс от ОКР и когда записаться к психологу.",
       "datePublished": "2026-08-06",
       "dateModified": "2026-08-06",
       "inLanguage": "ru",
-      "url": "__SITE_BASE__/blog/navyazchivye-mysli-psiholog/",
+      "url": "https://www.morozovanatalia.ru/blog/navyazchivye-mysli-psiholog/",
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "__SITE_BASE__/blog/navyazchivye-mysli-psiholog/"
+        "@id": "https://www.morozovanatalia.ru/blog/navyazchivye-mysli-psiholog/"
       },
       "image": {
         "@type": "ImageObject",
-        "url": "__SITE_BASE__/wp-content/uploads/blog/navyazchivye-mysli-psiholog-cover.png",
+        "url": "https://www.morozovanatalia.ru/blog-assets/navyazchivye-mysli-psiholog-cover.png",
         "width": 1200,
         "height": 675
       },
       "author": {
         "@type": "Person",
-        "@id": "__SITE_BASE__/#author-natalya-morozova",
+        "@id": "https://www.morozovanatalia.ru/#author-natalya-morozova",
         "name": "Наталья Морозова",
         "jobTitle": "Психолог, EMDR-терапевт",
         "description": "Сертифицированный психолог и EMDR-терапевт. Работа с тревогой, паническими атаками, фобиями, ПТСР, травматическим опытом, выгоранием и психосоматикой. Москва и онлайн.",
-        "image": "__SITE_BASE__/images/hero-photo-dark.jpg",
+        "image": "https://www.morozovanatalia.ru/images/hero-photo-dark.jpg",
         "worksFor": {
           "@type": "Organization",
           "name": "Наталья Морозова — психолог EMDR",
-          "url": "__SITE_BASE__/"
+          "url": "https://www.morozovanatalia.ru/"
         },
         "sameAs": [
-          "__SITE_BASE__/",
+          "https://www.morozovanatalia.ru/",
           "https://morozovanatalia.ru/",
           "https://www.b17.ru/morozova_natalia/",
           "https://t.me/natalyamorozovaa",
@@ -44,20 +44,26 @@
       "publisher": {
         "@type": "Organization",
         "name": "Наталья Морозова — психолог EMDR",
-        "url": "__SITE_BASE__/"
+        "url": "https://www.morozovanatalia.ru/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.morozovanatalia.ru/favicon.png",
+          "width": 192,
+          "height": 192
+        }
       },
       "keywords": "навязчивые мысли, тревожные навязчивые мысли, как справиться с навязчивыми мыслями, навязчивые мысли почему",
-      "wordCount": 8773,
+      "wordCount": 1149,
       "articleSection": "Навязчивые мысли",
       "isPartOf": {
         "@type": "Blog",
         "name": "Блог Натальи Морозовой",
-        "url": "__SITE_BASE__/blog/"
+        "url": "https://www.morozovanatalia.ru/blog/"
       }
     },
     {
       "@type": "FAQPage",
-      "@id": "__SITE_BASE__/blog/navyazchivye-mysli-psiholog/#faq",
+      "@id": "https://www.morozovanatalia.ru/blog/navyazchivye-mysli-psiholog/#faq",
       "mainEntity": [
         {
           "@type": "Question",

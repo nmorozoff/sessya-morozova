@@ -33,9 +33,17 @@ export const PRICING_OFFERS = [
   },
 ];
 
+export const BRAND_SAME_AS = [
+  "https://www.b17.ru/morozova_natalia/",
+  "https://dzen.ru/morozovanataliapsy",
+  "https://t.me/natalyamorozovabot",
+  "https://t.me/natamorozova_bot",
+];
+
 export const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
+  "@id": `${SITE_URL}/#person`,
   name: "Наталья Морозова",
   jobTitle: "EMDR-терапевт (ДПДГ)",
   url: SITE_URL,
@@ -53,7 +61,7 @@ export const personSchema = {
     "горевание",
     "психологическая травма",
   ],
-  sameAs: [] as string[],
+  sameAs: BRAND_SAME_AS,
 };
 
 const OFFICE_LOCATIONS = [
@@ -79,19 +87,26 @@ const OFFICE_LOCATIONS = [
   },
 ];
 
+export const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${SITE_URL}/#website`,
+  url: `${SITE_URL}/`,
+  name: "Наталья Морозова — психолог EMDR",
+  inLanguage: "ru",
+  publisher: { "@id": `${SITE_URL}/#person` },
+};
+
 export const professionalServiceSchema = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
+  "@id": `${SITE_URL}/#service`,
   name: "Психологическое консультирование — Наталья Морозова",
   serviceType: "Психологическое консультирование",
   url: SITE_URL,
   description:
     "EMDR-терапия (ДПДГ) и психологическое консультирование онлайн и очно в Москве. Работа с тревогой, травмой, фобиями, выгоранием.",
-  provider: {
-    "@type": "Person",
-    name: "Наталья Морозова",
-    jobTitle: "EMDR-терапевт (ДПДГ)",
-  },
+  provider: { "@id": `${SITE_URL}/#person` },
   areaServed: [
     { "@type": "City", name: "Москва" },
     { "@type": "Country", name: "Россия" },
@@ -170,6 +185,62 @@ export function buildBreadcrumbSchema(pageName: string, path: string) {
   };
 }
 
+export function buildBlogPostBreadcrumbSchema(title: string, slug: string) {
+  const postUrl = `${SITE_URL}/blog/${slug}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Главная", item: `${SITE_URL}/` },
+      { "@type": "ListItem", position: 2, name: "Блог", item: `${SITE_URL}/blog` },
+      { "@type": "ListItem", position: 3, name: title, item: postUrl },
+    ],
+  };
+}
+
+export function buildBlogIndexSchema(
+  posts: { slug: string; title: string; publishedAt: string }[],
+  path: string,
+) {
+  const pageUrl = `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${pageUrl}#collection`,
+    name: "Блог Натальи Морозовой",
+    description: "Статьи о психологии, EMDR-терапии, тревоге и травме",
+    url: pageUrl,
+    inLanguage: "ru",
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+    hasPart: posts.map((post) => ({
+      "@type": "BlogPosting",
+      headline: post.title,
+      url: `${SITE_URL}/blog/${post.slug}`,
+      datePublished: post.publishedAt,
+    })),
+  };
+}
+
+export function webPageSchema(name: string, description: string, path: string) {
+  const pageUrl = `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${pageUrl}#webpage`,
+    url: pageUrl,
+    name,
+    description,
+    inLanguage: "ru",
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+    about: { "@id": `${SITE_URL}/#person` },
+    speakable: {
+      "@type": "SpeakableSpecification",
+      cssSelector: [".geo-direct-answer"],
+    },
+  };
+}
+
+/** @deprecated Use webPageSchema — MedicalCondition запрещён на кластерах */
 export function medicalConditionSchema(
   name: string,
   description: string,

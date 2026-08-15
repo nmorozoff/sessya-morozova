@@ -1,8 +1,14 @@
 import { Link } from "react-router-dom";
+import PageMeta from "@/components/PageMeta";
 
 const AdvertisingConsent = () => {
   return (
     <div className="min-h-screen bg-background text-foreground px-6 py-16 lg:px-[120px] lg:py-24">
+      <PageMeta
+        title="Согласие на рекламную рассылку | Наталья Морозова"
+        description="Согласие на получение рекламной информации от психолога Натальи Морозовой."
+        path="/advertising-consent"
+      />
       <div className="max-w-3xl mx-auto">
         <Link to="/" className="text-muted-foreground text-sm hover:text-foreground transition-colors mb-8 inline-block">← На главную</Link>
         <h1 className="text-2xl sm:text-3xl font-bold mb-8">Согласие на получение рекламной рассылки</h1>

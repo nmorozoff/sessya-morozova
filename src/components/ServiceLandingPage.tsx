@@ -1,9 +1,12 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import JsonLd from "@/components/JsonLd";
 import PageMeta from "@/components/PageMeta";
-import { medicalConditionSchema, buildFaqPageSchema } from "@/lib/schema";
-import { servicePageUrl, type ServicePageConfig } from "@/lib/services/types";
+import {
+  buildBreadcrumbSchema,
+  buildFaqPageSchema,
+  webPageSchema,
+} from "@/lib/schema";
+import { type ServicePageConfig } from "@/lib/services/types";
 import { Link } from "react-router-dom";
 
 type ServiceLandingPageProps = ServicePageConfig;
@@ -19,18 +22,20 @@ const ServiceLandingPage = ({
   sections,
   table,
   faq,
-  conditionName,
-  conditionDescription,
 }: ServiceLandingPageProps) => {
-  const pageUrl = servicePageUrl(slug);
-  const conditionSchema = medicalConditionSchema(conditionName, conditionDescription, pageUrl);
+  const path = `/${slug}`;
+  const pageSchema = webPageSchema(h1, description, path);
   const faqSchema = buildFaqPageSchema(faq);
+  const breadcrumbSchema = buildBreadcrumbSchema(breadcrumb, path);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <PageMeta title={title} description={description} path={`/${slug}`} />
-      <JsonLd id={`condition-${slug}`} data={conditionSchema} />
-      <JsonLd id={`faq-${slug}`} data={faqSchema} />
+      <PageMeta
+        title={title}
+        description={description}
+        path={path}
+        jsonLd={[pageSchema, faqSchema, breadcrumbSchema]}
+      />
       <Navbar />
       <main className="pt-28 pb-16 px-6 lg:px-[60px]">
         <div className="max-w-3xl mx-auto">

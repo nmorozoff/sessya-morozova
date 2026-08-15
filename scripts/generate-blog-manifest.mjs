@@ -15,6 +15,10 @@ const ROOT = resolve(import.meta.dirname, "..");
 const CONTENT_DIR = resolve(ROOT, "content/blog");
 const MANIFEST_PATH = resolve(ROOT, "src/generated/blog-manifest.json");
 const PUBLIC_ASSETS_DIR = resolve(ROOT, "public/blog-assets");
+const SITE_URL = (process.env.VITE_SITE_URL || "https://www.morozovanatalia.ru")
+  .replace(/\/$/, "")
+  .replace(/^http:\/\//i, "https://")
+  .replace(/^https:\/\/morozovanatalia\.ru$/i, "https://www.morozovanatalia.ru");
 
 function stripHtml(html) {
   return html
@@ -29,6 +33,39 @@ function excerptFromHtml(html, maxLength = 160) {
   const text = stripHtml(html);
   if (text.length <= maxLength) return text;
   return `${text.slice(0, maxLength - 1).trimEnd()}…`;
+}
+
+function countWords(html) {
+  const text = stripHtml(html);
+  if (!text) return 0;
+  return text.split(/\s+/).filter(Boolean).length;
+}
+
+function enrichBlogSchema(schemaContent, bodyHtml) {
+  let parsed;
+  try {
+    parsed = JSON.parse(schemaContent);
+  } catch {
+    return schemaContent;
+  }
+
+  const wordCount = countWords(bodyHtml);
+  const nodes = parsed["@graph"] || [parsed];
+
+  for (const node of nodes) {
+    if (node["@type"] !== "BlogPosting") continue;
+    if (wordCount > 0) node.wordCount = wordCount;
+    if (node.publisher && typeof node.publisher === "object" && !node.publisher.logo) {
+      node.publisher.logo = {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/favicon.png`,
+        width: 192,
+        height: 192,
+      };
+    }
+  }
+
+  return `${JSON.stringify(parsed, null, 2)}\n`;
 }
 
 function normalizeMeta(raw, slugFromDir) {
@@ -129,7 +166,12 @@ function syncPublicAssets(posts) {
     writeFileSync(resolve(targetDir, "meta.json"), `${JSON.stringify(publicMeta, null, 2)}\n`, "utf8");
 
     if (existsSync(schemaPath)) {
-      writeFileSync(resolve(targetDir, "schema.jsonld"), readFileSync(schemaPath, "utf8"), "utf8");
+      let schemaContent = readFileSync(schemaPath, "utf8")
+        .replaceAll("__SITE_BASE__", SITE_URL)
+        .replaceAll(`/wp-content/uploads/blog/${slug}`, `/blog-assets/${slug}`)
+        .replaceAll("wp-content/uploads/blog/", "blog-assets/");
+      schemaContent = enrichBlogSchema(schemaContent, bodyHtml);
+      writeFileSync(resolve(targetDir, "schema.jsonld"), schemaContent, "utf8");
     }
 
     if (existsSync(coverDir)) {

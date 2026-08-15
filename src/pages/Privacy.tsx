@@ -1,9 +1,15 @@
 import { SiteLink } from "@/components/SiteLink";
 import { Link } from "react-router-dom";
+import PageMeta from "@/components/PageMeta";
 
 const Privacy = () => {
   return (
     <div className="min-h-screen bg-background text-foreground px-6 py-16 lg:px-[120px] lg:py-24">
+      <PageMeta
+        title="Согласие на обработку персональных данных | Наталья Морозова"
+        description="Согласие на обработку персональных данных при использовании сайта morozovanatalia.ru и Telegram-ботов."
+        path="/privacy"
+      />
       <div className="max-w-3xl mx-auto">
         <Link to="/" className="text-muted-foreground text-sm hover:text-foreground transition-colors mb-8 inline-block">← На главную</Link>
         <h1 className="text-2xl sm:text-3xl font-bold mb-8">Согласие на обработку персональных данных</h1>

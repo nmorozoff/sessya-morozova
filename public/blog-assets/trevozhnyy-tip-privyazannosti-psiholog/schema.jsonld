@@ -3,37 +3,37 @@
   "@graph": [
     {
       "@type": "BlogPosting",
-      "@id": "__SITE_BASE__/blog/trevozhnyy-tip-privyazannosti-psiholog/#article",
+      "@id": "https://www.morozovanatalia.ru/blog/trevozhnyy-tip-privyazannosti-psiholog/#article",
       "headline": "Тревожный тип привязанности: чек-лист из 5 шагов, когда тревога берёт верх в отношениях – и когда идти к психологу",
       "description": "Тревожная привязанность в отношениях: 5 признаков, правило паузы, таблица факт vs мысль, одна я-фраза для партнёра. Когда к психологу.",
       "datePublished": "2026-08-14",
       "dateModified": "2026-08-14",
       "inLanguage": "ru",
-      "url": "__SITE_BASE__/blog/trevozhnyy-tip-privyazannosti-psiholog/",
+      "url": "https://www.morozovanatalia.ru/blog/trevozhnyy-tip-privyazannosti-psiholog/",
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "__SITE_BASE__/blog/trevozhnyy-tip-privyazannosti-psiholog/"
+        "@id": "https://www.morozovanatalia.ru/blog/trevozhnyy-tip-privyazannosti-psiholog/"
       },
       "image": {
         "@type": "ImageObject",
-        "url": "__SITE_BASE__/wp-content/uploads/blog/trevozhnyy-tip-privyazannosti-psiholog-cover.png",
+        "url": "https://www.morozovanatalia.ru/blog-assets/trevozhnyy-tip-privyazannosti-psiholog-cover.png",
         "width": 1200,
         "height": 675
       },
       "author": {
         "@type": "Person",
-        "@id": "__SITE_BASE__/#author-natalya-morozova",
+        "@id": "https://www.morozovanatalia.ru/#author-natalya-morozova",
         "name": "Наталья Морозова",
         "jobTitle": "Психолог, EMDR-терапевт",
         "description": "Сертифицированный психолог и EMDR-терапевт. Работа с тревогой, паническими атаками, фобиями, ПТСР, травматическим опытом, выгоранием и психосоматикой. Москва и онлайн.",
-        "image": "__SITE_BASE__/images/hero-photo-dark.jpg",
+        "image": "https://www.morozovanatalia.ru/images/hero-photo-dark.jpg",
         "worksFor": {
           "@type": "Organization",
           "name": "Наталья Морозова — психолог EMDR",
-          "url": "__SITE_BASE__/"
+          "url": "https://www.morozovanatalia.ru/"
         },
         "sameAs": [
-          "__SITE_BASE__/",
+          "https://www.morozovanatalia.ru/",
           "https://morozovanatalia.ru/",
           "https://www.b17.ru/morozova_natalia/",
           "https://t.me/natalyamorozovaa",
@@ -44,20 +44,26 @@
       "publisher": {
         "@type": "Organization",
         "name": "Наталья Морозова — психолог EMDR",
-        "url": "__SITE_BASE__/"
+        "url": "https://www.morozovanatalia.ru/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.morozovanatalia.ru/favicon.png",
+          "width": 192,
+          "height": 192
+        }
       },
       "keywords": "тревожный тип привязанности, тревожная привязанность в отношениях, как справиться с тревогой в отношениях, тревожная привязанность что это простыми словами",
-      "wordCount": 9180,
+      "wordCount": 1114,
       "articleSection": "Тревожный тип привязанности",
       "isPartOf": {
         "@type": "Blog",
         "name": "Блог Натальи Морозовой",
-        "url": "__SITE_BASE__/blog/"
+        "url": "https://www.morozovanatalia.ru/blog/"
       }
     },
     {
       "@type": "FAQPage",
-      "@id": "__SITE_BASE__/blog/trevozhnyy-tip-privyazannosti-psiholog/#faq",
+      "@id": "https://www.morozovanatalia.ru/blog/trevozhnyy-tip-privyazannosti-psiholog/#faq",
       "mainEntity": [
         {
           "@type": "Question",
@@ -111,7 +117,7 @@
     },
     {
       "@type": "HowTo",
-      "@id": "__SITE_BASE__/blog/trevozhnyy-tip-privyazannosti-psiholog/#howto",
+      "@id": "https://www.morozovanatalia.ru/blog/trevozhnyy-tip-privyazannosti-psiholog/#howto",
       "name": "5 шагов на пике: как справиться с тревогой в отношениях",
       "description": "Чек-лист самопомощи при тревожной привязанности: правило паузы 20–30 минут, разделение факта и интерпретации, самоуспокоение, я-фраза для партнёра и границы связи.",
       "inLanguage": "ru",
@@ -134,35 +140,35 @@
           "position": 1,
           "name": "Правило паузы 20-30 минут",
           "text": "Уберите телефон. Называние эмоции снижает активность миндалевидного тела мозга. Скажите вслух: «У меня включилась тревога привязанности. Это аффект, а не конец света». Никаких действий из импульса.",
-          "url": "__SITE_BASE__/blog/trevozhnyy-tip-privyazannosti-psiholog/"
+          "url": "https://www.morozovanatalia.ru/blog/trevozhnyy-tip-privyazannosti-psiholog/"
         },
         {
           "@type": "HowToStep",
           "position": 2,
           "name": "Разделение: факт и интерпретация",
           "text": "Заполните таблицу в заметках: сигнал (например, пауза 3 часа или смена планов), тревожная мысль («он разлюбил») и что проверить по фактам (был ли он на работе, что именно сказал партнёр).",
-          "url": "__SITE_BASE__/blog/trevozhnyy-tip-privyazannosti-psiholog/"
+          "url": "https://www.morozovanatalia.ru/blog/trevozhnyy-tip-privyazannosti-psiholog/"
         },
         {
           "@type": "HowToStep",
           "position": 3,
           "name": "Меню самоуспокоения",
           "text": "Сделайте глоток холодной воды. Почувствуйте стопами твёрдый пол. Подышите: вдох короче выдоха. Тело должно получить сигнал, что угрозы для жизни нет.",
-          "url": "__SITE_BASE__/blog/trevozhnyy-tip-privyazannosti-psiholog/"
+          "url": "https://www.morozovanatalia.ru/blog/trevozhnyy-tip-privyazannosti-psiholog/"
         },
         {
           "@type": "HowToStep",
           "position": 4,
           "name": "Одна я-фраза партнёру",
           "text": "Вместо допроса «Где ты был?!» скажите прямо: «Мне страшно, когда ты долго не отвечаешь – это моя тревога, не обвинение в твой адрес».",
-          "url": "__SITE_BASE__/blog/trevozhnyy-tip-privyazannosti-psiholog/"
+          "url": "https://www.morozovanatalia.ru/blog/trevozhnyy-tip-privyazannosti-psiholog/"
         },
         {
           "@type": "HowToStep",
           "position": 5,
           "name": "Границы",
           "text": "Партнёр не должен становиться вашим терапевтом 24/7. Договоритесь об «окнах связи» – времени, когда вы точно спишетесь, чтобы не изводить себя подозрениями.",
-          "url": "__SITE_BASE__/blog/trevozhnyy-tip-privyazannosti-psiholog/"
+          "url": "https://www.morozovanatalia.ru/blog/trevozhnyy-tip-privyazannosti-psiholog/"
         }
       ]
     }

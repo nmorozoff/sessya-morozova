@@ -3,37 +3,37 @@
   "@graph": [
     {
       "@type": "BlogPosting",
-      "@id": "__SITE_BASE__/blog/ipohondriya-trevoga-za-zdorove-psiholog/#article",
+      "@id": "https://www.morozovanatalia.ru/blog/ipohondriya-trevoga-za-zdorove-psiholog/#article",
       "headline": "Ипохондрия и тревога за здоровье: чек-лист признаков и когда идти к психологу",
       "description": "Ипохондрия – не каприз, а тревожный круг проверок. Чек-лист из 6 признаков, разница с психосоматикой, киберхондрия, 4 шага на сутки и когда к психологу.",
       "datePublished": "2026-08-08",
       "dateModified": "2026-08-08",
       "inLanguage": "ru",
-      "url": "__SITE_BASE__/blog/ipohondriya-trevoga-za-zdorove-psiholog/",
+      "url": "https://www.morozovanatalia.ru/blog/ipohondriya-trevoga-za-zdorove-psiholog/",
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "__SITE_BASE__/blog/ipohondriya-trevoga-za-zdorove-psiholog/"
+        "@id": "https://www.morozovanatalia.ru/blog/ipohondriya-trevoga-za-zdorove-psiholog/"
       },
       "image": {
         "@type": "ImageObject",
-        "url": "__SITE_BASE__/wp-content/uploads/blog/ipohondriya-trevoga-za-zdorove-psiholog-cover.png",
+        "url": "https://www.morozovanatalia.ru/blog-assets/ipohondriya-trevoga-za-zdorove-psiholog-cover.png",
         "width": 1200,
         "height": 675
       },
       "author": {
         "@type": "Person",
-        "@id": "__SITE_BASE__/#author-natalya-morozova",
+        "@id": "https://www.morozovanatalia.ru/#author-natalya-morozova",
         "name": "Наталья Морозова",
         "jobTitle": "Психолог, EMDR-терапевт",
         "description": "Сертифицированный психолог и EMDR-терапевт. Работа с тревогой, паническими атаками, фобиями, ПТСР, травматическим опытом, выгоранием и психосоматикой. Москва и онлайн.",
-        "image": "__SITE_BASE__/images/hero-photo-dark.jpg",
+        "image": "https://www.morozovanatalia.ru/images/hero-photo-dark.jpg",
         "worksFor": {
           "@type": "Organization",
           "name": "Наталья Морозова — психолог EMDR",
-          "url": "__SITE_BASE__/"
+          "url": "https://www.morozovanatalia.ru/"
         },
         "sameAs": [
-          "__SITE_BASE__/",
+          "https://www.morozovanatalia.ru/",
           "https://morozovanatalia.ru/",
           "https://www.b17.ru/morozova_natalia/",
           "https://t.me/natalyamorozovaa",
@@ -44,20 +44,26 @@
       "publisher": {
         "@type": "Organization",
         "name": "Наталья Морозова — психолог EMDR",
-        "url": "__SITE_BASE__/"
+        "url": "https://www.morozovanatalia.ru/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.morozovanatalia.ru/favicon.png",
+          "width": 192,
+          "height": 192
+        }
       },
       "keywords": "ипохондрия, ипохондрия это простыми словами, тревога за здоровье, ипохондрия симптомы",
-      "wordCount": 8506,
+      "wordCount": 1274,
       "articleSection": "Ипохондрия и тревога за здоровье",
       "isPartOf": {
         "@type": "Blog",
         "name": "Блог Натальи Морозовой",
-        "url": "__SITE_BASE__/blog/"
+        "url": "https://www.morozovanatalia.ru/blog/"
       }
     },
     {
       "@type": "FAQPage",
-      "@id": "__SITE_BASE__/blog/ipohondriya-trevoga-za-zdorove-psiholog/#faq",
+      "@id": "https://www.morozovanatalia.ru/blog/ipohondriya-trevoga-za-zdorove-psiholog/#faq",
       "mainEntity": [
         {
           "@type": "Question",

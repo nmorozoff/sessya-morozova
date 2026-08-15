@@ -7,6 +7,7 @@ import { fetchBlogArticle, readBlogBootstrap, blogAssetUrl } from "@/lib/blog/cl
 import { usePrerenderBlog } from "@/lib/blog/context";
 import { findBlogPost, formatBlogDate } from "@/lib/blog/manifest";
 import { buildBlogPostingSchema } from "@/lib/blog/schema";
+import { buildBlogPostBreadcrumbSchema } from "@/lib/schema";
 import type { BlogArticleData } from "@/lib/blog/types";
 
 const BlogPost = () => {
@@ -43,12 +44,15 @@ const BlogPost = () => {
   const path = `/blog/${slug}`;
   const title = article?.title || manifestPost?.title || "Статья";
   const description = article?.description || manifestPost?.description || "";
-  const pageTitle = `${title} | Наталья Морозова`;
-  const schema = article
+  const pageTitle = title;
+  const articleSchema = article
     ? article.schemaJsonLd || buildBlogPostingSchema(article, path)
     : manifestPost
       ? buildBlogPostingSchema({ ...manifestPost, bodyHtml: "" }, path)
       : undefined;
+  const jsonLd = articleSchema
+    ? [articleSchema, buildBlogPostBreadcrumbSchema(title, slug)]
+    : buildBlogPostBreadcrumbSchema(title, slug);
 
   if (!manifestPost && !loading && !article) {
     return (
@@ -77,7 +81,7 @@ const BlogPost = () => {
         description={description}
         path={path}
         ogImage={article?.coverImage || manifestPost?.coverImage}
-        jsonLd={schema}
+        jsonLd={jsonLd}
       />
       <article className="max-w-3xl mx-auto">
         <BlogBackLink />

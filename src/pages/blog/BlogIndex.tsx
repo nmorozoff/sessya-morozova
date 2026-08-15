@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import PageMeta from "@/components/PageMeta";
 import BlogLayout from "@/components/blog/BlogLayout";
 import BlogPagination from "@/components/blog/BlogPagination";
+import { buildBlogIndexSchema, buildBreadcrumbSchema } from "@/lib/schema";
 import {
   BLOG_MANIFEST,
   blogIndexPath,
@@ -30,7 +31,15 @@ const BlogIndex = () => {
 
   return (
     <BlogLayout>
-      <PageMeta title={title} description={description} path={path} />
+      <PageMeta
+        title={title}
+        description={description}
+        path={path}
+        jsonLd={[
+          buildBlogIndexSchema(posts, path),
+          buildBreadcrumbSchema("Блог", path),
+        ]}
+      />
       <div className="max-w-5xl mx-auto">
         <p className="text-primary text-sm font-semibold tracking-wide uppercase mb-3">Блог</p>
         <h1 className="text-3xl sm:text-4xl font-black mb-4">Статьи и материалы</h1>

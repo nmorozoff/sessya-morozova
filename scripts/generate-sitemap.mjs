@@ -2,7 +2,10 @@ import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { SITE_ROUTES } from "./routes.mjs";
 
-const siteUrl = (process.env.VITE_SITE_URL || "https://www.morozovanatalia.ru").replace(/\/$/, "");
+const siteUrl = (process.env.VITE_SITE_URL || "https://www.morozovanatalia.ru")
+  .replace(/\/$/, "")
+  .replace(/^http:\/\//i, "https://")
+  .replace(/^https:\/\/morozovanatalia\.ru$/i, "https://www.morozovanatalia.ru");
 const lastmod = new Date().toISOString().slice(0, 10);
 
 const urls = SITE_ROUTES.map(

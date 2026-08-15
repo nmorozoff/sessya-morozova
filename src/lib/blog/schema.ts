@@ -1,6 +1,5 @@
 import type { BlogArticleData, BlogPostMeta } from "./types";
-
-const SITE = "https://www.morozovanatalia.ru";
+import { SITE_URL } from "@/lib/site";
 
 export function buildBlogPostingSchema(
   article: (BlogPostMeta | BlogArticleData) & { bodyHtml?: string },
@@ -8,7 +7,7 @@ export function buildBlogPostingSchema(
 ) {
   const image = article.coverImage?.startsWith("http")
     ? article.coverImage
-    : `${SITE}${article.coverImage}`;
+    : `${SITE_URL}${article.coverImage}`;
 
   return {
     "@context": "https://schema.org",
@@ -24,7 +23,7 @@ export function buildBlogPostingSchema(
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${SITE}${path}`,
+      "@id": `${SITE_URL}${path}`,
     },
   };
 }
