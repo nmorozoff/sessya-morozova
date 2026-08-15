@@ -1,7 +1,17 @@
 {
-  "generatedAt": "2026-08-14T23:27:24.088Z",
+  "generatedAt": "2026-08-15T00:04:36.354Z",
   "postsPerPage": 24,
   "posts": [
+    {
+      "slug": "trevozhnyy-tip-privyazannosti-psiholog",
+      "topicId": "BT17",
+      "title": "Тревожный тип привязанности: 5 шагов и когда к психологу",
+      "description": "Тревожная привязанность в отношениях: 5 признаков, правило паузы, таблица факт vs мысль, одна я-фраза для партнёра. Когда к психологу.",
+      "publishedAt": "2026-08-15",
+      "updatedAt": "2026-08-15",
+      "coverImage": "/blog-assets/trevozhnyy-tip-privyazannosti-psiholog/cover.png",
+      "excerpt": "Марине 29 лет. Партнёр три часа не пишет из-за совещания. Для неё это сигнал: «он охладел». Она отправляет семь сообщений подряд, сердце колотится. А когда он присылает фото заката, Марина отвечает л…"
+    },
     {
       "slug": "depersonalizaciya-derealizaciya-trevoga-psiholog",
       "topicId": "BT14",
@@ -91,16 +101,6 @@
       "updatedAt": "2026-08-14",
       "coverImage": "/blog-assets/trevoga-pered-snom-psiholog/cover.png",
       "excerpt": "Марина, 31 год, маркетолог. Днем на встречах держится уверенно. На часах 23:00. Ложится, закрывает глаза – и в голове вспыхивает: неотправленное письмо, завтрашняя презентация. Сердце ускоряется. Тян…"
-    },
-    {
-      "slug": "trevozhnyy-tip-privyazannosti-psiholog",
-      "topicId": "BT17",
-      "title": "Тревожный тип привязанности: 5 шагов и когда к психологу",
-      "description": "Тревожная привязанность в отношениях: 5 признаков, правило паузы, таблица факт vs мысль, одна я-фраза для партнёра. Когда к психологу.",
-      "publishedAt": "2026-08-14",
-      "updatedAt": "2026-08-14",
-      "coverImage": "/blog-assets/trevozhnyy-tip-privyazannosti-psiholog/cover.png",
-      "excerpt": "Марине 29 лет. Партнёр три часа не пишет из-за совещания. Для неё это сигнал: «он охладел». Она отправляет семь сообщений подряд, сердце колотится. А когда он присылает фото заката, Марина отвечает л…"
     },
     {
       "slug": "sotsiofobiya-strah-otsenki-psiholog",
