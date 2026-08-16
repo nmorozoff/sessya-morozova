@@ -73,6 +73,7 @@ function collectFiles(dir, base = dir) {
   return files;
 }
 
+const SKIP_REMOTE_FILES = new Set([".DS_Store"]);
 const OPTIONAL_REMOTE_FILES = new Set(["api/.htaccess", "api/logs/.htaccess"]);
 const ALLOWED_API_REMOTE_FILES = new Set([
   "api/send-form.php",
@@ -84,6 +85,7 @@ const SKIP_REMOTE_PREFIXES = ["api/"];
 
 function collectDeployFiles() {
   return collectFiles(DIST).filter((file) => {
+    if (SKIP_REMOTE_FILES.has(basename(file.local))) return false;
     if (ALLOWED_API_REMOTE_FILES.has(file.remote)) return true;
     return !SKIP_REMOTE_PREFIXES.some((prefix) => file.remote.startsWith(prefix));
   });
@@ -174,6 +176,26 @@ async function ensureRemoteDir({ server, user, password, remoteDir, subdir, pass
   }
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function uploadFileWithRetry(params, maxRetries = 3) {
+  let lastError;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await curlUpload({ ...params, passive: true });
+      return;
+    } catch (err) {
+      lastError = err;
+      if (attempt < maxRetries) {
+        await sleep(1000 * attempt);
+      }
+    }
+  }
+  throw lastError ?? new Error("upload failed");
+}
+
 async function uploadDist({ server, user, password, serverDir }) {
   if (!existsSync(DIST)) {
     throw new Error("Папка dist/ не найдена. Сначала выполните сборку.");
@@ -181,61 +203,71 @@ async function uploadDist({ server, user, password, serverDir }) {
 
   const files = collectDeployFiles();
   const remoteDir = (serverDir || "/public_html/").trim().replace(/\/+$/, "") || "/public_html";
-  let lastError;
+  const createdDirs = new Set();
+  const failed = [];
 
-  for (const passive of [true, false]) {
-    try {
-      console.log(
-        `[deploy] Загрузка ${files.length} файлов в ${remoteDir} (curl, passive=${passive}) ...`,
-      );
-      console.log(
-        "[deploy] api/: загружаем send-form.php и logs/.htaccess — config.php на сервере не трогаем.",
-      );
+  console.log(
+    `[deploy] Загрузка ${files.length} файлов в ${remoteDir} (curl passive, retry per file) ...`,
+  );
+  console.log(
+    "[deploy] api/: загружаем send-form.php и logs/.htaccess — config.php на сервере не трогаем.",
+  );
 
-      const createdDirs = new Set();
-
-      for (const file of files) {
-        const remoteDirPart = posix.dirname(file.remote);
-        if (remoteDirPart !== ".") {
-          const parts = remoteDirPart.split("/").filter(Boolean);
-          for (let i = 1; i <= parts.length; i++) {
-            const partial = parts.slice(0, i).join("/");
-            if (!createdDirs.has(partial)) {
-              await ensureRemoteDir({ server, user, password, remoteDir, subdir: partial, passive });
-              createdDirs.add(partial);
-            }
-          }
-        }
-
-        process.stdout.write(`[deploy] ↑ ${file.remote}\n`);
-        try {
-          await curlUpload({
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const remoteDirPart = posix.dirname(file.remote);
+    if (remoteDirPart !== ".") {
+      const parts = remoteDirPart.split("/").filter(Boolean);
+      for (let j = 1; j <= parts.length; j++) {
+        const partial = parts.slice(0, j).join("/");
+        if (!createdDirs.has(partial)) {
+          await ensureRemoteDir({
             server,
             user,
             password,
             remoteDir,
-            local: file.local,
-            remote: file.remote,
-            passive,
+            subdir: partial,
+            passive: true,
           });
-        } catch (err) {
-          if (OPTIONAL_REMOTE_FILES.has(file.remote)) {
-            console.warn(`[deploy] ⚠ пропущен ${file.remote}: ${err.message || err}`);
-            continue;
-          }
-          throw new Error(`${file.remote}: ${err.message || err}`);
+          createdDirs.add(partial);
         }
       }
+    }
 
-      return;
+    process.stdout.write(`[deploy] [${i + 1}/${files.length}] ↑ ${file.remote}\n`);
+    try {
+      await uploadFileWithRetry({
+        server,
+        user,
+        password,
+        remoteDir,
+        local: file.local,
+        remote: file.remote,
+      });
     } catch (err) {
-      lastError = err;
-      console.warn(`[deploy] Режим passive=${passive} не сработал: ${err.message || err}`);
+      if (OPTIONAL_REMOTE_FILES.has(file.remote)) {
+        console.warn(`[deploy] ⚠ пропущен ${file.remote}: ${err.message || err}`);
+        continue;
+      }
+      failed.push({ remote: file.remote, error: err.message || String(err) });
+      console.warn(`[deploy] ✗ ${file.remote}: ${err.message || err}`);
+    }
+
+    // Не забивать Timeweb частыми LOGIN — пауза между файлами
+    if (i < files.length - 1) {
+      await sleep(80);
     }
   }
 
-  throw lastError ?? new Error("Не удалось загрузить файлы по FTP");
+  if (failed.length > 0) {
+    throw new Error(
+      `Не загружено файлов: ${failed.length}. Первый: ${failed[0].remote} — ${failed[0].error}`,
+    );
+  }
 }
+
+const skipBuildRequested =
+  process.env.SKIP_BUILD === "1" || process.argv.includes("--skip-build");
 
 async function main() {
   const env = loadEnvFile(ENV_PATH);
@@ -245,10 +277,14 @@ async function main() {
   const password = requireEnv(env, "FTP_PASSWORD");
   const serverDir = env.FTP_SERVER_DIR?.trim() || "/public_html/";
 
-  if (process.env.SKIP_BUILD !== "1") {
-    await runBuild(siteUrl);
+  if (skipBuildRequested) {
+    if (!existsSync(DIST)) {
+      console.error("[deploy] dist/ не найден. Сначала выполните: npm run build");
+      process.exit(1);
+    }
+    console.log("[deploy] Пропуск сборки (--skip-build / SKIP_BUILD=1)");
   } else {
-    console.log("[deploy] Пропуск сборки (SKIP_BUILD=1)");
+    await runBuild(siteUrl);
   }
 
   const maxAttempts = 3;

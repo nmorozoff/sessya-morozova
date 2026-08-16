@@ -12,8 +12,9 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "deploy": "node scripts/deploy-ftp.mjs",
-    "deploy:ftp": "node scripts/deploy-ftp.mjs"
+    "deploy": "npm run build && npm run deploy:upload",
+    "deploy:upload": "node scripts/deploy-ftp.mjs --skip-build",
+    "deploy:ftp": "node scripts/deploy-ftp.mjs --skip-build"
   },
   "dependencies": {
     "clsx": "^2.1.1",
