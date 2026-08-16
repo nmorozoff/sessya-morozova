@@ -5,6 +5,13 @@ RewriteBase /
 RewriteCond %{HTTP_HOST} ^morozovanatalia\.ru$ [NC]
 RewriteRule ^(.*)$ https://www.morozovanatalia.ru/$1 [R=301,L,QSA]
 
+# Trailing slash на https://www (без downgrade на http:// от mod_dir)
+RewriteCond %{REQUEST_URI} !/$
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !\.[a-zA-Z0-9]{1,5}$
+RewriteRule ^(.*)$ https://www.morozovanatalia.ru/$1/ [R=301,L,QSA]
+
 # React SPA with build-time static HTML (SSG) + client-side routing fallback
 # API routes are real PHP files — never rewrite them to index.html
 RewriteRule ^api/ - [L]

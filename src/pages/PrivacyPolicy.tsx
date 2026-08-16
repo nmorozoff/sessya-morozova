@@ -1,6 +1,7 @@
 import { SiteLink } from "@/components/SiteLink";
 import { Link } from "react-router-dom";
 import PageMeta from "@/components/PageMeta";
+import { webPageSchema } from "@/lib/schema";
 
 const PrivacyPolicy = () => {
   return (
@@ -9,6 +10,7 @@ const PrivacyPolicy = () => {
         title="Политика конфиденциальности | Наталья Морозова"
         description="Политика обработки персональных данных на сайте morozovanatalia.ru и в Telegram-ботах."
         path="/privacy-policy"
+        jsonLd={[webPageSchema("Политика конфиденциальности", "Политика обработки персональных данных на сайте morozovanatalia.ru и в Telegram-ботах.", "/privacy-policy")]}
       />
       <div className="max-w-3xl mx-auto">
         <Link to="/" className="text-muted-foreground text-sm hover:text-foreground transition-colors mb-8 inline-block">← На главную</Link>

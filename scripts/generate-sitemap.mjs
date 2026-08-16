@@ -27,6 +27,19 @@ writeFileSync(resolve("public/sitemap.xml"), sitemap);
 
 const robots = `User-agent: *
 Allow: /
+Disallow: /api/
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: YandexBot
+Allow: /
 
 Sitemap: ${siteUrl}/sitemap.xml
 `;

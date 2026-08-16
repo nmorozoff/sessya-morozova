@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import PageMeta from "@/components/PageMeta";
+import { webPageSchema } from "@/lib/schema";
 
 const AdvertisingConsent = () => {
   return (
@@ -8,6 +9,7 @@ const AdvertisingConsent = () => {
         title="Согласие на рекламную рассылку | Наталья Морозова"
         description="Согласие на получение рекламной информации от психолога Натальи Морозовой."
         path="/advertising-consent"
+        jsonLd={[webPageSchema("Согласие на рекламную рассылку", "Согласие на получение рекламной информации от психолога Натальи Морозовой.", "/advertising-consent")]}
       />
       <div className="max-w-3xl mx-auto">
         <Link to="/" className="text-muted-foreground text-sm hover:text-foreground transition-colors mb-8 inline-block">← На главную</Link>

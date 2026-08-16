@@ -2,6 +2,7 @@ import { SiteLink } from "@/components/SiteLink";
 import { SITE_URL } from "@/lib/site";
 import { Link } from "react-router-dom";
 import PageMeta from "@/components/PageMeta";
+import { webPageSchema } from "@/lib/schema";
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <>
@@ -17,6 +18,7 @@ const Offer = () => {
         title="Публичная оферта | Наталья Морозова"
         description="Публичная оферта на оказание психологических консультационных услуг. Условия записи и оплаты."
         path="/offer"
+        jsonLd={[webPageSchema("Публичная оферта", "Публичная оферта на оказание психологических консультационных услуг. Условия записи и оплаты.", "/offer")]}
       />
       <div className="max-w-3xl mx-auto">
         <Link to="/" className="text-muted-foreground text-sm hover:text-foreground transition-colors mb-8 inline-block">← На главную</Link>

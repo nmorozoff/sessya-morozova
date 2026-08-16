@@ -13,7 +13,7 @@ const TopicsSection = () => {
   return (
     <>
       <div className="glow-line mx-6 lg:mx-[60px]" />
-      <section className="px-6 lg:px-[60px] py-[72px] lg:py-[100px] bg-bg2">
+      <section id="topics" className="px-6 lg:px-[60px] py-[72px] lg:py-[100px] bg-bg2">
         <Reveal className="text-center max-w-[700px] mx-auto mb-[60px]">
           <h2 className="text-[clamp(36px,4.5vw,60px)] font-extrabold tracking-tight leading-[1.1] mb-4">
             Запросы, с которыми <span className="text-gradient">работаю</span>

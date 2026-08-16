@@ -1,6 +1,7 @@
 import { SiteLink } from "@/components/SiteLink";
 import { Link } from "react-router-dom";
 import PageMeta from "@/components/PageMeta";
+import { webPageSchema } from "@/lib/schema";
 
 const Privacy = () => {
   return (
@@ -9,6 +10,7 @@ const Privacy = () => {
         title="Согласие на обработку персональных данных | Наталья Морозова"
         description="Согласие на обработку персональных данных при использовании сайта morozovanatalia.ru и Telegram-ботов."
         path="/privacy"
+        jsonLd={[webPageSchema("Согласие на обработку персональных данных", "Согласие на обработку персональных данных при использовании сайта morozovanatalia.ru и Telegram-ботов.", "/privacy")]}
       />
       <div className="max-w-3xl mx-auto">
         <Link to="/" className="text-muted-foreground text-sm hover:text-foreground transition-colors mb-8 inline-block">← На главную</Link>
