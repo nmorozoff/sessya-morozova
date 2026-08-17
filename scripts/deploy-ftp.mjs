@@ -1,10 +1,27 @@
 import { spawn } from "node:child_process";
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { basename, join, posix, relative, resolve } from "node:path";
+import {
+  chmodSync,
+  existsSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { basename, join, resolve } from "node:path";
+import { tmpdir } from "node:os";
 
 const ROOT = resolve(".");
 const ENV_PATH = resolve(ROOT, ".ftp-deploy.env");
 const DIST = resolve(ROOT, "dist");
+
+const ALLOWED_API_REMOTE_FILES = [
+  "api/send-form.php",
+  "api/crm-webhook.php",
+  "api/max-notify.php",
+  "api/logs/.htaccess",
+];
+const OPTIONAL_API_REMOTE_FILES = ["api/.htaccess"];
 
 function loadEnvFile(path) {
   if (!existsSync(path)) {
@@ -57,217 +74,163 @@ function runBuild(siteUrl) {
   });
 }
 
-function collectFiles(dir, base = dir) {
-  const files = [];
-  for (const entry of readdirSync(dir)) {
-    const full = join(dir, entry);
-    if (statSync(full).isDirectory()) {
-      files.push(...collectFiles(full, base));
-    } else {
-      files.push({
-        local: full,
-        remote: posix.join(relative(base, full).split("\\").join("/")),
-      });
+function lftpQuote(value) {
+  return `'${String(value).replace(/'/g, `'\\''`)}'`;
+}
+
+function normalizeServer(server) {
+  const trimmed = server.trim();
+  if (trimmed.startsWith("ftp://") || trimmed.startsWith("ftps://")) {
+    return trimmed;
+  }
+  return `ftp://${trimmed}`;
+}
+
+function normalizeRemoteDir(serverDir) {
+  const dir = (serverDir || "/public_html/").trim().replace(/\/+$/, "");
+  return dir || "/public_html";
+}
+
+function countDistFiles(dir) {
+  if (!existsSync(dir)) return 0;
+  let count = 0;
+  const stack = [dir];
+  while (stack.length) {
+    const current = stack.pop();
+    for (const entry of readdirSync(current, { withFileTypes: true })) {
+      const full = resolve(current, entry.name);
+      if (entry.isDirectory()) stack.push(full);
+      else if (entry.name !== ".DS_Store") count += 1;
     }
   }
-  return files;
+  return count;
 }
 
-const SKIP_REMOTE_FILES = new Set([".DS_Store"]);
-const OPTIONAL_REMOTE_FILES = new Set(["api/.htaccess", "api/logs/.htaccess"]);
-const ALLOWED_API_REMOTE_FILES = new Set([
-  "api/send-form.php",
-  "api/crm-webhook.php",
-  "api/max-notify.php",
-  "api/logs/.htaccess",
-]);
-const SKIP_REMOTE_PREFIXES = ["api/"];
-
-function collectDeployFiles() {
-  return collectFiles(DIST).filter((file) => {
-    if (SKIP_REMOTE_FILES.has(basename(file.local))) return false;
-    if (ALLOWED_API_REMOTE_FILES.has(file.remote)) return true;
-    return !SKIP_REMOTE_PREFIXES.some((prefix) => file.remote.startsWith(prefix));
-  });
-}
-
-function ftpUrl(server, remoteDir, remotePath) {
-  const dir = remoteDir.replace(/\/+$/, "");
-  const path = remotePath.startsWith("/") ? remotePath.slice(1) : remotePath;
-  return `ftp://${server}${dir}/${path}`;
-}
-
-function curlUpload({ server, user, password, remoteDir, local, remote, passive }) {
-  const url = ftpUrl(server, remoteDir, remote);
-  const args = [
-    "--silent",
-    "--show-error",
-    "--fail",
-    "--connect-timeout",
-    "30",
-    "--retry",
-    "2",
-    "--retry-delay",
-    "2",
-    "-u",
-    `${user}:${password}`,
-    "-T",
-    local,
+function buildLftpScript({ server, user, password, remoteDir, distPath }) {
+  const commands = [
+    "set cmd:fail-exit true",
+    "set cmd:verbose true",
+    "set ftp:ssl-allow no",
+    "set ftp:passive-mode true",
+    "set net:max-retries 3",
+    "set net:reconnect-interval-base 5",
+    "set net:reconnect-interval-multiplier 1",
+    `open -u ${lftpQuote(`${user},${password}`)} ${lftpQuote(normalizeServer(server))}`,
+    `cd ${lftpQuote(remoteDir)}`,
+    [
+      "mirror -R",
+      "--parallel=1",
+      "--verbose",
+      "--exclude-glob .DS_Store",
+      "--exclude-glob api/*",
+      lftpQuote(distPath),
+      ".",
+    ].join(" "),
+    "mkdir -f api",
+    "mkdir -f api/logs",
   ];
 
-  if (passive) {
-    args.push("--ftp-pasv");
-  } else {
-    args.push("--ftp-port", "-");
+  for (const remote of ALLOWED_API_REMOTE_FILES) {
+    const local = resolve(DIST, ...remote.split("/"));
+    commands.push(`put ${lftpQuote(local)} -o ${remote}`);
   }
 
-  args.push(url);
+  for (const remote of OPTIONAL_API_REMOTE_FILES) {
+    const local = resolve(DIST, ...remote.split("/"));
+    commands.push("set cmd:fail-exit false");
+    commands.push(`put ${lftpQuote(local)} -o ${remote}`);
+    commands.push("set cmd:fail-exit true");
+  }
 
+  commands.push("bye");
+  return `${commands.join("; ")}\n`;
+}
+
+function writeSecureLftpBatch(script) {
+  const dir = mkdtempSync(join(tmpdir(), "deploy-lftp-"));
+  chmodSync(dir, 0o700);
+  const scriptPath = join(dir, "upload.lftp");
+  writeFileSync(scriptPath, script, { mode: 0o600 });
+  return { dir, scriptPath };
+}
+
+async function ensureLftpAvailable() {
   return new Promise((resolvePromise, reject) => {
-    const proc = spawn("curl", args, { stdio: ["ignore", "pipe", "pipe"] });
-    let stderr = "";
-
-    proc.stderr.on("data", (chunk) => {
-      stderr += chunk.toString();
+    const proc = spawn("which", ["lftp"], { stdio: ["ignore", "pipe", "pipe"] });
+    let stdout = "";
+    proc.stdout.on("data", (chunk) => {
+      stdout += chunk.toString();
     });
-
     proc.on("error", reject);
     proc.on("exit", (code) => {
-      if (code === 0) resolvePromise();
-      else reject(new Error(stderr.trim() || `curl exit ${code}`));
+      if (code === 0 && stdout.trim()) {
+        resolvePromise(stdout.trim());
+      } else {
+        reject(
+          new Error(
+            "lftp не найден. Установите: brew install lftp (macOS) или apt-get install -y lftp (Linux).",
+          ),
+        );
+      }
     });
   });
 }
 
-async function ensureRemoteDir({ server, user, password, remoteDir, subdir, passive }) {
-  if (!subdir || subdir === ".") return;
+function runLftpUpload({ server, user, password, serverDir }) {
+  const remoteDir = normalizeRemoteDir(serverDir);
+  const script = buildLftpScript({ server, user, password, remoteDir, distPath: DIST });
+  const { dir, scriptPath } = writeSecureLftpBatch(script);
+  const fileCount = countDistFiles(DIST);
 
-  const parts = subdir.split("/").filter(Boolean);
-  let current = "";
+  console.log(
+    `[deploy] Загрузка dist/ → ${remoteDir} через lftp mirror -R (1 соединение, --parallel=1)`,
+  );
+  console.log(`[deploy] Файлов в dist/: ~${fileCount} (api/config.php на сервер не заливаем)`);
+  console.log(
+    "[deploy] api/: только send-form.php, crm-webhook.php, max-notify.php, logs/.htaccess",
+  );
+  console.log("[deploy] Запуск lftp...");
 
-  for (const part of parts) {
-    current = current ? `${current}/${part}` : part;
-    const url = `${ftpUrl(server, remoteDir, current)}/`;
-    const args = [
-      "--silent",
-      "--show-error",
-      "--connect-timeout",
-      "30",
-      "-u",
-      `${user}:${password}`,
-    ];
-
-    if (passive) args.push("--ftp-pasv");
-    args.push("--ftp-create-dirs", url);
-
-    await new Promise((resolvePromise, reject) => {
-      const proc = spawn("curl", args, { stdio: ["ignore", "pipe", "pipe"] });
-      let stderr = "";
-      proc.stderr?.on("data", (chunk) => {
-        stderr += chunk.toString();
-      });
-      proc.on("error", reject);
-      proc.on("exit", (code) => {
-        // Timeweb: 9 = directory exists or CWD ok — не фейлим MKD
-        if (code === 0 || code === 9) resolvePromise();
-        else reject(new Error(stderr.trim() || `mkdir ${current} exit ${code}`));
-      });
+  return new Promise((resolvePromise, reject) => {
+    const proc = spawn("lftp", ["-f", scriptPath], {
+      cwd: ROOT,
+      stdio: "inherit",
+      env: { ...process.env },
     });
-  }
-}
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function uploadFileWithRetry(params, maxRetries = 3) {
-  let lastError;
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      await curlUpload({ ...params, passive: true });
-      return;
-    } catch (err) {
-      lastError = err;
-      if (attempt < maxRetries) {
-        await sleep(1000 * attempt);
+    const cleanup = () => {
+      try {
+        rmSync(dir, { recursive: true, force: true });
+      } catch {
+        // ignore temp cleanup errors
       }
-    }
-  }
-  throw lastError ?? new Error("upload failed");
-}
+    };
 
-async function uploadDist({ server, user, password, serverDir }) {
-  if (!existsSync(DIST)) {
-    throw new Error("Папка dist/ не найдена. Сначала выполните сборку.");
-  }
-
-  const files = collectDeployFiles();
-  const remoteDir = (serverDir || "/public_html/").trim().replace(/\/+$/, "") || "/public_html";
-  const createdDirs = new Set();
-  const failed = [];
-
-  console.log(
-    `[deploy] Загрузка ${files.length} файлов в ${remoteDir} (curl passive, retry per file) ...`,
-  );
-  console.log(
-    "[deploy] api/: загружаем send-form.php и logs/.htaccess — config.php на сервере не трогаем.",
-  );
-
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    const remoteDirPart = posix.dirname(file.remote);
-    if (remoteDirPart !== ".") {
-      const parts = remoteDirPart.split("/").filter(Boolean);
-      for (let j = 1; j <= parts.length; j++) {
-        const partial = parts.slice(0, j).join("/");
-        if (!createdDirs.has(partial)) {
-          await ensureRemoteDir({
-            server,
-            user,
-            password,
-            remoteDir,
-            subdir: partial,
-            passive: true,
-          });
-          createdDirs.add(partial);
-        }
+    proc.on("error", (err) => {
+      cleanup();
+      if (err.code === "ENOENT") {
+        reject(
+          new Error(
+            "lftp не найден. Установите: brew install lftp (macOS) или apt-get install -y lftp (Linux).",
+          ),
+        );
+        return;
       }
-    }
+      reject(err);
+    });
 
-    process.stdout.write(`[deploy] [${i + 1}/${files.length}] ↑ ${file.remote}\n`);
-    try {
-      await uploadFileWithRetry({
-        server,
-        user,
-        password,
-        remoteDir,
-        local: file.local,
-        remote: file.remote,
-      });
-    } catch (err) {
-      if (OPTIONAL_REMOTE_FILES.has(file.remote)) {
-        console.warn(`[deploy] ⚠ пропущен ${file.remote}: ${err.message || err}`);
-        continue;
-      }
-      failed.push({ remote: file.remote, error: err.message || String(err) });
-      console.warn(`[deploy] ✗ ${file.remote}: ${err.message || err}`);
-    }
-
-    // Не забивать Timeweb частыми LOGIN — пауза между файлами
-    if (i < files.length - 1) {
-      await sleep(80);
-    }
-  }
-
-  if (failed.length > 0) {
-    throw new Error(
-      `Не загружено файлов: ${failed.length}. Первый: ${failed[0].remote} — ${failed[0].error}`,
-    );
-  }
+    proc.on("exit", (code) => {
+      cleanup();
+      if (code === 0) resolvePromise();
+      else reject(new Error(`lftp завершился с кодом ${code}`));
+    });
+  });
 }
 
 const skipBuildRequested =
   process.env.SKIP_BUILD === "1" || process.argv.includes("--skip-build");
+
+const OUTER_RETRY_DELAY_MS = Number(process.env.DEPLOY_OUTER_RETRY_DELAY_MS || 120_000);
 
 async function main() {
   const env = loadEnvFile(ENV_PATH);
@@ -276,6 +239,8 @@ async function main() {
   const user = requireEnv(env, "FTP_USERNAME");
   const password = requireEnv(env, "FTP_PASSWORD");
   const serverDir = env.FTP_SERVER_DIR?.trim() || "/public_html/";
+
+  await ensureLftpAvailable();
 
   if (skipBuildRequested) {
     if (!existsSync(DIST)) {
@@ -292,14 +257,16 @@ async function main() {
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
-      await uploadDist({ server, user, password, serverDir });
+      await runLftpUpload({ server, user, password, serverDir });
       console.log("[deploy] Готово. Проверьте сайт и sitemap.xml");
       return;
     } catch (err) {
       lastError = err;
       if (attempt < maxAttempts) {
-        console.warn(`[deploy] Попытка ${attempt}/${maxAttempts} не удалась, повтор через 3 с...`);
-        await new Promise((r) => setTimeout(r, 3000));
+        console.warn(
+          `[deploy] Попытка ${attempt}/${maxAttempts} не удалась, повтор через ${Math.round(OUTER_RETRY_DELAY_MS / 1000)} с...`,
+        );
+        await new Promise((r) => setTimeout(r, OUTER_RETRY_DELAY_MS));
       }
     }
   }
