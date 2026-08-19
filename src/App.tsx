@@ -27,6 +27,7 @@ const Dissociation = lazy(() => import("./pages/services/Dissociation"));
 const ComplexPtsd = lazy(() => import("./pages/services/ComplexPtsd"));
 const ParentsRelationship = lazy(() => import("./pages/services/ParentsRelationship"));
 const EmigrationStress = lazy(() => import("./pages/services/EmigrationStress"));
+const PsychologicalTrauma = lazy(() => import("./pages/services/PsychologicalTrauma"));
 const BlogIndex = lazy(() => import("./pages/blog/BlogIndex"));
 const BlogPost = lazy(() => import("./pages/blog/BlogPost"));
 
@@ -62,6 +63,7 @@ const App = () => (
           <Route path="/complex-ptsd" element={<ComplexPtsd />} />
           <Route path="/parents-relationship" element={<ParentsRelationship />} />
           <Route path="/emigration-stress" element={<EmigrationStress />} />
+          <Route path="/psychological-trauma" element={<PsychologicalTrauma />} />
           <Route path="/blog" element={<BlogIndex />} />
           <Route path="/blog/page/:pageNum" element={<BlogIndex />} />
           <Route path="/blog/:slug" element={<BlogPost />} />

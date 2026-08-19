@@ -6,6 +6,7 @@ import { getBlogRoutes } from "./blog-routes.mjs";
 export const STATIC_SITE_ROUTES = [
   "/",
   "/emdr-therapy",
+  "/psychological-trauma",
   "/panic-attacks",
   "/phobias",
   "/anxiety",

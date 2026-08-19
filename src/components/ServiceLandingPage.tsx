@@ -8,8 +8,33 @@ import {
 } from "@/lib/schema";
 import { type ServicePageConfig } from "@/lib/services/types";
 import { Link } from "react-router-dom";
+import { type SectionParagraphLink } from "@/lib/services/types";
 
 type ServiceLandingPageProps = ServicePageConfig;
+
+function renderParagraphWithLink(text: string, link?: Pick<SectionParagraphLink, "match" | "to">) {
+  if (!link) return text;
+
+  const regex =
+    typeof link.match === "string"
+      ? new RegExp(link.match.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+      : link.match;
+  const match = text.match(regex);
+  if (!match || match.index === undefined) return text;
+
+  const matched = match[0];
+  const start = match.index;
+
+  return (
+    <>
+      {text.slice(0, start)}
+      <Link to={link.to} className="text-primary underline-offset-2 hover:underline">
+        {matched}
+      </Link>
+      {text.slice(start + matched.length)}
+    </>
+  );
+}
 
 const ServiceLandingPage = ({
   slug,
@@ -56,11 +81,19 @@ const ServiceLandingPage = ({
           {sections.map((section) => (
             <section key={section.h2} className="mb-10">
               <h2 className="text-2xl font-semibold mb-4">{section.h2}</h2>
-              {section.paragraphs?.map((paragraph) => (
-                <p key={paragraph.slice(0, 40)} className="mb-4 leading-relaxed text-muted-foreground">
-                  {paragraph}
-                </p>
-              ))}
+              {section.paragraphs?.map((paragraph, paragraphIndex) => {
+                const linkConfig = section.paragraphLinks?.find(
+                  (item) => !item.trailing && item.paragraphIndex === paragraphIndex,
+                );
+                return (
+                  <p key={paragraph.slice(0, 40)} className="mb-4 leading-relaxed text-muted-foreground">
+                    {renderParagraphWithLink(
+                      paragraph,
+                      linkConfig ? { match: linkConfig.match, to: linkConfig.to } : undefined,
+                    )}
+                  </p>
+                );
+              })}
               {section.list && (
                 <ul className="list-disc pl-5 space-y-2 text-muted-foreground">
                   {section.list.map((item) => (
@@ -68,11 +101,19 @@ const ServiceLandingPage = ({
                   ))}
                 </ul>
               )}
-              {section.trailingParagraphs?.map((paragraph) => (
-                <p key={paragraph.slice(0, 40)} className="mt-4 leading-relaxed text-muted-foreground">
-                  {paragraph}
-                </p>
-              ))}
+              {section.trailingParagraphs?.map((paragraph, paragraphIndex) => {
+                const linkConfig = section.paragraphLinks?.find(
+                  (item) => item.trailing && item.paragraphIndex === paragraphIndex,
+                );
+                return (
+                  <p key={paragraph.slice(0, 40)} className="mt-4 leading-relaxed text-muted-foreground">
+                    {renderParagraphWithLink(
+                      paragraph,
+                      linkConfig ? { match: linkConfig.match, to: linkConfig.to } : undefined,
+                    )}
+                  </p>
+                );
+              })}
             </section>
           ))}
 

@@ -1,10 +1,18 @@
 import { SITE_URL } from "@/lib/site";
 
+export type SectionParagraphLink = {
+  paragraphIndex: number;
+  match: string | RegExp;
+  to: string;
+  trailing?: boolean;
+};
+
 export type ServiceSection = {
   h2: string;
   paragraphs?: string[];
   list?: string[];
   trailingParagraphs?: string[];
+  paragraphLinks?: SectionParagraphLink[];
 };
 
 export type ServiceFaqItem = {
