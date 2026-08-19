@@ -11,7 +11,10 @@ const Hero = () => {
         <div className="inline-block bg-primary/10 border border-primary/25 text-primary text-xs font-semibold tracking-[0.12em] uppercase px-4 py-1.5 rounded-full mb-6 opacity-0 animate-[fadeUp_0.6s_0.1s_forwards]">
           Психолог · Онлайн и Очно
         </div>
-        <h1 className="text-[clamp(32px,4.5vw,64px)] font-black leading-[1.08] mb-5 tracking-tight opacity-0 animate-[fadeUp_0.7s_0.2s_forwards]">
+        <p className="text-[clamp(28px,5.5vw,45px)] font-semibold text-primary leading-tight mb-6 opacity-0 animate-[fadeUp_0.7s_0.15s_forwards]">
+          Наталья Морозова · Психолог, EMDR-терапевт
+        </p>
+        <h1 className="text-[clamp(18px,2vw,24px)] font-medium leading-snug text-foreground/75 max-w-[600px] mb-5 opacity-0 animate-[fadeUp_0.7s_0.2s_forwards]">
           Как избавиться от тревоги, панических атак и травмы с помощью EMDR-терапии?
         </h1>
         <p className="text-[17px] leading-relaxed text-foreground/90 max-w-[560px] mb-4 opacity-0 animate-[fadeUp_0.7s_0.25s_forwards]">
@@ -19,22 +22,21 @@ const Hero = () => {
           рекомендован ВОЗ для работы с ПТСР, паническими атаками и фобиями. Переработка травматического опыта на
           нейробиологическом уровне за 1–6 сессий. Очные кабинеты у м. Тургеневская и м. Ботанический сад.
         </p>
-        <p className="text-[15px] font-semibold text-primary mb-2 opacity-0 animate-[fadeUp_0.7s_0.28s_forwards]">
-          Наталья Морозова · Психолог, EMDR-терапевт
-        </p>
         <h2 className="text-[clamp(18px,2vw,24px)] font-medium leading-snug text-foreground/75 max-w-[600px] mb-6 opacity-0 animate-[fadeUp_0.7s_0.3s_forwards]">
           Терапия для тех, кто устал жить в постоянном напряжении
         </h2>
         <p className="text-[17px] leading-relaxed text-muted-foreground max-w-[500px] mb-10 opacity-0 animate-[fadeUp_0.7s_0.35s_forwards]">
           Помогаю найти связь между вашими симптомами и тем, что происходит в жизни — без общих фраз и бесконечных разговоров. Конкретные точки изменений. В вашем ритме.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center opacity-0 animate-[fadeUp_0.7s_0.45s_forwards]">
-          <a href="#session" onClick={scrollToSession} className="bg-primary text-primary-foreground px-9 py-4 rounded-[10px] text-[15px] font-bold hover:bg-accent hover:translate-y-[-2px] hover:shadow-[var(--shadow-primary)] transition-all inline-flex items-center gap-2 justify-center">
-            Записаться на бесплатную 30 минутную пробную сессию
-          </a>
-          <a href="#about" className="bg-foreground/[0.06] text-foreground px-9 py-4 rounded-[10px] text-[15px] font-semibold border border-border hover:bg-foreground/10 transition-all text-center">
-            Узнать больше
-          </a>
+        <div className="w-full flex justify-center opacity-0 animate-[fadeUp_0.7s_0.45s_forwards]">
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+            <a href="#session" onClick={scrollToSession} className="bg-primary text-primary-foreground px-9 py-4 rounded-[10px] text-[15px] font-bold hover:bg-accent hover:translate-y-[-2px] hover:shadow-[var(--shadow-primary)] transition-all inline-flex items-center gap-2 justify-center text-center">
+              Записаться на бесплатную 30 минутную пробную сессию
+            </a>
+            <a href="#about" className="bg-foreground/[0.06] text-foreground px-9 py-4 rounded-[10px] text-[15px] font-semibold border border-border hover:bg-foreground/10 transition-all text-center">
+              Узнать больше
+            </a>
+          </div>
         </div>
       </div>
 
