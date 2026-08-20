@@ -6,7 +6,8 @@
 
 - React 18, TypeScript, Vite, Tailwind CSS
 - PHP + MySQL на Timeweb (форма заявок)
-- GitHub Actions → FTP деплой на Timeweb
+- **Git:** репозиторий на GitHub (push в `main` — только код, без автодеплоя)
+- **Деплой:** локально через lftp (`npm run deploy`), GitHub Actions отключён
 
 ## Локальная разработка
 
@@ -52,26 +53,30 @@ npm run dev   # http://localhost:8080
 
 ## Деплой
 
-### GitHub Secrets
+Автодеплой через GitHub Actions **отключён** (см. `.github/workflows/deploy.yml`).
 
-| Secret | Описание |
-|--------|----------|
-| `VITE_SITE_URL` | URL сайта |
+### Локальный деплой (lftp)
+
+1. Скопируйте `.ftp-deploy.env.example` → `.ftp-deploy.env` и заполните доступ Timeweb.
+2. Установите `lftp` (на macOS: `brew install lftp`).
+3. Запустите:
+
+```sh
+npm run deploy          # сборка + загрузка dist/ на сервер
+npm run deploy:upload   # только FTP, если dist/ уже собран
+```
+
+Скрипт `scripts/deploy-ftp.mjs` заливает `dist/` через `lftp mirror -R` в `public_html/`.
+
+| Переменная в `.ftp-deploy.env` | Описание |
+|--------------------------------|----------|
+| `VITE_SITE_URL` | Публичный URL сайта (для sitemap и meta при сборке) |
 | `FTP_SERVER` | Хост FTP Timeweb |
 | `FTP_USERNAME` | Логин FTP |
 | `FTP_PASSWORD` | Пароль FTP |
-| `FTP_SERVER_DIR` | Путь к сайту (`/public_html/`) |
+| `FTP_SERVER_DIR` | Путь к сайту (обычно `/public_html/`) |
 
-При push в `main` сайт собирается и загружается автоматически.
-
-> **Важно:** `config.php` не перезаписывается при деплое — настройте его один раз вручную на сервере.
-
-### Ручной деплой
-
-```sh
-npm run build
-# Загрузите dist/ в public_html/
-```
+> **Важно:** `api/config.php` на сервере не перезаписывается при деплое — настройте его один раз вручную.
 
 ## Просмотр заявок
 
