@@ -76,15 +76,15 @@ const ServiceLandingPage = ({
 
           <p className="geo-direct-answer text-lg leading-relaxed mb-5 text-foreground/90">{geoBlock}</p>
 
-          <div className="mb-8 flex flex-wrap items-center gap-3 text-sm">
+          <div className="mb-8 flex flex-wrap items-center gap-3">
             <Link
               to="/#session"
-              className="inline-flex items-center gap-1.5 font-semibold text-primary hover:text-accent transition-colors"
+              className="inline-flex items-center gap-1.5 bg-foreground/[0.06] text-foreground px-5 py-2.5 rounded-[10px] text-sm font-semibold border border-border hover:bg-foreground/10 transition-all"
             >
               Записаться на бесплатную пробную сессию
               <span aria-hidden="true">→</span>
             </Link>
-            <span className="text-muted-foreground">· 30 минут, онлайн</span>
+            <span className="text-sm text-muted-foreground">30 минут, онлайн</span>
           </div>
 
           <p className="leading-relaxed mb-8 text-muted-foreground">{intro}</p>
