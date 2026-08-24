@@ -79,10 +79,9 @@ const ServiceLandingPage = ({
           <div className="mb-8 flex flex-wrap items-center gap-3">
             <Link
               to="/#session"
-              className="inline-flex items-center gap-1.5 bg-foreground/[0.06] text-foreground px-5 py-2.5 rounded-[10px] text-sm font-semibold border border-border hover:bg-foreground/10 transition-all"
+              className="bg-primary text-primary-foreground px-9 py-4 rounded-[10px] text-[15px] font-bold hover:bg-accent hover:translate-y-[-2px] hover:shadow-[var(--shadow-primary)] transition-all inline-flex items-center gap-2 justify-center text-center"
             >
               Записаться на бесплатную пробную сессию
-              <span aria-hidden="true">→</span>
             </Link>
             <span className="text-sm text-muted-foreground">30 минут, онлайн</span>
           </div>
