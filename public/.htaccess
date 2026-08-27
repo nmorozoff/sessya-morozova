@@ -2,6 +2,9 @@
 RewriteEngine On
 RewriteBase /
 
+# amoCRM OAuth redirect URI (/amocrm/callback без каталога — иначе 301 на trailing slash)
+RewriteRule ^amocrm/callback/?$ amocrm/callback.php [L]
+
 RewriteCond %{HTTP_HOST} ^morozovanatalia\.ru$ [NC]
 RewriteRule ^(.*)$ https://www.morozovanatalia.ru/$1 [R=301,L,QSA]
 
