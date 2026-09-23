@@ -16,23 +16,41 @@ const SITE_URL = (process.env.VITE_SITE_URL || "https://www.morozovanatalia.ru")
   .replace(/^http:\/\//i, "https://")
   .replace(/^https:\/\/morozovanatalia\.ru$/i, "https://www.morozovanatalia.ru");
 
+const MIN_BLOG_H2 = Number(process.env.PRERENDER_BLOG_MIN_H2 || 5);
+const MIN_BLOG_BODY_CHARS = Number(process.env.PRERENDER_BLOG_MIN_BODY_CHARS || 2000);
+const MIN_BLOG_ARTICLE_CHARS = Number(process.env.PRERENDER_BLOG_MIN_CHARS || 3000);
+
 function canonicalForRoute(route) {
   return route === "/" ? `${SITE_URL}/` : `${SITE_URL}${route}`;
+}
+
+function isBlogPostRoute(route) {
+  return route.startsWith("/blog/") && route !== "/blog" && !route.startsWith("/blog/page/");
 }
 
 function startPreview() {
   return new Promise((resolvePromise, reject) => {
     const proc = spawn(
       process.platform === "win32" ? "npx.cmd" : "npx",
-      ["serve", DIST, "-s", "-l", String(PORT), "--no-clipboard"],
-      { stdio: ["ignore", "pipe", "pipe"] },
+      ["vite", "preview", "--host", "127.0.0.1", "--port", String(PORT), "--strictPort"],
+      {
+        cwd: resolve(import.meta.dirname, ".."),
+        stdio: ["ignore", "pipe", "pipe"],
+        env: { ...process.env, VITE_SITE_URL: SITE_URL },
+      },
     );
 
     let ready = false;
 
     const onData = (data) => {
       const text = data.toString();
-      if (!ready && (text.includes("Accepting connections") || text.includes(BASE))) {
+      if (
+        !ready &&
+        (text.includes(BASE) ||
+          text.includes(`localhost:${PORT}`) ||
+          text.includes("Local:") ||
+          text.includes("ready in"))
+      ) {
         ready = true;
         resolvePromise(proc);
       }
@@ -42,11 +60,11 @@ function startPreview() {
     proc.stderr.on("data", onData);
     proc.on("error", reject);
     proc.on("exit", (code) => {
-      if (!ready) reject(new Error(`Preview server exited with code ${code ?? "unknown"}`));
+      if (!ready) reject(new Error(`vite preview exited with code ${code ?? "unknown"}`));
     });
 
     setTimeout(() => {
-      if (!ready) reject(new Error("Preview server did not start within 60s"));
+      if (!ready) reject(new Error("vite preview did not start within 60s"));
     }, 60_000);
   });
 }
@@ -56,43 +74,67 @@ function outputPath(route) {
   return resolve(DIST, route.slice(1), "index.html");
 }
 
+async function waitForBlogPostContent(page, route) {
+  await page.waitForFunction(
+    () => !document.body?.innerText?.includes("Загрузка статьи"),
+    { timeout: 90_000 },
+  );
+
+  await page.waitForSelector('[data-blog-article-body][data-blog-body-ready="true"]', {
+    timeout: 90_000,
+  });
+
+  const stats = await page.evaluate(() => {
+    const article = document.querySelector("article");
+    const body = document.querySelector("[data-blog-article-body][data-blog-body-ready='true']");
+    const h2InBody = body ? body.querySelectorAll("h2").length : 0;
+    const h2InArticle = article ? article.querySelectorAll("h2").length : 0;
+    const bodyTextLen = body?.innerText?.trim().length ?? 0;
+    const articleTextLen = article?.innerText?.trim().length ?? 0;
+    return { h2InBody, h2InArticle, bodyTextLen, articleTextLen };
+  });
+
+  const h2 = Math.max(stats.h2InBody, stats.h2InArticle);
+  if (h2 < MIN_BLOG_H2) {
+    throw new Error(
+      `[prerender] ${route}: только ${h2} h2 в body/article (нужно ≥${MIN_BLOG_H2}) — fetchBlogArticle/bodyHtml не успели`,
+    );
+  }
+  if (stats.bodyTextLen < MIN_BLOG_BODY_CHARS) {
+    throw new Error(
+      `[prerender] ${route}: body ${stats.bodyTextLen} символов (нужно ≥${MIN_BLOG_BODY_CHARS})`,
+    );
+  }
+  if (stats.articleTextLen < MIN_BLOG_ARTICLE_CHARS) {
+    throw new Error(
+      `[prerender] ${route}: article ${stats.articleTextLen} символов (нужно ≥${MIN_BLOG_ARTICLE_CHARS})`,
+    );
+  }
+
+  console.log(
+    `[prerender] ${route} body OK: h2=${stats.h2InBody}, body=${stats.bodyTextLen}, article=${stats.articleTextLen}`,
+  );
+}
+
 async function waitForPageContent(page, route) {
   const expectedCanonical = canonicalForRoute(route);
 
-  const isBlogPost =
-    route.startsWith("/blog/") && route !== "/blog" && !route.startsWith("/blog/page/");
-
   if (route === "/") {
-    await page.waitForSelector("#session, [data-hero-section]", { timeout: 60_000 }).catch(() => {});
+    await page.waitForSelector("#session, [data-hero-section]", { timeout: 60_000 });
     await page.waitForSelector("h1", { timeout: 60_000 });
-  } else if (isBlogPost) {
-    await page
-      .waitForSelector("[data-blog-article-body]", { timeout: 90_000 })
-      .catch(() => {});
-    await page
-      .waitForFunction(
-        () => {
-          const el = document.querySelector("[data-blog-article-body]");
-          return el && (el.textContent?.trim().length ?? 0) > 200;
-        },
-        { timeout: 90_000 },
-      )
-      .catch(() => {});
-    await page.waitForSelector("article h1", { timeout: 60_000 }).catch(() => {});
+  } else if (isBlogPostRoute(route)) {
+    await waitForBlogPostContent(page, route);
+    await page.waitForSelector("article h1", { timeout: 60_000 });
   } else {
     await page.waitForSelector("h1", { timeout: 60_000 });
   }
 
-  await page
-    .waitForFunction(
-      () => !document.body?.innerText?.includes("Загрузка..."),
-      { timeout: 30_000 },
-    )
-    .catch(() => {});
+  await page.waitForFunction(
+    () => !document.body?.innerText?.includes("Загрузка..."),
+    { timeout: 30_000 },
+  );
 
-  await page
-    .waitForSelector('script[type="application/ld+json"]', { timeout: 30_000 })
-    .catch(() => {});
+  await page.waitForSelector('script[type="application/ld+json"]', { timeout: 30_000 }).catch(() => {});
 
   await page
     .waitForFunction(
@@ -107,7 +149,7 @@ async function waitForPageContent(page, route) {
       console.warn(`[prerender] Canonical mismatch on ${route}, expected ${expectedCanonical}`);
     });
 
-  await new Promise((r) => setTimeout(r, 500));
+  await new Promise((r) => setTimeout(r, 300));
 }
 
 async function launchBrowser(puppeteer) {
@@ -146,6 +188,7 @@ async function prerender() {
   await new Promise((r) => setTimeout(r, 2000));
 
   const browser = await launchBrowser(puppeteer);
+  const failures = [];
 
   try {
     for (const route of routes) {
@@ -153,7 +196,7 @@ async function prerender() {
       console.log(`[prerender] ${route}`);
       const page = await browser.newPage();
       try {
-        await page.goto(url, { waitUntil: "domcontentloaded", timeout: 90_000 });
+        await page.goto(url, { waitUntil: "domcontentloaded", timeout: 120_000 });
         await waitForPageContent(page, route);
 
         const html = await page.content();
@@ -161,7 +204,12 @@ async function prerender() {
         mkdirSync(dirname(out), { recursive: true });
         writeFileSync(out, html, "utf-8");
       } catch (err) {
-        console.warn(`[prerender] Failed ${route}:`, err instanceof Error ? err.message : err);
+        const message = err instanceof Error ? err.message : String(err);
+        console.error(`[prerender] FAILED ${route}: ${message}`);
+        failures.push({ route, message });
+        if (isBlogPostRoute(route)) {
+          throw new Error(`Blog post prerender blocked: ${route} — ${message}`);
+        }
       } finally {
         await page.close();
       }
@@ -175,11 +223,15 @@ async function prerender() {
     throw err;
   }
 
+  if (failures.length > 0) {
+    console.error(`[prerender] ${failures.length} route(s) failed (non-blog)`);
+    process.exit(1);
+  }
+
   console.log("[prerender] Done.");
 }
 
 prerender().catch((err) => {
-  console.error("[prerender] Failed:", err);
-  console.warn("[prerender] Continuing with Vite SPA build (.htaccess fallback).");
-  process.exit(0);
+  console.error("[prerender] Failed:", err instanceof Error ? err.message : err);
+  process.exit(1);
 });

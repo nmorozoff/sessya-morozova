@@ -7,7 +7,7 @@
     "dev": "vite",
     "prebuild": "node scripts/generate-blog-manifest.mjs && node scripts/generate-sitemap.mjs",
     "build": "vite build",
-    "postbuild": "node scripts/prerender.mjs",
+    "postbuild": "node scripts/prerender.mjs && node scripts/blog-prerender-gate.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
