@@ -1,4 +1,4 @@
-import { SITE_URL } from "@/lib/site";
+import { SITE_URL, canonicalUrl } from "@/lib/site";
 
 export const EMDR_TREATMENT = {
   "@type": "PsychologicalTreatment" as const,
@@ -6,7 +6,7 @@ export const EMDR_TREATMENT = {
   alternateName: "ДПДГ",
   description:
     "Нейробиологический метод психотерапии, рекомендованный ВОЗ для работы с ПТСР. Переработка травматического опыта через билатеральную стимуляцию.",
-  url: `${SITE_URL}/emdr-therapy`,
+  url: canonicalUrl("/emdr-therapy"),
 };
 
 export const PRICING_OFFERS = [
@@ -46,7 +46,7 @@ export const personSchema = {
   "@id": `${SITE_URL}/#person`,
   name: "Наталья Морозова",
   jobTitle: "EMDR-терапевт (ДПДГ)",
-  url: SITE_URL,
+  url: canonicalUrl("/"),
   image: `${SITE_URL}/images/about-photo-dark.jpg`,
   knowsAbout: [
     "EMDR-терапия",
@@ -103,7 +103,7 @@ export const professionalServiceSchema = {
   "@id": `${SITE_URL}/#service`,
   name: "Психологическое консультирование — Наталья Морозова",
   serviceType: "Психологическое консультирование",
-  url: SITE_URL,
+  url: canonicalUrl("/"),
   description:
     "EMDR-терапия (ДПДГ) и психологическое консультирование онлайн и очно в Москве. Работа с тревогой, травмой, фобиями, выгоранием.",
   provider: { "@id": `${SITE_URL}/#person` },
@@ -164,7 +164,7 @@ export function buildFaqPageSchema(items: { question: string; answer: string }[]
 export const faqPageSchema = buildFaqPageSchema(homepageFaqItems);
 
 export function buildBreadcrumbSchema(pageName: string, path: string) {
-  const pageUrl = `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+  const pageUrl = canonicalUrl(path);
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -186,13 +186,13 @@ export function buildBreadcrumbSchema(pageName: string, path: string) {
 }
 
 export function buildBlogPostBreadcrumbSchema(title: string, slug: string) {
-  const postUrl = `${SITE_URL}/blog/${slug}`;
+  const postUrl = canonicalUrl(`/blog/${slug}`);
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Главная", item: `${SITE_URL}/` },
-      { "@type": "ListItem", position: 2, name: "Блог", item: `${SITE_URL}/blog` },
+      { "@type": "ListItem", position: 2, name: "Блог", item: canonicalUrl("/blog") },
       { "@type": "ListItem", position: 3, name: title, item: postUrl },
     ],
   };
@@ -202,7 +202,7 @@ export function buildBlogIndexSchema(
   posts: { slug: string; title: string; publishedAt: string }[],
   path: string,
 ) {
-  const pageUrl = `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+  const pageUrl = canonicalUrl(path);
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -215,14 +215,14 @@ export function buildBlogIndexSchema(
     hasPart: posts.map((post) => ({
       "@type": "BlogPosting",
       headline: post.title,
-      url: `${SITE_URL}/blog/${post.slug}`,
+      url: canonicalUrl(`/blog/${post.slug}`),
       datePublished: post.publishedAt,
     })),
   };
 }
 
 export function webPageSchema(name: string, description: string, path: string) {
-  const pageUrl = `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+  const pageUrl = canonicalUrl(path);
   return {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -254,7 +254,7 @@ export function medicalConditionSchema(
     url: pageUrl,
     possibleTreatment: {
       ...EMDR_TREATMENT,
-      url: `${SITE_URL}/emdr-therapy`,
+      url: canonicalUrl("/emdr-therapy"),
     },
   };
 }

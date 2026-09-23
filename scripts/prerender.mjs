@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { SITE_ROUTES } from "./routes.mjs";
+import { canonicalLoc, normalizeSiteUrl, withTrailingSlash } from "./url-utils.mjs";
 
 if (process.env.SKIP_PRERENDER === "1" || process.env.EXCALIBUR_REACT_SKIP_PRERENDER === "yes") {
   console.log("[prerender] SKIP_PRERENDER — пропуск (vite dist без puppeteer)");
@@ -11,17 +12,14 @@ if (process.env.SKIP_PRERENDER === "1" || process.env.EXCALIBUR_REACT_SKIP_PRERE
 const DIST = resolve("dist");
 const PORT = 4173;
 const BASE = `http://127.0.0.1:${PORT}`;
-const SITE_URL = (process.env.VITE_SITE_URL || "https://www.morozovanatalia.ru")
-  .replace(/\/$/, "")
-  .replace(/^http:\/\//i, "https://")
-  .replace(/^https:\/\/morozovanatalia\.ru$/i, "https://www.morozovanatalia.ru");
+const SITE_URL = normalizeSiteUrl(process.env.VITE_SITE_URL);
 
 const MIN_BLOG_H2 = Number(process.env.PRERENDER_BLOG_MIN_H2 || 5);
 const MIN_BLOG_BODY_CHARS = Number(process.env.PRERENDER_BLOG_MIN_BODY_CHARS || 2000);
 const MIN_BLOG_ARTICLE_CHARS = Number(process.env.PRERENDER_BLOG_MIN_CHARS || 3000);
 
 function canonicalForRoute(route) {
-  return route === "/" ? `${SITE_URL}/` : `${SITE_URL}${route}`;
+  return canonicalLoc(SITE_URL, route);
 }
 
 function isBlogPostRoute(route) {
@@ -192,7 +190,7 @@ async function prerender() {
 
   try {
     for (const route of routes) {
-      const url = `${BASE}${route}`;
+      const url = `${BASE}${withTrailingSlash(route)}`;
       console.log(`[prerender] ${route}`);
       const page = await browser.newPage();
       try {

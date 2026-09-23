@@ -40,11 +40,13 @@ export function getAllSiteRoutes(siteRoutes, manifest) {
  * @returns {{ kind: "index"; page: number } | { kind: "post"; slug: string } | null}
  */
 export function parseBlogRoute(route) {
-  if (route === "/blog") {
+  const normalized = route !== "/" && route.endsWith("/") ? route.slice(0, -1) : route;
+
+  if (normalized === "/blog") {
     return { kind: "index", page: 1 };
   }
 
-  const pageMatch = route.match(/^\/blog\/page\/(\d+)$/);
+  const pageMatch = normalized.match(/^\/blog\/page\/(\d+)$/);
   if (pageMatch) {
     const page = Number.parseInt(pageMatch[1], 10);
     if (page >= 2) {
@@ -53,7 +55,7 @@ export function parseBlogRoute(route) {
     return null;
   }
 
-  const postMatch = route.match(/^\/blog\/([^/]+)$/);
+  const postMatch = normalized.match(/^\/blog\/([^/]+)$/);
   if (postMatch && postMatch[1] !== "page") {
     return { kind: "post", slug: postMatch[1] };
   }

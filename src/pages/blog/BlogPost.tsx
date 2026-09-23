@@ -8,6 +8,7 @@ import { usePrerenderBlog } from "@/lib/blog/context";
 import { findBlogPost, formatBlogDate } from "@/lib/blog/manifest";
 import { buildBlogPostingSchema } from "@/lib/blog/schema";
 import { buildBlogPostBreadcrumbSchema } from "@/lib/schema";
+import { sitePath } from "@/lib/site";
 import type { BlogArticleData } from "@/lib/blog/types";
 
 const BlogPost = () => {
@@ -41,7 +42,7 @@ const BlogPost = () => {
     };
   }, [article?.slug, slug]);
 
-  const path = `/blog/${slug}`;
+  const path = sitePath(`/blog/${slug}`);
   const title = article?.title || manifestPost?.title || "Статья";
   const description = article?.description || manifestPost?.description || "";
   const pageTitle = title;
@@ -66,7 +67,7 @@ const BlogPost = () => {
           <BlogBackLink />
           <h1 className="text-3xl font-bold mb-4">Статья не найдена</h1>
           <p className="text-muted-foreground mb-6">Возможно, материал был перемещён или ещё не опубликован.</p>
-          <Link to="/blog" className="text-primary font-semibold hover:text-accent transition-colors">
+          <Link to="/blog/" className="text-primary font-semibold hover:text-accent transition-colors">
             Перейти в блог →
           </Link>
         </div>

@@ -3,17 +3,17 @@ import { Link, useLocation } from "react-router-dom";
 import { scrollToSession } from "@/lib/scrollToSession";
 
 const SERVICE_LINKS = [
-  { to: "/emdr-therapy", label: "EMDR-терапия" },
-  { to: "/panic-attacks", label: "Панические атаки" },
-  { to: "/phobias", label: "Фобии и страхи" },
-  { to: "/anxiety", label: "Тревожность и ГТР" },
-  { to: "/psychosomatics", label: "Психосоматика" },
-  { to: "/grief", label: "Горевание и потеря" },
-  { to: "/divorce", label: "Развод и расставание" },
-  { to: "/emotional-abuse", label: "Эмоциональное насилие" },
-  { to: "/sexual-abuse", label: "Сексуальное насилие" },
-  { to: "/eating-disorders", label: "РПП" },
-  { to: "/business-psychology", label: "Бизнес-психология" },
+  { to: "/emdr-therapy/", label: "EMDR-терапия" },
+  { to: "/panic-attacks/", label: "Панические атаки" },
+  { to: "/phobias/", label: "Фобии и страхи" },
+  { to: "/anxiety/", label: "Тревожность и ГТР" },
+  { to: "/psychosomatics/", label: "Психосоматика" },
+  { to: "/grief/", label: "Горевание и потеря" },
+  { to: "/divorce/", label: "Развод и расставание" },
+  { to: "/emotional-abuse/", label: "Эмоциональное насилие" },
+  { to: "/sexual-abuse/", label: "Сексуальное насилие" },
+  { to: "/eating-disorders/", label: "РПП" },
+  { to: "/business-psychology/", label: "Бизнес-психология" },
 ];
 
 const Navbar = () => {
@@ -49,7 +49,7 @@ const Navbar = () => {
         <Link to="/#pricing" className={navLinkClass}>
           Форматы
         </Link>
-        <Link to="/blog" className={navLinkClass}>
+        <Link to="/blog/" className={navLinkClass}>
           Блог
         </Link>
 

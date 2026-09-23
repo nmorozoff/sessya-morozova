@@ -1,4 +1,5 @@
 import blogManifest from "@/generated/blog-manifest.json";
+import { sitePath } from "@/lib/site";
 import type { BlogManifest, BlogPostMeta } from "./types";
 
 export const BLOG_MANIFEST = blogManifest as BlogManifest;
@@ -15,7 +16,7 @@ export function getBlogPostsForPage(page: number, posts: BlogPostMeta[] = BLOG_M
 }
 
 export function blogIndexPath(page: number): string {
-  return page <= 1 ? "/blog" : `/blog/page/${page}`;
+  return page <= 1 ? sitePath("/blog") : sitePath(`/blog/page/${page}`);
 }
 
 export function formatBlogDate(isoDate: string): string {

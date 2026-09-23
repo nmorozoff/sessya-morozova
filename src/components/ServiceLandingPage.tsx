@@ -6,6 +6,7 @@ import {
   buildFaqPageSchema,
   webPageSchema,
 } from "@/lib/schema";
+import { sitePath } from "@/lib/site";
 import { type ServicePageConfig } from "@/lib/services/types";
 import { Link } from "react-router-dom";
 import { type SectionParagraphLink } from "@/lib/services/types";
@@ -48,7 +49,7 @@ const ServiceLandingPage = ({
   table,
   faq,
 }: ServiceLandingPageProps) => {
-  const path = `/${slug}`;
+  const path = sitePath(`/${slug}`);
   const pageSchema = webPageSchema(h1, description, path);
   const faqSchema = buildFaqPageSchema(faq);
   const breadcrumbSchema = buildBreadcrumbSchema(breadcrumb, path);
@@ -178,7 +179,7 @@ const ServiceLandingPage = ({
               Записаться на бесплатную 30-минутную сессию
             </Link>
             <Link
-              to="/emdr-therapy"
+              to="/emdr-therapy/"
               className="inline-flex items-center justify-center border border-border px-6 py-3 rounded-lg font-semibold hover:bg-muted transition-colors"
             >
               Подробнее об EMDR →

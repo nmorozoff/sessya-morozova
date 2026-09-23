@@ -45,32 +45,32 @@ const App = () => (
         <YandexRotorReady />
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/emdr-therapy" element={<EmdrTherapy />} />
-          <Route path="/panic-attacks" element={<PanicAttacks />} />
-          <Route path="/phobias" element={<Phobias />} />
-          <Route path="/anxiety" element={<Anxiety />} />
-          <Route path="/grief" element={<Grief />} />
-          <Route path="/divorce" element={<Divorce />} />
-          <Route path="/sexual-abuse" element={<SexualAbuse />} />
-          <Route path="/emotional-abuse" element={<EmotionalAbuse />} />
-          <Route path="/eating-disorders" element={<EatingDisorders />} />
-          <Route path="/psychosomatics" element={<Psychosomatics />} />
-          <Route path="/business-psychology" element={<BusinessPsychology />} />
-          <Route path="/ptsd" element={<Ptsd />} />
-          <Route path="/ocd" element={<Ocd />} />
-          <Route path="/burnout" element={<Burnout />} />
-          <Route path="/dissociation" element={<Dissociation />} />
-          <Route path="/complex-ptsd" element={<ComplexPtsd />} />
-          <Route path="/parents-relationship" element={<ParentsRelationship />} />
-          <Route path="/emigration-stress" element={<EmigrationStress />} />
-          <Route path="/psychological-trauma" element={<PsychologicalTrauma />} />
-          <Route path="/blog" element={<BlogIndex />} />
-          <Route path="/blog/page/:pageNum" element={<BlogIndex />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/advertising-consent" element={<AdvertisingConsent />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/offer" element={<Offer />} />
+          <Route path="/emdr-therapy/" element={<EmdrTherapy />} />
+          <Route path="/panic-attacks/" element={<PanicAttacks />} />
+          <Route path="/phobias/" element={<Phobias />} />
+          <Route path="/anxiety/" element={<Anxiety />} />
+          <Route path="/grief/" element={<Grief />} />
+          <Route path="/divorce/" element={<Divorce />} />
+          <Route path="/sexual-abuse/" element={<SexualAbuse />} />
+          <Route path="/emotional-abuse/" element={<EmotionalAbuse />} />
+          <Route path="/eating-disorders/" element={<EatingDisorders />} />
+          <Route path="/psychosomatics/" element={<Psychosomatics />} />
+          <Route path="/business-psychology/" element={<BusinessPsychology />} />
+          <Route path="/ptsd/" element={<Ptsd />} />
+          <Route path="/ocd/" element={<Ocd />} />
+          <Route path="/burnout/" element={<Burnout />} />
+          <Route path="/dissociation/" element={<Dissociation />} />
+          <Route path="/complex-ptsd/" element={<ComplexPtsd />} />
+          <Route path="/parents-relationship/" element={<ParentsRelationship />} />
+          <Route path="/emigration-stress/" element={<EmigrationStress />} />
+          <Route path="/psychological-trauma/" element={<PsychologicalTrauma />} />
+          <Route path="/blog/" element={<BlogIndex />} />
+          <Route path="/blog/page/:pageNum/" element={<BlogIndex />} />
+          <Route path="/blog/:slug/" element={<BlogPost />} />
+          <Route path="/privacy/" element={<Privacy />} />
+          <Route path="/advertising-consent/" element={<AdvertisingConsent />} />
+          <Route path="/privacy-policy/" element={<PrivacyPolicy />} />
+          <Route path="/offer/" element={<Offer />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

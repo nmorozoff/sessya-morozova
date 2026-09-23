@@ -26,17 +26,17 @@ const NotFound = () => {
               </Link>
             </li>
             <li>
-              <Link to="/emdr-therapy" className="text-primary underline hover:text-primary/90">
+              <Link to="/emdr-therapy/" className="text-primary underline hover:text-primary/90">
                 EMDR-терапия
               </Link>
             </li>
             <li>
-              <Link to="/panic-attacks" className="text-primary underline hover:text-primary/90">
+              <Link to="/panic-attacks/" className="text-primary underline hover:text-primary/90">
                 Панические атаки — как я работаю
               </Link>
             </li>
             <li>
-              <Link to="/business-psychology" className="text-primary underline hover:text-primary/90">
+              <Link to="/business-psychology/" className="text-primary underline hover:text-primary/90">
                 Бизнес-психология
               </Link>
             </li>

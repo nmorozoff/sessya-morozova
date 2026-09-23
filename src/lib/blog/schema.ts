@@ -1,5 +1,5 @@
 import type { BlogArticleData, BlogPostMeta } from "./types";
-import { SITE_URL } from "@/lib/site";
+import { SITE_URL, canonicalUrl } from "@/lib/site";
 
 export function buildBlogPostingSchema(
   article: (BlogPostMeta | BlogArticleData) & { bodyHtml?: string },
@@ -23,7 +23,7 @@ export function buildBlogPostingSchema(
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${SITE_URL}${path}`,
+      "@id": canonicalUrl(path),
     },
   };
 }

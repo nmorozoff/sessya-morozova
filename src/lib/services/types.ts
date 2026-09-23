@@ -1,4 +1,4 @@
-import { SITE_URL } from "@/lib/site";
+import { canonicalUrl } from "@/lib/site";
 
 export type SectionParagraphLink = {
   paragraphIndex: number;
@@ -39,5 +39,5 @@ export type ServicePageConfig = {
 };
 
 export function servicePageUrl(slug: string) {
-  return `${SITE_URL}/${slug}`;
+  return canonicalUrl(`/${slug}`);
 }

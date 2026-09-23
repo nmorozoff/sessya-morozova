@@ -1,0 +1,2 @@
+# Без 301 /amocrm/callback → /amocrm/callback/ (важно для OAuth ?code=)
+DirectorySlash Off

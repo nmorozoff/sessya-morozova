@@ -1,5 +1,5 @@
 import { useLayoutEffect } from "react";
-import { SITE_URL } from "@/lib/site";
+import { SITE_URL, canonicalUrl } from "@/lib/site";
 
 export type PageSeo = {
   title: string;
@@ -21,7 +21,7 @@ function setMeta(attr: "name" | "property", key: string, content: string) {
 }
 
 const PageMeta = ({ title, description, path, ogImage = "/og-image.jpg", jsonLd }: PageSeo) => {
-  const canonical = `${SITE_URL}${path === "/" ? "/" : path}`;
+  const canonical = canonicalUrl(path);
   const image = ogImage.startsWith("http") ? ogImage : `${SITE_URL}${ogImage}`;
   const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 

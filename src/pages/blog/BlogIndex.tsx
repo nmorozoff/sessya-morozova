@@ -61,7 +61,7 @@ const BlogIndex = () => {
               >
                 <div className="flex flex-col lg:flex-row gap-6">
                   {post.coverImage ? (
-                    <Link to={`/blog/${post.slug}`} className="shrink-0">
+                    <Link to={`/blog/${post.slug}/`} className="shrink-0">
                       <img
                         src={blogAssetUrl(post.coverImage)}
                         alt={`Обложка статьи: ${post.title}`}
@@ -75,13 +75,13 @@ const BlogIndex = () => {
                       {formatBlogDate(post.publishedAt)}
                     </time>
                     <h2 className="text-xl sm:text-2xl font-bold mt-2 mb-3">
-                      <Link to={`/blog/${post.slug}`} className="hover:text-primary transition-colors">
+                      <Link to={`/blog/${post.slug}/`} className="hover:text-primary transition-colors">
                         {post.title}
                       </Link>
                     </h2>
                     <p className="text-muted-foreground text-[15px] leading-relaxed mb-4">{post.excerpt}</p>
                     <Link
-                      to={`/blog/${post.slug}`}
+                      to={`/blog/${post.slug}/`}
                       className="text-sm font-semibold text-primary hover:text-accent transition-colors"
                     >
                       Читать статью →

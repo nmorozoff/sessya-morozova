@@ -1,16 +1,14 @@
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { SITE_ROUTES } from "./routes.mjs";
+import { canonicalLoc, normalizeSiteUrl } from "./url-utils.mjs";
 
-const siteUrl = (process.env.VITE_SITE_URL || "https://www.morozovanatalia.ru")
-  .replace(/\/$/, "")
-  .replace(/^http:\/\//i, "https://")
-  .replace(/^https:\/\/morozovanatalia\.ru$/i, "https://www.morozovanatalia.ru");
+const siteUrl = normalizeSiteUrl(process.env.VITE_SITE_URL);
 const lastmod = new Date().toISOString().slice(0, 10);
 
 const urls = SITE_ROUTES.map(
   (route) => `  <url>
-    <loc>${siteUrl}${route === "/" ? "/" : route}</loc>
+    <loc>${canonicalLoc(siteUrl, route)}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>${route === "/" ? "1.0" : "0.5"}</priority>

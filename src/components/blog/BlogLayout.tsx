@@ -16,7 +16,7 @@ const BlogLayout = ({ children }: BlogLayoutProps) => (
 
 export const BlogBackLink = () => (
   <Link
-    to="/blog"
+    to="/blog/"
     className="text-muted-foreground text-sm hover:text-foreground transition-colors mb-8 inline-block"
   >
     ← Все статьи

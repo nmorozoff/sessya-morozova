@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 
 const SERVICE_LINKS = [
-  { to: "/emdr-therapy", label: "EMDR-терапия" },
-  { to: "/panic-attacks", label: "Панические атаки" },
-  { to: "/phobias", label: "Фобии" },
-  { to: "/anxiety", label: "Тревожность" },
-  { to: "/psychosomatics", label: "Психосоматика" },
-  { to: "/business-psychology", label: "Бизнес-психология" },
+  { to: "/emdr-therapy/", label: "EMDR-терапия" },
+  { to: "/panic-attacks/", label: "Панические атаки" },
+  { to: "/phobias/", label: "Фобии" },
+  { to: "/anxiety/", label: "Тревожность" },
+  { to: "/psychosomatics/", label: "Психосоматика" },
+  { to: "/business-psychology/", label: "Бизнес-психология" },
 ];
 
 const Footer = () => {
@@ -28,7 +28,7 @@ const Footer = () => {
               {link.label}
             </Link>
           ))}
-          <Link to="/privacy-policy" className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
+          <Link to="/privacy-policy/" className="text-[13px] text-muted-foreground hover:text-foreground transition-colors">
             Политика конфиденциальности
           </Link>
         </nav>
