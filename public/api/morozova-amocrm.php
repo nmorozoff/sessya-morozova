@@ -310,7 +310,14 @@ function morozova_amocrm_send_lead(array $config, array $input): bool
     }
 
     morozova_amocrm_set_custom_field($leadPayload, $config, 'request_field_id', $userMessage);
-    morozova_amocrm_set_custom_field($leadPayload, $config, 'messenger_field_id', $preferredChannel);
+    $messengerFieldId = (int) ($config['messenger_field_id'] ?? 0);
+    if ($preferredChannel !== '') {
+        if ($messengerFieldId > 0) {
+            morozova_amocrm_set_custom_field($leadPayload, $config, 'messenger_field_id', $preferredChannel);
+        } else {
+            $noteLines[] = 'Мессенджер: ' . $preferredChannel;
+        }
+    }
     morozova_amocrm_set_custom_field($leadPayload, $config, 'telegram_field_id', $contactParts['telegramNickname']);
     morozova_amocrm_set_custom_field($leadPayload, $config, 'traffic_source_field_id', $trafficLabel);
     morozova_amocrm_set_custom_field($leadPayload, $config, 'utm_code_field_id', $utmSource);

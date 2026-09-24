@@ -17,6 +17,7 @@ const DIST = resolve(ROOT, "dist");
 
 const ALLOWED_API_REMOTE_FILES = [
   "api/send-form.php",
+  "api/morozova-amocrm.php",
   "api/crm-webhook.php",
   "api/max-notify.php",
   "api/logs/.htaccess",
@@ -130,6 +131,13 @@ function buildLftpScript({ server, user, password, remoteDir, distPath }) {
     "mkdir -f api/logs",
   ];
 
+  commands.push(`put ${lftpQuote(resolve(DIST, "index.html"))} -o home-shell.html`);
+  commands.push(`put ${lftpQuote(resolve(DIST, "index.php"))} -o index.php`);
+  commands.push(`put ${lftpQuote(resolve(DIST, ".htaccess"))} -o .htaccess`);
+  commands.push("set cmd:fail-exit false");
+  commands.push("rm index.html");
+  commands.push("set cmd:fail-exit true");
+
   for (const remote of ALLOWED_API_REMOTE_FILES) {
     const local = resolve(DIST, ...remote.split("/"));
     commands.push(`put ${lftpQuote(local)} -o ${remote}`);
@@ -187,7 +195,7 @@ function runLftpUpload({ server, user, password, serverDir }) {
   );
   console.log(`[deploy] Файлов в dist/: ~${fileCount} (api/config.php на сервер не заливаем)`);
   console.log(
-    "[deploy] api/: только send-form.php, crm-webhook.php, max-notify.php, logs/.htaccess",
+    "[deploy] api/: send-form.php, morozova-amocrm.php, crm-webhook.php, max-notify.php, logs/.htaccess",
   );
   console.log("[deploy] Запуск lftp...");
 

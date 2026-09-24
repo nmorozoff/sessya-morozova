@@ -27,7 +27,7 @@ const ContactForm = () => {
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [message, setMessage] = useState("");
-  const [preferMessaging, setPreferMessaging] = useState(false);
+  const [preferredChannel, setPreferredChannel] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -51,7 +51,7 @@ const ContactForm = () => {
           name: name.trim(),
           contact: contact.trim(),
           message: message.trim(),
-          preferMessaging,
+          preferredChannel,
           website: "",
           ...getStoredUtm(),
         }),
@@ -67,7 +67,7 @@ const ContactForm = () => {
       setName("");
       setContact("");
       setMessage("");
-      setPreferMessaging(false);
+      setPreferredChannel("");
     } catch {
       toast.error("Не удалось отправить заявку. Попробуйте ещё раз или напишите в Telegram.");
     } finally {
@@ -95,6 +95,20 @@ const ContactForm = () => {
         onChange={(e) => setContact(e.target.value)}
         className="bg-foreground/[0.04] border border-foreground/10 rounded-[10px] text-foreground px-4 py-3.5 text-sm placeholder:text-foreground/30 focus:border-primary focus:bg-primary/[0.05] focus:outline-none transition-colors"
       />
+      <label className="flex flex-col gap-1.5">
+        <span className="text-[13px] text-muted-foreground">В каком мессенджере вам ответить?</span>
+        <select
+          value={preferredChannel}
+          onChange={(e) => setPreferredChannel(e.target.value)}
+          className="bg-foreground/[0.04] border border-foreground/10 rounded-[10px] text-foreground px-4 py-3.5 text-sm focus:border-primary focus:bg-primary/[0.05] focus:outline-none transition-colors appearance-none"
+        >
+          <option value="" disabled>Выберите мессенджер</option>
+          <option value="Telegram">Telegram</option>
+          <option value="WhatsApp">WhatsApp</option>
+          <option value="MAX">MAX</option>
+          <option value="Звонок">Звонок</option>
+        </select>
+      </label>
       <textarea
         placeholder="Коротко опишите, что вас беспокоит (необязательно)"
         rows={3}
@@ -110,15 +124,6 @@ const ContactForm = () => {
         className="hidden"
         aria-hidden="true"
       />
-      <label className="flex items-start gap-3 cursor-pointer text-[13px] text-muted-foreground leading-snug">
-        <input
-          type="checkbox"
-          checked={preferMessaging}
-          onChange={(e) => setPreferMessaging(e.target.checked)}
-          className="mt-0.5 h-4 w-4 shrink-0 rounded border border-foreground/20 accent-primary"
-        />
-        <span>Предпочитаю переписку, а не звонок</span>
-      </label>
       <label className="flex items-start gap-3 cursor-pointer text-[13px] text-muted-foreground leading-snug mt-1">
         <input
           type="checkbox"

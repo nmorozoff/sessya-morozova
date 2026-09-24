@@ -140,7 +140,7 @@ function morozova_build_notify_text(
     string $name,
     string $contact,
     string $message,
-    bool $preferMessaging,
+    string $preferredChannel,
     string $utmSource,
     string $utmCampaign,
     string $utmMedium,
@@ -154,8 +154,10 @@ function morozova_build_notify_text(
         "📱 Контакт: {$contact}",
     ];
 
-    if ($preferMessaging) {
-        $lines[] = '💬 Предпочитает переписку, а не звонок';
+    if ($preferredChannel === 'Звонок') {
+        $lines[] = '📞 Предпочитает звонок';
+    } elseif ($preferredChannel !== '') {
+        $lines[] = "💬 Предпочитает {$preferredChannel}";
     }
     if ($message !== '') {
         $lines[] = "💬 Сообщение: {$message}";
@@ -186,7 +188,7 @@ $name = trim((string)($data['name'] ?? ''));
 $contact = trim((string)($data['contact'] ?? ''));
 $message = trim((string)($data['message'] ?? ''));
 $website = trim((string)($data['website'] ?? ''));
-$preferMessaging = !empty($data['preferMessaging']);
+$preferredChannel = trim((string)($data['preferredChannel'] ?? ''));
 $utmSource = morozova_trim_field((string)($data['utm_source'] ?? ''), 64);
 $utmCampaign = morozova_trim_field((string)($data['utm_campaign'] ?? ''), 128);
 $utmMedium = morozova_trim_field((string)($data['utm_medium'] ?? ''), 64);
@@ -262,7 +264,7 @@ $notifyText = morozova_build_notify_text(
     $name,
     $contact,
     $message,
-    $preferMessaging,
+    $preferredChannel,
     $utmSource,
     $utmCampaign,
     $utmMedium,
@@ -277,6 +279,37 @@ if (file_exists($maxNotifyPath)) {
     $maxOk = morozova_max_send_message($maxConfig, $notifyText);
     if (!$maxOk) {
         morozova_form_log('warn', 'max_send_failed', ['context' => $logContext]);
+    }
+}
+
+$amoOk = false;
+$amoCrmPath = __DIR__ . '/morozova-amocrm.php';
+if (file_exists($amoCrmPath)) {
+    require_once $amoCrmPath;
+
+    $amoConfig = $config['amocrm'] ?? [];
+    if (!empty($amoConfig['enabled'])) {
+        $amoMetadata = [];
+        if ($landingPath !== '') {
+            $amoMetadata[] = 'landing: ' . $landingPath;
+        }
+
+        $amoOk = morozova_amocrm_send_lead($amoConfig, [
+            'name' => $name,
+            'contact' => $contact,
+            'message' => $message,
+            'metadata' => $amoMetadata,
+            'source_site' => $siteDomain,
+            'lead_source' => morozova_crm_lead_source($utmSource),
+            'utm_source' => $utmSource !== '' ? $utmSource : null,
+            'utm_medium' => $utmMedium !== '' ? $utmMedium : null,
+            'utm_campaign' => $utmCampaign !== '' ? $utmCampaign : null,
+            'preferred_channel' => $preferredChannel !== '' ? $preferredChannel : null,
+        ]);
+
+        if (!$amoOk) {
+            morozova_form_log('warn', 'amocrm_send_failed', ['context' => $logContext]);
+        }
     }
 }
 
@@ -315,7 +348,7 @@ if ($telegramToken !== '' && $telegramChatId !== '') {
     }
 }
 
-$crmOk = false;
+$crmWebhookOk = false;
 $crmWebhookPath = __DIR__ . '/crm-webhook.php';
 if (file_exists($crmWebhookPath)) {
     require_once $crmWebhookPath;
@@ -342,39 +375,38 @@ if (file_exists($crmWebhookPath)) {
     }
 
     if (!empty($config['crm_webhook_url']) && !empty($config['crm_webhook_secret'])) {
-        $crmOk = morozova_crm_send_lead([
+        $crmWebhookOk = morozova_crm_send_lead([
             'webhook_url' => $config['crm_webhook_url'],
             'webhook_secret' => $config['crm_webhook_secret'],
             'name' => $name,
             'contact' => $contact,
             'message' => implode("\n", $crmMessageParts),
             'source_site' => $siteDomain,
-            'prefer_messaging' => $preferMessaging,
+            'prefer_messaging' => $preferredChannel !== '' && $preferredChannel !== 'Звонок',
             'lead_source' => morozova_crm_lead_source($utmSource),
-            'preferred_channel' => $preferMessaging ? 'Telegram' : null,
+            'preferred_channel' => $preferredChannel !== '' ? $preferredChannel : null,
             'utm_source' => $utmSource !== '' ? $utmSource : null,
         ]);
 
-        if (!$crmOk) {
+        if (!$crmWebhookOk) {
             morozova_form_log('warn', 'crm_webhook_failed', ['context' => $logContext]);
         }
-    } else {
-        morozova_form_log('warn', 'crm_not_configured', ['context' => $logContext]);
     }
 }
 
-if (!$dbOk && !$maxOk && !$telegramOk && !$crmOk) {
+if (!$dbOk && !$maxOk && !$telegramOk && !$amoOk && !$crmWebhookOk) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Submission failed']);
     exit;
 }
 
-if (!$dbOk || !$maxOk || !$telegramOk || !$crmOk) {
+if (!$dbOk || !$maxOk || !$telegramOk || !$amoOk) {
     morozova_form_log('warn', 'partial_submission', [
         'db_ok' => $dbOk,
         'max_ok' => $maxOk,
         'telegram_ok' => $telegramOk,
-        'crm_ok' => $crmOk,
+        'amo_ok' => $amoOk,
+        'crm_webhook_ok' => $crmWebhookOk,
         'context' => $logContext,
     ]);
 }
@@ -385,6 +417,6 @@ echo json_encode([
         'database' => $dbOk,
         'max' => $maxOk,
         'telegram' => $telegramOk,
-        'crm' => $crmOk,
+        'crm' => $amoOk,
     ],
 ]);

@@ -1,12 +1,19 @@
-# Canonical www host (HTTPS terminates at Timeweb nginx — do not check %{HTTPS} here)
+# Canonical www + HTTPS (TLS на Timeweb nginx; %{HTTPS} в Apache всегда off — не использовать)
 RewriteEngine On
 RewriteBase /
 
+DirectoryIndex index.php
+
+# Один 301: реальный http:// клиент (X-Forwarded-Proto: http) → https://www
+RewriteCond %{HTTP:X-Forwarded-Proto} =http [NC]
+RewriteRule ^ https://www.morozovanatalia.ru%{REQUEST_URI} [R=301,L]
+
+# non-www → https://www (один шаг, со слэшем на каталогах — ниже)
+RewriteCond %{HTTP_HOST} ^morozovanatalia\.ru$ [NC]
+RewriteRule ^ https://www.morozovanatalia.ru%{REQUEST_URI} [R=301,L,QSA]
+
 # amoCRM OAuth redirect URI (/amocrm/callback без каталога — иначе 301 на trailing slash)
 RewriteRule ^amocrm/callback/?$ amocrm/callback.php [L]
-
-RewriteCond %{HTTP_HOST} ^morozovanatalia\.ru$ [NC]
-RewriteRule ^(.*)$ https://www.morozovanatalia.ru/$1 [R=301,L,QSA]
 
 # Trailing slash на https://www (без downgrade на http:// от mod_dir)
 RewriteCond %{REQUEST_URI} !/$
