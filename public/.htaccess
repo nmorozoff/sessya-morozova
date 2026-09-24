@@ -28,7 +28,10 @@ RewriteRule ^(.*)$ https://www.morozovanatalia.ru/$1/ [R=301,L,QSA]
 RewriteRule ^api/ - [L]
 RewriteRule ^amocrm/ - [L]
 
+ErrorDocument 404 /404.html
+
+RewriteRule ^404\.html$ - [L]
 RewriteRule ^index\.html$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.html [L]
+RewriteRule ^ - [R=404,L]

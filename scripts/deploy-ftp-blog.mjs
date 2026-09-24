@@ -32,6 +32,7 @@ const FORBIDDEN_REMOTE_PREFIXES = [
   "index.html",
   "index.php",
   "home-shell.html",
+  "404.html",
   ".htaccess",
 ];
 

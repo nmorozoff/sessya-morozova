@@ -17,6 +17,8 @@ const SITE_URL = normalizeSiteUrl(process.env.VITE_SITE_URL);
 const MIN_BLOG_H2 = Number(process.env.PRERENDER_BLOG_MIN_H2 || 5);
 const MIN_BLOG_BODY_CHARS = Number(process.env.PRERENDER_BLOG_MIN_BODY_CHARS || 2000);
 const MIN_BLOG_ARTICLE_CHARS = Number(process.env.PRERENDER_BLOG_MIN_CHARS || 3000);
+/** Путь только для puppeteer — не входит в SITE_ROUTES и не деплоится как URL */
+const NOT_FOUND_PRERENDER_PATH = "/__prerender-not-found__/";
 
 function canonicalForRoute(route) {
   return canonicalLoc(SITE_URL, route);
@@ -213,6 +215,8 @@ async function prerender() {
       }
     }
 
+    await prerenderNotFoundPage(browser);
+
     await browser.close();
     server.kill("SIGTERM");
   } catch (err) {
@@ -227,6 +231,27 @@ async function prerender() {
   }
 
   console.log("[prerender] Done.");
+}
+
+async function prerenderNotFoundPage(browser) {
+  const url = `${BASE}${withTrailingSlash(NOT_FOUND_PRERENDER_PATH)}`;
+  console.log(`[prerender] 404.html (via ${NOT_FOUND_PRERENDER_PATH})`);
+  const page = await browser.newPage();
+  try {
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 120_000 });
+    await page.waitForSelector("h1", { timeout: 60_000 });
+    await page.waitForFunction(
+      () => document.body?.innerText?.includes("Страница не найдена"),
+      { timeout: 30_000 },
+    );
+    await new Promise((r) => setTimeout(r, 300));
+
+    const html = await page.content();
+    writeFileSync(resolve(DIST, "404.html"), html, "utf-8");
+    console.log("[prerender] Wrote dist/404.html");
+  } finally {
+    await page.close();
+  }
 }
 
 prerender().catch((err) => {

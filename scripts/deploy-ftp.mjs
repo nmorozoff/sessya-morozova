@@ -133,6 +133,7 @@ function buildLftpScript({ server, user, password, remoteDir, distPath }) {
 
   commands.push(`put ${lftpQuote(resolve(DIST, "index.html"))} -o home-shell.html`);
   commands.push(`put ${lftpQuote(resolve(DIST, "index.php"))} -o index.php`);
+  commands.push(`put ${lftpQuote(resolve(DIST, "404.html"))} -o 404.html`);
   commands.push(`put ${lftpQuote(resolve(DIST, ".htaccess"))} -o .htaccess`);
   commands.push("set cmd:fail-exit false");
   commands.push("rm index.html");
