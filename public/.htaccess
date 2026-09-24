@@ -2,7 +2,7 @@
 RewriteEngine On
 RewriteBase /
 
-DirectoryIndex index.php
+DirectoryIndex index.php index.html
 
 # Один 301: реальный http:// клиент (X-Forwarded-Proto: http) → https://www
 RewriteCond %{HTTP:X-Forwarded-Proto} =http [NC]
