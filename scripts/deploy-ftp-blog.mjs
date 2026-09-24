@@ -27,7 +27,13 @@ const ROOT = resolve(".");
 const ENV_PATH = resolve(ROOT, ".ftp-deploy.env");
 const DIST = resolve(ROOT, "dist");
 
-const FORBIDDEN_REMOTE_PREFIXES = ["api/", "index.html"];
+const FORBIDDEN_REMOTE_PREFIXES = [
+  "api/",
+  "index.html",
+  "index.php",
+  "home-shell.html",
+  ".htaccess",
+];
 
 function parseArgs(argv) {
   const out = { skipBuild: false, slug: "" };
@@ -246,7 +252,9 @@ function runLftpUpload({ server, user, password, serverDir, slug }) {
     `[deploy-blog]   blog-assets${slug ? `/${slug}` : ""}/ (~${assetFiles} files)`,
   );
   console.log("[deploy-blog]   sitemap.xml");
-  console.log("[deploy-blog] ЗАПРЕЩЕНО: api/, index.html, assets/, остальные корневые HTML");
+  console.log(
+    "[deploy-blog] ЗАПРЕЩЕНО: api/, index.html, index.php, home-shell.html, .htaccess, assets/",
+  );
 
   return new Promise((resolvePromise, reject) => {
     const proc = spawn("lftp", ["-f", scriptPath], { cwd: ROOT, stdio: "inherit" });
