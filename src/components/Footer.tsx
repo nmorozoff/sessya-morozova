@@ -1,3 +1,4 @@
+import { BookingMessengerIcons } from "@/components/BookingMessengerIcons";
 import { Link } from "react-router-dom";
 
 const SERVICE_LINKS = [
@@ -13,9 +14,15 @@ const Footer = () => {
   return (
     <footer className="px-6 lg:px-[60px] py-8 border-t border-border">
       <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-        <div>
-          <div className="text-base font-bold text-foreground mb-1">Наталья Морозова</div>
-          <div className="text-[13px] text-muted-foreground">Психолог · EMDR-терапевт · Работаю онлайн и в Москве</div>
+        <div className="flex flex-col items-center md:items-start gap-3">
+          <div>
+            <div className="text-base font-bold text-foreground mb-1">Наталья Морозова</div>
+            <div className="text-[13px] text-muted-foreground">Психолог · EMDR-терапевт · Работаю онлайн и в Москве</div>
+          </div>
+          <div className="flex flex-col items-center md:items-start gap-1.5">
+            <span className="text-[11px] text-muted-foreground uppercase tracking-wide">Написать сейчас</span>
+            <BookingMessengerIcons size="md" />
+          </div>
         </div>
 
         <nav className="flex flex-wrap justify-center gap-4 md:gap-6">

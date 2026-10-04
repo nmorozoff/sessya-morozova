@@ -83,11 +83,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      <Link
-        to="/#session"
-        onClick={handleSessionClick}
-        className={ctaClass}
-      >
+      <Link to="/#session" onClick={handleSessionClick} className={ctaClass}>
         Записаться →
       </Link>
     </nav>

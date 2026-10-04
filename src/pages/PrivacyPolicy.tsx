@@ -1,16 +1,20 @@
+import { BookingContactLinks } from "@/components/BookingContactLinks";
 import { SiteLink } from "@/components/SiteLink";
 import { Link } from "react-router-dom";
 import PageMeta from "@/components/PageMeta";
 import { webPageSchema } from "@/lib/schema";
+
+const PRIVACY_POLICY_DESCRIPTION =
+  "Политика обработки персональных данных на сайте morozovanatalia.ru и в каналах связи для записи.";
 
 const PrivacyPolicy = () => {
   return (
     <div className="min-h-screen bg-background text-foreground px-6 py-16 lg:px-[120px] lg:py-24">
       <PageMeta
         title="Политика конфиденциальности | Наталья Морозова"
-        description="Политика обработки персональных данных на сайте morozovanatalia.ru и в Telegram-ботах."
+        description={PRIVACY_POLICY_DESCRIPTION}
         path="/privacy-policy"
-        jsonLd={[webPageSchema("Политика конфиденциальности", "Политика обработки персональных данных на сайте morozovanatalia.ru и в Telegram-ботах.", "/privacy-policy")]}
+        jsonLd={[webPageSchema("Политика конфиденциальности", PRIVACY_POLICY_DESCRIPTION, "/privacy-policy")]}
       />
       <div className="max-w-3xl mx-auto">
         <Link to="/" className="text-muted-foreground text-sm hover:text-foreground transition-colors mb-8 inline-block">← На главную</Link>
@@ -20,17 +24,35 @@ const PrivacyPolicy = () => {
           <h2 className="text-lg font-bold text-foreground">1. ОБЩИЕ ПОЛОЖЕНИЯ</h2>
           <p>1.1. Настоящая Политика обработки персональных данных составлена в соответствии с требованиями Федерального закона от 27.07.2006. №152-ФЗ «О персональных данных» и определяет порядок обработки персональных данных и меры по обеспечению безопасности персональных данных, предпринимаемые самозанятой Морозовой Натальей Андреевной (далее – Оператор).</p>
           <p>1.2. Настоящая Политика обработки персональных данных:</p>
-          <p>1.2.1. Устанавливает правила обработки Оператором персональных данных, предоставляемых лицами, которые используют телеграм-боты <a href="https://t.me/natalyamorozovabot" className="text-foreground underline" target="_blank" rel="noopener noreferrer">https://t.me/natalyamorozovabot</a>, <a href="https://t.me/natamorozova_bot" className="text-foreground underline" target="_blank" rel="noopener noreferrer">https://t.me/natamorozova_bot</a>, включая поддомены и их страницы, сайт <SiteLink /> для получения услуг (далее – Заказчики, Пользователи, Сайт);</p>
+          <p>
+            1.2.1. Устанавливает правила обработки Оператором персональных данных, предоставляемых лицами, которые
+            используют сайт <SiteLink /> и каналы связи для записи (<BookingContactLinks />) для получения услуг (далее
+            – Заказчики, Пользователи, Сайт);
+          </p>
           <p>1.2.2. Определяет цели, правовые основания, порядок и объем обрабатываемых персональных данных;</p>
           <p>1.2.3. Определяет порядок взаимодействия с субъектами персональных данных при поступлении от них обращений.</p>
           <p>1.2.4. Настоящая Политика определяет политику Оператора в отношении обработки персональных данных. Все вопросы, связанные с обработкой персональных данных, не урегулированные настоящей Политикой обработки персональных данных, разрешаются в соответствии с действующим законодательством Российской Федерации в области персональных данных.</p>
-          <p>1.2.5. Настоящая политика Оператора в отношении обработки персональных данных применяется ко всей информации, которую Оператор может получить о посетителях телеграм-боты <a href="https://t.me/natalyamorozovabot" className="text-foreground underline" target="_blank" rel="noopener noreferrer">https://t.me/natalyamorozovabot</a>, <a href="https://t.me/natamorozova_bot" className="text-foreground underline" target="_blank" rel="noopener noreferrer">https://t.me/natamorozova_bot</a>, включая поддомены и их страницы.</p>
+          <p>
+            1.2.5. Настоящая политика Оператора в отношении обработки персональных данных применяется ко всей
+            информации, которую Оператор может получить о посетителях сайта <SiteLink /> и пользователях каналов связи (
+            <BookingContactLinks />).
+          </p>
 
           <p>1.3. Основные понятия, используемые в Политике обработки персональных данных:</p>
           <p>1.3.1. Оператор – индивидуальный предприниматель самостоятельно или совместно с другими лицами организующие и (или) осуществляющие обработку персональных данных, а также определяющие цели обработки персональных данных, состав персональных данных, подлежащих обработке, действия (операции), совершаемые с персональными данными;</p>
-          <p>1.3.2. Пользователь – любой посетитель телеграм-боты <a href="https://t.me/natalyamorozovabot" className="text-foreground underline" target="_blank" rel="noopener noreferrer">https://t.me/natalyamorozovabot</a>, <a href="https://t.me/natamorozova_bot" className="text-foreground underline" target="_blank" rel="noopener noreferrer">https://t.me/natamorozova_bot</a>, включая поддомены и их страницы, сайт <SiteLink />.</p>
-          <p>1.3.3. Сайт – совокупность графических и информационных материалов, а также программ для ЭВМ и баз данных, обеспечивающих их доступность в сети интернет по сетевому адресу телеграм-боты <a href="https://t.me/natalyamorozovabot" className="text-foreground underline" target="_blank" rel="noopener noreferrer">https://t.me/natalyamorozovabot</a>, <a href="https://t.me/natamorozova_bot" className="text-foreground underline" target="_blank" rel="noopener noreferrer">https://t.me/natamorozova_bot</a>, включая поддомены и их страницы, сайт <SiteLink />.</p>
-          <p>1.3.4. Персональные данные – любая информация, относящаяся прямо или косвенно к определенному или определяемому Пользователю телеграм-боты <a href="https://t.me/natalyamorozovabot" className="text-foreground underline" target="_blank" rel="noopener noreferrer">https://t.me/natalyamorozovabot</a>, <a href="https://t.me/natamorozova_bot" className="text-foreground underline" target="_blank" rel="noopener noreferrer">https://t.me/natamorozova_bot</a>, включая поддомены и их страницы, сайт <SiteLink />.</p>
+          <p>
+            1.3.2. Пользователь – любой посетитель сайта <SiteLink /> и пользователь каналов связи (
+            <BookingContactLinks />).
+          </p>
+          <p>
+            1.3.3. Сайт – совокупность графических и информационных материалов, а также программ для ЭВМ и баз данных,
+            обеспечивающих их доступность в сети интернет по адресу сайта <SiteLink /> и каналов связи (
+            <BookingContactLinks />).
+          </p>
+          <p>
+            1.3.4. Персональные данные – любая информация, относящаяся прямо или косвенно к определенному или
+            определяемому Пользователю сайта <SiteLink /> и каналов связи (<BookingContactLinks />).
+          </p>
           <p>1.3.5. Обработка персональных данных – любое действие или совокупность действий, которые совершаются с использованием средств автоматизации или без использования таких средств с персональными данными, включая сбор, запись, систематизацию, накопление, хранение, уточнение (обновление, изменение), извлечение, использование, передачу (распространение, предоставление, доступ), обезличивание, блокирование, удаление, уничтожение персональных данных;</p>
           <p>1.3.6. Автоматизированная обработка персональных данных – обработка персональных данных с помощью средств вычислительной техники;</p>
           <p>1.3.7. Блокирование персональных данных – временное прекращение обработки персональных данных (за исключением случаев, если обработка необходима для уточнения персональных данных);</p>
@@ -54,7 +76,11 @@ const PrivacyPolicy = () => {
 
           <h2 className="text-lg font-bold text-foreground pt-4">2. ЦЕЛИ ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ</h2>
           <p>2.1. Обеспечение защиты прав и свобод человека и гражданина при обработке его персональных данных, в том числе защиты прав на неприкосновенность частной жизни, личную и семейную тайну.</p>
-          <p>2.2. Заключение, исполнение и прекращение гражданско-правовых договоров; предоставление доступа Пользователю к сервисам, информации и/или материалам Оператора, в том числе, содержащимся в телеграм-боты <a href="https://t.me/natalyamorozovabot" className="text-foreground underline" target="_blank" rel="noopener noreferrer">https://t.me/natalyamorozovabot</a>, <a href="https://t.me/natamorozova_bot" className="text-foreground underline" target="_blank" rel="noopener noreferrer">https://t.me/natamorozova_bot</a>, включая поддомены и их страницы, уточнение деталей заказа.</p>
+          <p>
+            2.2. Заключение, исполнение и прекращение гражданско-правовых договоров; предоставление доступа Пользователю
+            к сервисам, информации и/или материалам Оператора, в том числе, содержащимся на сайте <SiteLink /> и в
+            каналах связи (<BookingContactLinks />), уточнение деталей заказа.
+          </p>
           <p>2.3. При обработке персональных данных Оператор применяет правовые, организационные и технические меры по обеспечению безопасности персональных данных в соответствии со ст. 19 Федерального закона от 27.07.2006 N 152-ФЗ «О персональных данных».</p>
           <p>2.4. Также Оператор имеет право направлять Пользователю уведомления о новых продуктах и услугах, специальных предложениях и различных событиях.</p>
           <p>2.5. Обезличенные данные Пользователей, собираемые с помощью сервисов интернет-статистики, служат для сбора информации о действиях Пользователей на Сайте, улучшения качества Сайта и его содержания.</p>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { getStoredUtm } from "@/lib/utm";
+import { getFormAttribution } from "@/lib/utm";
 import Reveal from "./Reveal";
 
 const SuccessOverlay = ({ onClose }: { onClose: () => void }) => (
@@ -53,7 +53,7 @@ const ContactForm = () => {
           message: message.trim(),
           preferredChannel,
           website: "",
-          ...getStoredUtm(),
+          ...getFormAttribution(),
         }),
       });
 
@@ -69,7 +69,7 @@ const ContactForm = () => {
       setMessage("");
       setPreferredChannel("");
     } catch {
-      toast.error("Не удалось отправить заявку. Попробуйте ещё раз или напишите в Telegram.");
+      toast.error("Не удалось отправить заявку. Попробуйте ещё раз или напишите через контакты внизу страницы.");
     } finally {
       setLoading(false);
     }

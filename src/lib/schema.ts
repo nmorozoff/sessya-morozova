@@ -1,3 +1,4 @@
+import { BOOKING_CHANNELS, DZEN_CHANNEL_URL } from "@/lib/bookingChannels";
 import { SITE_URL, canonicalUrl } from "@/lib/site";
 
 export const EMDR_TREATMENT = {
@@ -33,12 +34,16 @@ export const PRICING_OFFERS = [
   },
 ];
 
-export const BRAND_SAME_AS = [
-  "https://www.b17.ru/morozova_natalia/",
-  "https://dzen.ru/morozovanataliapsy",
-  "https://t.me/natalyamorozovabot",
-  "https://t.me/natamorozova_bot",
-];
+export const BRAND_SAME_AS = ["https://www.b17.ru/morozova_natalia/", DZEN_CHANNEL_URL];
+
+export const BOOKING_CONTACT_TYPE = "запись на консультацию";
+
+/** Каналы записи на консультацию (schema.org ContactPoint). */
+export const BOOKING_CONTACT_POINTS = BOOKING_CHANNELS.map((channel) => ({
+  "@type": "ContactPoint" as const,
+  contactType: BOOKING_CONTACT_TYPE,
+  url: channel.href,
+}));
 
 export const personSchema = {
   "@context": "https://schema.org",
@@ -62,6 +67,7 @@ export const personSchema = {
     "психологическая травма",
   ],
   sameAs: BRAND_SAME_AS,
+  contactPoint: BOOKING_CONTACT_POINTS,
 };
 
 const OFFICE_LOCATIONS = [
@@ -113,6 +119,7 @@ export const professionalServiceSchema = {
   ],
   offers: PRICING_OFFERS,
   location: OFFICE_LOCATIONS,
+  contactPoint: BOOKING_CONTACT_POINTS,
 };
 
 /** @deprecated Использовать personSchema + professionalServiceSchema */
