@@ -7,7 +7,11 @@
  *   - sitemap.xml
  *
  * NEVER touches: api/, index.html, assets/, or any other site root files.
- * Full site deploy: npm run deploy / scripts/deploy-ftp.mjs (manual only).
+ * Site deploy (без блога): npm run deploy:site → scripts/deploy-ftp-site.mjs
+ *
+ * Перед сборкой из Excalibur: обязательный pull main в этом репо
+ * (python3 <Контент EMDR>/scripts/excalibur_react_repo_sync.py --pull).
+ * Без pull — риск отката шапки/футера (WhatsApp/Telegram/MAX) при blog-only FTP.
  */
 import { spawn } from "node:child_process";
 import {
@@ -22,19 +26,14 @@ import {
 } from "node:fs";
 import { basename, join, resolve } from "node:path";
 import { tmpdir } from "node:os";
+import { assertContentBlogCommitted } from "./assert-content-blog-committed.mjs";
+import { submitIndexNowFromSitemap } from "./indexnow.mjs";
 
 const ROOT = resolve(".");
 const ENV_PATH = resolve(ROOT, ".ftp-deploy.env");
 const DIST = resolve(ROOT, "dist");
 
-const FORBIDDEN_REMOTE_PREFIXES = [
-  "api/",
-  "index.html",
-  "index.php",
-  "home-shell.html",
-  "404.html",
-  ".htaccess",
-];
+const FORBIDDEN_REMOTE_PREFIXES = ["api/", "index.html"];
 
 function parseArgs(argv) {
   const out = { skipBuild: false, slug: "" };
@@ -253,9 +252,7 @@ function runLftpUpload({ server, user, password, serverDir, slug }) {
     `[deploy-blog]   blog-assets${slug ? `/${slug}` : ""}/ (~${assetFiles} files)`,
   );
   console.log("[deploy-blog]   sitemap.xml");
-  console.log(
-    "[deploy-blog] ЗАПРЕЩЕНО: api/, index.html, index.php, home-shell.html, .htaccess, assets/",
-  );
+  console.log("[deploy-blog] ЗАПРЕЩЕНО: api/, index.html, assets/, остальные корневые HTML");
 
   return new Promise((resolvePromise, reject) => {
     const proc = spawn("lftp", ["-f", scriptPath], { cwd: ROOT, stdio: "inherit" });
@@ -279,6 +276,8 @@ function runLftpUpload({ server, user, password, serverDir, slug }) {
 }
 
 async function main() {
+  assertContentBlogCommitted("deploy-blog");
+
   const args = parseArgs(process.argv.slice(2));
   const env = loadEnvFile(ENV_PATH);
   const siteUrl = requireEnv(env, "VITE_SITE_URL");
@@ -308,6 +307,18 @@ async function main() {
     try {
       await runLftpUpload({ server, user, password, serverDir, slug: args.slug });
       console.log("[deploy-blog] Готово (blog-only). api/ и index.html не затронуты.");
+      try {
+        const inResult = await submitIndexNowFromSitemap(siteUrl, { slug: args.slug });
+        if (inResult.skipped) {
+          console.log(`[deploy-blog] IndexNow пропущен: ${inResult.reason}`);
+        } else {
+          console.log(
+            `[deploy-blog] IndexNow: HTTP ${inResult.httpStatus}, URL: ${inResult.urlCount}`,
+          );
+        }
+      } catch (inErr) {
+        console.warn("[deploy-blog] IndexNow не отправлен (деплой OK):", inErr.message || inErr);
+      }
       return;
     } catch (err) {
       lastError = err;

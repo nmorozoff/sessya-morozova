@@ -62,11 +62,15 @@ npm run dev   # http://localhost:8080
 3. Запустите:
 
 ```sh
-npm run deploy          # сборка + загрузка dist/ на сервер
-npm run deploy:upload   # только FTP, если dist/ уже собран
+npm run deploy:site          # сборка + сайт на FTP (без blog/** и blog-assets/**)
+npm run deploy:site:upload   # только FTP сайта, если dist/ уже собран
+npm run deploy:blog          # сборка + только блог (blog/, blog-assets/, sitemap.xml)
+npm run deploy:blog:upload   # только FTP блога
 ```
 
-Скрипт `scripts/deploy-ftp.mjs` заливает `dist/` через `lftp mirror -R` в `public_html/`.
+`deploy:site` → `scripts/deploy-ftp-site.mjs`. `deploy:blog` → `scripts/deploy-ftp-blog.mjs`.
+
+Перед любым деплоем проверяется, что `content/blog/` закоммичен (иначе скрипт останавливается).
 
 | Переменная в `.ftp-deploy.env` | Описание |
 |--------------------------------|----------|

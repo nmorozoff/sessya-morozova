@@ -12,9 +12,14 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "deploy": "npm run build && npm run deploy:upload",
-    "deploy:upload": "node scripts/deploy-ftp.mjs --skip-build",
-    "deploy:ftp": "node scripts/deploy-ftp.mjs --skip-build"
+    "deploy": "npm run deploy:site",
+    "deploy:site": "npm run build && npm run deploy:site:upload",
+    "deploy:site:upload": "node scripts/deploy-ftp-site.mjs --skip-build",
+    "deploy:blog": "npm run build && npm run deploy:blog:upload",
+    "deploy:blog:upload": "node scripts/deploy-ftp-blog.mjs --skip-build",
+    "deploy:upload": "npm run deploy:site:upload",
+    "deploy:ftp": "npm run deploy:site:upload",
+    "indexnow": "node scripts/indexnow.mjs --sitemap"
   },
   "dependencies": {
     "clsx": "^2.1.1",
