@@ -9,7 +9,7 @@ const Hero = () => {
 
       <div>
         <div className="inline-block bg-primary/10 border border-primary/25 text-primary text-xs font-semibold tracking-[0.12em] uppercase px-4 py-1.5 rounded-full mb-6 opacity-0 animate-[fadeUp_0.6s_0.1s_forwards]">
-          Психолог · Онлайн и Очно
+          Психолог · Онлайн и очно в Москве
         </div>
         <p className="text-[clamp(28px,5.5vw,45px)] font-semibold text-primary leading-tight mb-6 opacity-0 animate-[fadeUp_0.7s_0.15s_forwards]">
           Наталья Морозова · Психолог, EMDR-терапевт
