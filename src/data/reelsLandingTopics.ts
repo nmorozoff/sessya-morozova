@@ -252,4 +252,26 @@ export const REELS_SUCCESS_SESSIYA =
 export const REELS_FORM_FOOTER_PROBA = "Без обязательств продолжать. Всё конфиденциально.";
 export const REELS_FORM_FOOTER_SESSIYA = "Всё конфиденциально.";
 
-export const REELS_MESSENGER_INTRO = "Или напишите сразу в мессенджер";
+export const REELS_MESSENGER_INTRO = "Если удобнее написать сразу:";
+
+/** Три пункта образования на лендингах рилсов (без бизнес-блоков) */
+export const REELS_ABOUT_CREDENTIALS_LANDING = REELS_ABOUT_CREDENTIALS.slice(0, 3);
+
+export const REELS_HERO_FOOTER_PROBA = "Без обязательств продолжать.";
+export const REELS_HERO_FOOTER_SESSIYA = "Всё конфиденциально.";
+
+export const REELS_BRIDGE_AFTER_BLOCK: Record<number, string> = {
+  1: "Прочтите дальше, это займёт пару минут.",
+  2: "Если это про вас, важно понять, почему так происходит.",
+  3: "Но это можно изменить. Вот как.",
+  4: "Теперь о том, кто будет с вами работать.",
+  5: "А вот что вы получите.",
+  6: "Как это выглядит на практике.",
+  7: "Остался главный вопрос: а если не подойдёт?",
+  8: "Ответы на вопросы, которые чаще всего задают до записи.",
+  9: "И последнее.",
+};
+
+export const REELS_BRIDGE_AFTER_BLOCK_10 = "Сделайте один шаг: оставьте заявку.";
+
+export const REELS_FORM_ANCHOR_ID = "zapis";

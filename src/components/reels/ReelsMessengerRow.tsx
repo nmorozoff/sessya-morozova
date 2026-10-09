@@ -16,9 +16,9 @@ type Props = {
 
 const ReelsMessengerRow = ({ offer, topic }: Props) => {
   return (
-    <div className="flex flex-col gap-3">
-      <p className="text-[15px] text-center text-muted-foreground">{REELS_MESSENGER_INTRO}</p>
-      <div className="flex flex-wrap gap-3 justify-center">
+    <div className="flex flex-col gap-2.5 pt-2">
+      <p className="text-[12px] text-center text-muted-foreground">{REELS_MESSENGER_INTRO}</p>
+      <div className="flex flex-wrap gap-2 justify-center">
         {BOOKING_CHANNELS.map((channel) => (
           <a
             key={channel.id}
@@ -26,7 +26,7 @@ const ReelsMessengerRow = ({ offer, topic }: Props) => {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackMessengerClick({ offer, topic, channel: channel.id })}
-            className="min-h-12 inline-flex items-center justify-center px-5 py-2.5 rounded-[10px] border border-border bg-background text-[14px] font-semibold hover:border-primary/40 transition-colors"
+            className="min-h-10 inline-flex items-center justify-center px-3.5 py-2 rounded-[10px] border border-border bg-background text-[12px] font-medium hover:border-primary/40 transition-colors"
           >
             {MESSENGER_LABELS[channel.id] ?? channel.name}
           </a>

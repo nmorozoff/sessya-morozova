@@ -4,6 +4,7 @@ type GoalParams = {
   offer: "proba" | "sessiya";
   topic: "razvod" | "poterya";
   channel?: string;
+  block?: number;
 };
 
 function reachGoal(goal: string, params: GoalParams) {
