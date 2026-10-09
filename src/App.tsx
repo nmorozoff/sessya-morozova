@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import YandexRotorReady from "@/components/YandexRotorReady";
 import Index from "./pages/Index";
+import { REELS_LANDING_PAGES } from "@/data/reelsLandingPages";
 
 const Privacy = lazy(() => import("./pages/Privacy"));
 const AdvertisingConsent = lazy(() => import("./pages/AdvertisingConsent"));
@@ -30,6 +31,7 @@ const EmigrationStress = lazy(() => import("./pages/services/EmigrationStress"))
 const PsychologicalTrauma = lazy(() => import("./pages/services/PsychologicalTrauma"));
 const BlogIndex = lazy(() => import("./pages/blog/BlogIndex"));
 const BlogPost = lazy(() => import("./pages/blog/BlogPost"));
+const ReelsLandingRoute = lazy(() => import("./pages/reels/ReelsLandingRoute"));
 
 const PageLoader = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">
@@ -71,6 +73,9 @@ const App = () => (
           <Route path="/advertising-consent/" element={<AdvertisingConsent />} />
           <Route path="/privacy-policy/" element={<PrivacyPolicy />} />
           <Route path="/offer/" element={<Offer />} />
+          {REELS_LANDING_PAGES.map((page) => (
+            <Route key={page.path} path={page.path} element={<ReelsLandingRoute />} />
+          ))}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

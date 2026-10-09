@@ -6,6 +6,7 @@ export type PageSeo = {
   description: string;
   path: string;
   ogImage?: string;
+  robots?: string;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 };
 
@@ -20,7 +21,14 @@ function setMeta(attr: "name" | "property", key: string, content: string) {
   el.setAttribute("content", content);
 }
 
-const PageMeta = ({ title, description, path, ogImage = "/og-image.jpg", jsonLd }: PageSeo) => {
+const PageMeta = ({
+  title,
+  description,
+  path,
+  ogImage = "/og-image.jpg",
+  robots,
+  jsonLd,
+}: PageSeo) => {
   const canonical = canonicalUrl(path);
   const image = ogImage.startsWith("http") ? ogImage : `${SITE_URL}${ogImage}`;
   const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
@@ -47,7 +55,14 @@ const PageMeta = ({ title, description, path, ogImage = "/og-image.jpg", jsonLd 
     setMeta("name", "twitter:title", title);
     setMeta("name", "twitter:description", description);
     setMeta("name", "twitter:image", image);
-  }, [title, description, canonical, image]);
+
+    if (robots) {
+      setMeta("name", "robots", robots);
+    } else {
+      const robotsEl = document.head.querySelector('meta[name="robots"]');
+      robotsEl?.remove();
+    }
+  }, [title, description, canonical, image, robots]);
 
   return (
     <>

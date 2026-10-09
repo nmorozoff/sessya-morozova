@@ -45,3 +45,13 @@ function blogRoutes() {
 }
 
 export const SITE_ROUTES = [...STATIC_SITE_ROUTES, ...blogRoutes()];
+
+/** Лендинги рилсов: noindex, не в sitemap */
+export const REELS_LANDING_ROUTES = [
+  "/probnaya-razvod",
+  "/probnaya-poterya",
+  "/sessiya-razvod",
+  "/sessiya-poterya",
+];
+
+export const PRERENDER_ROUTES = [...SITE_ROUTES, ...REELS_LANDING_ROUTES];

@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
-import { SITE_ROUTES } from "./routes.mjs";
+import { PRERENDER_ROUTES } from "./routes.mjs";
 import { canonicalLoc, normalizeSiteUrl, withTrailingSlash } from "./url-utils.mjs";
 
 if (process.env.SKIP_PRERENDER === "1" || process.env.EXCALIBUR_REACT_SKIP_PRERENDER === "yes") {
@@ -181,7 +181,7 @@ async function prerender() {
 
   const routes = process.env.PRERENDER_ONLY
     ? process.env.PRERENDER_ONLY.split(",").map((route) => route.trim()).filter(Boolean)
-    : SITE_ROUTES;
+    : PRERENDER_ROUTES;
 
   console.log(`[prerender] Rendering ${routes.length} routes...`);
   const server = await startPreview();
