@@ -7,13 +7,35 @@ import ReelsLandingForm from "@/components/reels/ReelsLandingForm";
 import ReelsMessengerRow from "@/components/reels/ReelsMessengerRow";
 import type { ReelsLandingPageConfig } from "@/data/reelsLandingPages";
 import {
-  POTERYA_LIVING_LOSS_PAIN,
+  REELS_ABOUT_CREDENTIALS,
+  REELS_ABOUT_LEAD,
+  REELS_ABOUT_PARAGRAPHS,
+  REELS_ABOUT_PHOTO,
+  REELS_ABOUT_PHOTO_ALT,
+  REELS_ABOUT_QUOTE,
+  REELS_BLOCK7_PROBA,
+  REELS_BLOCK7_SESSIYA,
+  REELS_BLOCK8_PROBA,
+  REELS_BLOCK8_SESSIYA,
+  REELS_CTA_CAPTION,
+  REELS_CTA_PROBA,
+  REELS_CTA_SESSIYA,
+  REELS_EMDR_BULLETS,
+  REELS_EMDR_DISCLAIMER,
+  REELS_FINAL_PROBA,
+  REELS_FINAL_SESSIYA,
+  REELS_FORM_FOOTER_PROBA,
+  REELS_FORM_FOOTER_SESSIYA,
+  REELS_FORM_TITLE_PROBA,
+  REELS_FORM_TITLE_SESSIYA,
   REELS_PROBA_FAQ,
   REELS_SESSIYA_FAQ,
   REELS_SHARED_FAQ,
   REELS_TOPIC_COPY,
-  REELS_TOPIC_HEADLINES,
-  REELS_WORK_STEPS,
+  REELS_WORK_STEP_1,
+  REELS_WORK_STEP_2,
+  REELS_WORK_STEP_3_PROBA,
+  REELS_WORK_STEP_3_SESSIYA,
 } from "@/data/reelsLandingTopics";
 import { initReelsScrollGoals } from "@/lib/reelsLandingAnalytics";
 import {
@@ -22,34 +44,24 @@ import {
   SESSION_PRICE_ONLINE_RUB,
 } from "@/lib/sessionPricing";
 
-const ABOUT_PHOTO = "/images/about-photo-dark.jpg";
-
-const CREDENTIALS = [
-  "Психологическая работа с травматическим стрессом, ВШЭ",
-  "EMDR (ДПДГ) терапия, Академия краткосрочной стратегической психотерапии",
-  "Психологическое консультирование, Институт трансперсональной психологии",
-  "Школа бизнес-психологов, Международный центр обучения",
-  "Бизнес-тренер, ИПО",
-];
+const FORM_ID = "reels-form-bottom";
 
 type Props = { config: ReelsLandingPageConfig };
 
 const ReelsLandingPage = ({ config }: Props) => {
-  const { path, topic, offer, includeLivingLossPain, slotsRemainingThisWeek } = config;
-  const headlines = REELS_TOPIC_HEADLINES[topic];
+  const { path, topic, offer } = config;
   const copy = REELS_TOPIC_COPY[topic];
   const isProba = offer === "proba";
-  const ctaLabel = isProba ? "Записаться на знакомство" : "Записаться на сессию";
-  const heroSubmit = isProba
-    ? "Записаться на бесплатное знакомство 30 минут"
-    : "Записаться на сессию";
-
-  const pains = [...copy.pains];
-  if (includeLivingLossPain && topic === "poterya") {
-    pains.push(POTERYA_LIVING_LOSS_PAIN);
-  }
+  const ctaLabel = isProba ? REELS_CTA_PROBA : REELS_CTA_SESSIYA;
+  const subtitle = isProba ? copy.subtitleProba : copy.subtitleSessiya;
+  const formTitle = isProba ? REELS_FORM_TITLE_PROBA : REELS_FORM_TITLE_SESSIYA;
+  const formFooter = isProba ? REELS_FORM_FOOTER_PROBA : REELS_FORM_FOOTER_SESSIYA;
+  const finalBlock = isProba ? REELS_FINAL_PROBA : REELS_FINAL_SESSIYA;
+  const block8 = isProba ? REELS_BLOCK8_PROBA : REELS_BLOCK8_SESSIYA;
+  const workStep3 = isProba ? REELS_WORK_STEP_3_PROBA : REELS_WORK_STEP_3_SESSIYA;
 
   const faqItems = [
+    ...copy.thematicFaq,
     ...REELS_SHARED_FAQ,
     isProba ? REELS_PROBA_FAQ : REELS_SESSIYA_FAQ,
   ];
@@ -72,19 +84,18 @@ const ReelsLandingPage = ({ config }: Props) => {
     return () => observer.disconnect();
   }, []);
 
-  const topicLabel = topic === "razvod" ? "развод" : "утрата";
-  const title = isProba
-    ? `Бесплатное знакомство 30 мин | ${topicLabel}`
-    : `Сессия 90 мин | ${topicLabel}`;
+  const pageTitle = isProba ? `Пробная сессия | ${topic === "razvod" ? "развод" : "утрата"}` : `Сессия 90 минут | ${topic === "razvod" ? "развод" : "утрата"}`;
+
+  const Cta = () => (
+    <div className="mt-8 flex flex-col items-center gap-2">
+      <ReelsCtaButton offer={offer} topic={topic} label={ctaLabel} formId={FORM_ID} />
+      <p className="text-[13px] text-center text-muted-foreground">{REELS_CTA_CAPTION}</p>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-24">
-      <PageMeta
-        title={title}
-        description={headlines.metaDescription}
-        path={path}
-        robots="noindex, nofollow"
-      />
+      <PageMeta title={pageTitle} description={subtitle} path={path} robots="noindex, nofollow" />
 
       <header className="px-5 py-4 border-b border-border flex items-center justify-center">
         <Link to="/" className="text-[15px] font-bold tracking-wide">
@@ -95,159 +106,145 @@ const ReelsLandingPage = ({ config }: Props) => {
       <main className="max-w-xl mx-auto px-5 py-8 flex flex-col gap-14">
         <section ref={heroRef} className="flex flex-col gap-6">
           <h1 className="text-[clamp(26px,6vw,34px)] font-extrabold leading-tight tracking-tight">
-            {headlines.h1}
+            {copy.h1}
           </h1>
-          <p className="text-[17px] text-muted-foreground leading-relaxed">{headlines.subtitle}</p>
-
-          {!isProba ? (
-            <div className="grid gap-3">
-              <div className="border border-border rounded-2xl p-5 bg-bg3">
-                <div className="text-sm text-muted-foreground">Онлайн, 90 минут</div>
-                <div className="text-2xl font-bold mt-1">{formatPriceRub(SESSION_PRICE_ONLINE_RUB)} ₽</div>
-              </div>
-              <div className="border border-border rounded-2xl p-5 bg-bg3">
-                <div className="text-sm text-muted-foreground">Очно в Москве, 90 минут</div>
-                <div className="text-2xl font-bold mt-1">{formatPriceRub(SESSION_PRICE_OFFLINE_RUB)} ₽</div>
-              </div>
-              <p className="text-[13px] text-muted-foreground">Полноценная рабочая сессия 90 минут (оплачиваемая)</p>
-            </div>
-          ) : null}
-
-          <ReelsLandingForm
-            id="reels-form-hero"
-            offer={offer}
-            topic={topic}
-            submitLabel={heroSubmit}
-            showSessionFormat={!isProba}
-          />
-          <ReelsMessengerRow offer={offer} topic={topic} />
-          <p className="text-[13px] text-center text-muted-foreground">
-            Без обязательств продолжать. Всё конфиденциально.
-          </p>
+          <p className="text-[17px] text-muted-foreground leading-relaxed">{subtitle}</p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-5">Узнаёте себя?</h2>
+          <h2 className="text-2xl font-bold mb-5">{copy.painsTitle}</h2>
           <ul className="space-y-3 text-[15px] text-muted-foreground leading-relaxed list-disc pl-5">
-            {pains.map((pain) => (
+            {copy.pains.map((pain) => (
               <li key={pain}>{pain}</li>
             ))}
           </ul>
-          <div className="mt-8 flex justify-center">
-            <ReelsCtaButton offer={offer} topic={topic} label={ctaLabel} formId="reels-form-hero" />
-          </div>
+          <p className="mt-5 text-[15px] text-foreground/90 leading-relaxed">{copy.painsClosing}</p>
+          <Cta />
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-5">Чего вы можете бояться</h2>
-          <div className="space-y-5">
-            {copy.doubts.map((item) => (
-              <div key={item.doubt} className="border border-border rounded-xl p-4 bg-bg3">
-                <p className="font-medium text-[15px] mb-2">{item.doubt}</p>
-                <p className="text-[15px] text-muted-foreground leading-relaxed">{item.answer}</p>
-              </div>
+          <h2 className="text-2xl font-bold mb-5">{copy.block3Title}</h2>
+          <p className="text-[15px] text-muted-foreground leading-relaxed mb-4">{copy.block3Paragraphs[0]}</p>
+          <p className="text-[15px] text-muted-foreground leading-relaxed">{copy.block3Paragraphs[1]}</p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-5">{copy.block4Title}</h2>
+          <p className="text-[15px] text-muted-foreground leading-relaxed mb-5">{copy.block4Text}</p>
+          <ul className="space-y-2 text-[15px] text-muted-foreground leading-relaxed list-disc pl-5 mb-4">
+            {REELS_EMDR_BULLETS.map((item) => (
+              <li key={item}>{item}</li>
             ))}
-          </div>
-          <div className="mt-8 flex justify-center">
-            <ReelsCtaButton offer={offer} topic={topic} label={ctaLabel} formId="reels-form-bottom" />
-          </div>
+          </ul>
+          <p className="text-[12px] text-muted-foreground leading-relaxed">{REELS_EMDR_DISCLAIMER}</p>
+          <Cta />
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-5">Что на самом деле происходит</h2>
-          <p className="text-[15px] text-muted-foreground leading-relaxed mb-4">{copy.normalization[0]}</p>
-          <p className="text-[15px] text-muted-foreground leading-relaxed mb-4">{copy.normalization[1]}</p>
-          <p className="text-[15px] text-foreground/90 leading-relaxed">{copy.emdrNote}</p>
-          <div className="mt-8 flex justify-center">
-            <ReelsCtaButton offer={offer} topic={topic} label={ctaLabel} formId="reels-form-bottom" />
-          </div>
+          <h2 className="text-2xl font-bold mb-5">Кто с вами будет работать</h2>
+          <img
+            src={REELS_ABOUT_PHOTO}
+            alt={REELS_ABOUT_PHOTO_ALT}
+            className="w-full max-w-xs rounded-2xl object-cover object-top aspect-[3/4] mb-5"
+            width={400}
+            height={533}
+            loading="lazy"
+          />
+          <p className="text-[15px] font-medium mb-4">{REELS_ABOUT_LEAD}</p>
+          <blockquote className="text-[15px] italic text-foreground/80 leading-relaxed mb-4 p-4 bg-primary/[0.06] border-l-[3px] border-primary rounded-r-xl">
+            {REELS_ABOUT_QUOTE}
+          </blockquote>
+          {REELS_ABOUT_PARAGRAPHS.map((p) => (
+            <p key={p} className="text-[15px] text-muted-foreground leading-relaxed mb-3.5">
+              {p}
+            </p>
+          ))}
+          <ul className="mt-4 space-y-2.5">
+            {REELS_ABOUT_CREDENTIALS.map((c) => (
+              <li key={c} className="flex items-start gap-3 text-[13px] text-foreground/60 leading-snug">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-1.5" />
+                {c}
+              </li>
+            ))}
+          </ul>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-5">Как проходит работа</h2>
+          <h2 className="text-2xl font-bold mb-5">Как это проходит</h2>
           <ol className="space-y-4">
-            {REELS_WORK_STEPS.map((step, i) => (
+            {[REELS_WORK_STEP_1, REELS_WORK_STEP_2, workStep3].map((step, i) => (
               <li key={step} className="flex gap-3 text-[15px] text-muted-foreground leading-relaxed">
                 <span className="font-bold text-primary shrink-0">{i + 1}.</span>
                 <span>{step}</span>
               </li>
             ))}
           </ol>
+          <Cta />
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-5">Кто ведёт</h2>
-          <img
-            src={ABOUT_PHOTO}
-            alt="Наталья Морозова, психолог и EMDR-терапевт"
-            className="w-full max-w-xs rounded-2xl object-cover aspect-[3/4] mb-5"
-            width={400}
-            height={533}
-            fetchPriority="high"
-          />
-          <p className="text-xl font-bold mb-1">Наталья Морозова</p>
-          <p className="text-[15px] text-muted-foreground mb-4">Психолог, EMDR-терапевт</p>
-          <ul className="space-y-2 text-[13px] text-muted-foreground">
-            {CREDENTIALS.map((c) => (
-              <li key={c} className="flex gap-2">
-                <span className="text-primary">•</span>
-                <span>{c}</span>
-              </li>
+          <h2 className="text-2xl font-bold mb-5">
+            {isProba ? REELS_BLOCK7_PROBA.title : REELS_BLOCK7_SESSIYA.title}
+          </h2>
+          <ul className="space-y-3 text-[15px] text-muted-foreground leading-relaxed list-disc pl-5">
+            {(isProba ? REELS_BLOCK7_PROBA.items : REELS_BLOCK7_SESSIYA.items).map((item) => (
+              <li key={item}>{item}</li>
             ))}
           </ul>
-          <div className="mt-8 flex justify-center">
-            <ReelsCtaButton offer={offer} topic={topic} label={ctaLabel} formId="reels-form-bottom" />
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-bold mb-5">Вопросы и ответы</h2>
-          <ReelsFaqAccordion items={[...faqItems]} offer={offer} topic={topic} />
-        </section>
-
-        <section className="flex flex-col gap-6">
-          <h2 className="text-2xl font-bold">
-            {isProba ? "Бесплатное знакомство 30 минут" : "Запись на сессию 90 минут"}
-          </h2>
-          {isProba ? (
-            <div className="text-[15px] text-muted-foreground leading-relaxed space-y-3">
-              <p>
-                Знакомство: вы рассказываете, что беспокоит, я отвечаю, подойдёт ли вам EMDR и как может выглядеть
-                работа. Это не полноценная терапевтическая сессия. Формат: онлайн.
-              </p>
-              {typeof slotsRemainingThisWeek === "number" ? (
-                <p className="text-foreground font-medium">
-                  Свободных слотов на этой неделе: {slotsRemainingThisWeek}
-                </p>
-              ) : null}
-            </div>
-          ) : (
-            <p className="text-[15px] text-muted-foreground">
-              Рабочая сессия 90 минут — онлайн или очно в Москве. Выберите формат в форме.
-            </p>
-          )}
-
-          <ReelsLandingForm
-            id="reels-form-bottom"
-            offer={offer}
-            topic={topic}
-            submitLabel={heroSubmit}
-            showSessionFormat={!isProba}
-          />
-          <ReelsMessengerRow offer={offer} topic={topic} />
-
-          {isProba ? (
-            <div className="border border-border rounded-2xl p-5 bg-bg3 text-[15px] leading-relaxed text-muted-foreground">
-              Если после знакомства решите продолжить: сессия 90 минут, онлайн{" "}
-              {formatPriceRub(SESSION_PRICE_ONLINE_RUB)} ₽, очно в Москве{" "}
-              {formatPriceRub(SESSION_PRICE_OFFLINE_RUB)} ₽.
+          {!isProba ? (
+            <div className="mt-6 grid gap-3">
+              <div className="border border-border rounded-2xl p-5 bg-bg3 text-[15px]">
+                Онлайн, 90 минут: {formatPriceRub(SESSION_PRICE_ONLINE_RUB)} ₽
+              </div>
+              <div className="border border-border rounded-2xl p-5 bg-bg3 text-[15px]">
+                Очно в Москве, 90 минут: {formatPriceRub(SESSION_PRICE_OFFLINE_RUB)} ₽
+              </div>
+              <p className="text-[13px] text-muted-foreground">{REELS_BLOCK7_SESSIYA.priceCaption}</p>
             </div>
           ) : null}
         </section>
 
+        <section>
+          <h2 className="text-2xl font-bold mb-4">{block8.title}</h2>
+          <p className="text-[15px] text-muted-foreground leading-relaxed">{block8.text}</p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-5">Частые вопросы</h2>
+          <ReelsFaqAccordion items={faqItems} offer={offer} topic={topic} />
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4">{copy.block11Title}</h2>
+          <p className="text-[15px] text-muted-foreground leading-relaxed">{copy.block11Text}</p>
+          <Cta />
+        </section>
+
+        <section className="flex flex-col gap-6">
+          <h2 className="text-2xl font-bold">{finalBlock.title}</h2>
+          <p className="text-[17px] text-muted-foreground leading-relaxed">{finalBlock.subtitle}</p>
+
+          <ReelsLandingForm
+            id={FORM_ID}
+            offer={offer}
+            topic={topic}
+            formTitle={formTitle}
+            submitLabel={ctaLabel}
+            showSessionFormat={!isProba}
+          />
+          <p className="text-[13px] text-center text-muted-foreground -mt-2">{formFooter}</p>
+          <ReelsMessengerRow offer={offer} topic={topic} />
+        </section>
+
+        {isProba ? (
+          <div className="border border-border rounded-2xl p-5 bg-bg3 text-[15px] leading-relaxed text-muted-foreground">
+            Если после пробной сессии решите продолжить: сессия 90 минут, онлайн {formatPriceRub(SESSION_PRICE_ONLINE_RUB)} ₽, очно в Москве {formatPriceRub(SESSION_PRICE_OFFLINE_RUB)} ₽.
+          </div>
+        ) : null}
+
         <p className="text-[12px] text-muted-foreground leading-relaxed border-t border-border pt-6">
-          Сессия не заменяет экстренную помощь. Если вам сейчас очень плохо или есть мысли причинить себе вред,
-          позвоните <a href="tel:112" className="underline">112</a>.
+          Если вам сейчас очень плохо или есть мысли причинить себе вред, позвоните{" "}
+          <a href="tel:112" className="underline">112</a>. Сессия не заменяет экстренную помощь.
         </p>
       </main>
 
@@ -257,7 +254,7 @@ const ReelsLandingPage = ({ config }: Props) => {
             type="button"
             className="w-full min-h-12 bg-primary text-primary-foreground rounded-[10px] font-bold text-[15px]"
             onClick={() => {
-              document.getElementById("reels-form-bottom")?.scrollIntoView({ behavior: "smooth" });
+              document.getElementById(FORM_ID)?.scrollIntoView({ behavior: "smooth" });
             }}
           >
             {ctaLabel}

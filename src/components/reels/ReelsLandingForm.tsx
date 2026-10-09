@@ -1,8 +1,17 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import type { ReelsOfferId, ReelsTopicId } from "@/data/reelsLandingTopics";
+import {
+  REELS_SUCCESS_PROBA,
+  REELS_SUCCESS_SESSIYA,
+} from "@/data/reelsLandingTopics";
 import { PAYMENT_URL_OFFLINE, PAYMENT_URL_ONLINE } from "@/data/reelsLandingPayment";
 import { trackFormSubmit } from "@/lib/reelsLandingAnalytics";
+import {
+  formatPriceRub,
+  SESSION_PRICE_OFFLINE_RUB,
+  SESSION_PRICE_ONLINE_RUB,
+} from "@/lib/sessionPricing";
 import { buildReelsLeadMessage, getFormAttribution } from "@/lib/utm";
 
 export type SessionFormat = "online" | "offline";
@@ -11,11 +20,19 @@ type Props = {
   id: string;
   offer: ReelsOfferId;
   topic: ReelsTopicId;
+  formTitle: string;
   submitLabel: string;
   showSessionFormat?: boolean;
 };
 
-const ReelsLandingForm = ({ id, offer, topic, submitLabel, showSessionFormat }: Props) => {
+const ReelsLandingForm = ({
+  id,
+  offer,
+  topic,
+  formTitle,
+  submitLabel,
+  showSessionFormat,
+}: Props) => {
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [preferredChannel, setPreferredChannel] = useState("");
@@ -72,37 +89,26 @@ const ReelsLandingForm = ({ id, offer, topic, submitLabel, showSessionFormat }: 
   if (success) {
     const paymentUrl =
       showSessionFormat && sessionFormat === "offline" ? PAYMENT_URL_OFFLINE : PAYMENT_URL_ONLINE;
+    const successText = offer === "proba" ? REELS_SUCCESS_PROBA : REELS_SUCCESS_SESSIYA;
 
     return (
       <div id={id} className="bg-bg3 border border-border rounded-2xl p-6 sm:p-8 scroll-mt-24">
-        <h3 className="text-xl font-bold mb-3">Заявка принята</h3>
-        {offer === "sessiya" ? (
-          <>
-            <p className="text-muted-foreground text-[15px] leading-relaxed mb-4">
-              Следующий шаг: оплата и согласование времени.
-            </p>
-            {paymentUrl ? (
-              <a
-                href={paymentUrl}
-                className="inline-flex min-h-12 items-center justify-center bg-primary text-primary-foreground px-6 py-3 rounded-[10px] font-bold text-[15px]"
-                rel="noopener noreferrer"
-              >
-                Перейти к оплате
-              </a>
-            ) : (
-              <p className="text-[15px] text-foreground/90">
-                Я свяжусь с вами в выбранном мессенджере и помогу выбрать время.
-              </p>
-            )}
-          </>
-        ) : (
-          <p className="text-muted-foreground text-[15px] leading-relaxed">
-            Отвечу в выбранном мессенджере и согласуем время знакомства.
-          </p>
-        )}
+        <p className="text-[15px] text-foreground/90 leading-relaxed">{successText}</p>
+        {offer === "sessiya" && paymentUrl ? (
+          <a
+            href={paymentUrl}
+            className="inline-flex min-h-12 items-center justify-center bg-primary text-primary-foreground px-6 py-3 rounded-[10px] font-bold text-[15px] mt-4"
+            rel="noopener noreferrer"
+          >
+            Перейти к оплате
+          </a>
+        ) : null}
       </div>
     );
   }
+
+  const onlineLabel = `Онлайн, ${formatPriceRub(SESSION_PRICE_ONLINE_RUB)} ₽`;
+  const offlineLabel = `Очно в Москве, ${formatPriceRub(SESSION_PRICE_OFFLINE_RUB)} ₽`;
 
   return (
     <form
@@ -110,16 +116,21 @@ const ReelsLandingForm = ({ id, offer, topic, submitLabel, showSessionFormat }: 
       className="bg-bg3 border border-border rounded-2xl p-6 sm:p-8 flex flex-col gap-4 scroll-mt-24"
       onSubmit={handleSubmit}
     >
-      <input
-        type="text"
-        placeholder="Ваше имя"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-        className="bg-foreground/[0.04] border border-foreground/10 rounded-[10px] px-4 py-3.5 text-sm min-h-12 focus:border-primary focus:outline-none"
-      />
+      <h3 className="text-xl font-bold">{formTitle}</h3>
+
       <label className="flex flex-col gap-1.5">
-        <span className="text-[13px] text-muted-foreground">Мессенджер</span>
+        <span className="text-[13px] text-muted-foreground">Как вас зовут</span>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          className="bg-foreground/[0.04] border border-foreground/10 rounded-[10px] px-4 py-3.5 text-sm min-h-12 focus:border-primary focus:outline-none"
+        />
+      </label>
+
+      <label className="flex flex-col gap-1.5">
+        <span className="text-[13px] text-muted-foreground">В каком мессенджере вам ответить</span>
         <select
           value={preferredChannel}
           onChange={(e) => setPreferredChannel(e.target.value)}
@@ -133,19 +144,23 @@ const ReelsLandingForm = ({ id, offer, topic, submitLabel, showSessionFormat }: 
           <option value="Звонок">Звонок</option>
         </select>
       </label>
-      <input
-        type="text"
-        inputMode="text"
-        autoComplete="tel"
-        placeholder="Телефон или @username"
-        value={contact}
-        onChange={(e) => setContact(e.target.value)}
-        required
-        className="bg-foreground/[0.04] border border-foreground/10 rounded-[10px] px-4 py-3.5 text-sm min-h-12 focus:border-primary focus:outline-none"
-      />
+
+      <label className="flex flex-col gap-1.5">
+        <span className="text-[13px] text-muted-foreground">Ваш контакт (телефон или @ник)</span>
+        <input
+          type="text"
+          inputMode="text"
+          autoComplete="tel"
+          value={contact}
+          onChange={(e) => setContact(e.target.value)}
+          required
+          className="bg-foreground/[0.04] border border-foreground/10 rounded-[10px] px-4 py-3.5 text-sm min-h-12 focus:border-primary focus:outline-none"
+        />
+      </label>
+
       {showSessionFormat ? (
         <fieldset className="flex flex-col gap-2">
-          <legend className="text-[13px] text-muted-foreground mb-1">Формат сессии</legend>
+          <legend className="sr-only">Формат сессии</legend>
           <label className="flex items-center gap-2 min-h-12 text-sm">
             <input
               type="radio"
@@ -153,7 +168,7 @@ const ReelsLandingForm = ({ id, offer, topic, submitLabel, showSessionFormat }: 
               checked={sessionFormat === "online"}
               onChange={() => setSessionFormat("online")}
             />
-            Онлайн, 90 минут
+            {onlineLabel}
           </label>
           <label className="flex items-center gap-2 min-h-12 text-sm">
             <input
@@ -162,31 +177,41 @@ const ReelsLandingForm = ({ id, offer, topic, submitLabel, showSessionFormat }: 
               checked={sessionFormat === "offline"}
               onChange={() => setSessionFormat("offline")}
             />
-            Очно в Москве, 90 минут
+            {offlineLabel}
           </label>
         </fieldset>
       ) : null}
+
       <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
-      <label className="flex items-start gap-3 text-[13px] text-muted-foreground leading-snug">
+
+      <label className="flex items-start gap-3 cursor-pointer text-[13px] text-muted-foreground leading-snug mt-1">
         <input
           type="checkbox"
           checked={agreed}
           onChange={(e) => setAgreed(e.target.checked)}
-          className="mt-1 h-4 w-4 accent-primary"
+          className="mt-0.5 h-4 w-4 shrink-0 rounded border border-foreground/20 accent-primary"
           required
         />
         <span>
-          Согласен(-на) с{" "}
-          <a href="/privacy-policy/" target="_blank" rel="noopener noreferrer" className="underline">
+          Я согласен(-на) с{" "}
+          <a href="/privacy-policy/" target="_blank" className="underline hover:text-foreground transition-colors">
             политикой конфиденциальности
+          </a>
+          , с условиями{" "}
+          <a href="/offer/" target="_blank" className="underline hover:text-foreground transition-colors">
+            публичной оферты
+          </a>
+          , даю своё{" "}
+          <a href="/privacy/" target="_blank" className="underline hover:text-foreground transition-colors">
+            согласие на обработку персональных данных
           </a>{" "}
           и{" "}
-          <a href="/offer/" target="_blank" rel="noopener noreferrer" className="underline">
-            офертой
+          <a href="/advertising-consent/" target="_blank" className="underline hover:text-foreground transition-colors">
+            согласие на получение рекламной рассылки
           </a>
-          , даю согласие на обработку персональных данных
         </span>
       </label>
+
       <button
         type="submit"
         disabled={loading || !agreed}
@@ -194,7 +219,6 @@ const ReelsLandingForm = ({ id, offer, topic, submitLabel, showSessionFormat }: 
       >
         {loading ? "Отправляю…" : submitLabel}
       </button>
-      <p className="text-center text-[13px] text-muted-foreground">Отвечу в мессенджере, который вы выберете</p>
     </form>
   );
 };
