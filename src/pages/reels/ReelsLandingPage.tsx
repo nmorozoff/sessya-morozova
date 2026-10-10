@@ -6,31 +6,20 @@ import ReelsFaqAccordion from "@/components/reels/ReelsFaqAccordion";
 import ReelsLandingForm from "@/components/reels/ReelsLandingForm";
 import ReelsMessengerRow from "@/components/reels/ReelsMessengerRow";
 import type { ReelsLandingPageConfig } from "@/data/reelsLandingPages";
+import { faqListFor, resolveReelsLanding } from "@/data/reelsLandingResolve";
 import {
   REELS_ABOUT_CREDENTIALS_LANDING,
   REELS_ABOUT_PHOTO,
   REELS_ABOUT_PHOTO_ALT,
-  REELS_BLOCK7_PROBA,
-  REELS_BLOCK7_SESSIYA,
   REELS_BLOCK8_PROBA,
   REELS_BLOCK8_SESSIYA,
   REELS_BRIDGE_AFTER_BLOCK,
   REELS_BRIDGE_AFTER_BLOCK_10,
-  REELS_CTA_PROBA,
-  REELS_CTA_SESSIYA,
-  REELS_EMDR_BULLETS,
-  REELS_EMDR_DISCLAIMER,
-  REELS_FINAL_PROBA,
-  REELS_FINAL_SESSIYA,
   REELS_FORM_ANCHOR_ID,
   REELS_FORM_TITLE_PROBA,
   REELS_FORM_TITLE_SESSIYA,
   REELS_HERO_FOOTER_PROBA,
   REELS_HERO_FOOTER_SESSIYA,
-  REELS_PROBA_FAQ,
-  REELS_SESSIYA_FAQ,
-  REELS_SHARED_FAQ,
-  REELS_TOPIC_COPY,
   REELS_WORK_STEP_1,
   REELS_WORK_STEP_2,
   REELS_WORK_STEP_3_PROBA,
@@ -50,22 +39,15 @@ const h2Class = "text-[clamp(26px,5.5vw,32px)] font-extrabold leading-tight trac
 const bodyClass = "text-[17px] text-muted-foreground leading-relaxed max-w-[36ch]";
 
 const ReelsLandingPage = ({ config }: Props) => {
-  const { path, topic, offer } = config;
-  const copy = REELS_TOPIC_COPY[topic];
+  const resolved = resolveReelsLanding(config);
+  const { path, topic, offer } = resolved;
   const isProba = offer === "proba";
-  const ctaLabel = isProba ? REELS_CTA_PROBA : REELS_CTA_SESSIYA;
-  const subtitle = isProba ? copy.subtitleProba : copy.subtitleSessiya;
   const formTitle = isProba ? REELS_FORM_TITLE_PROBA : REELS_FORM_TITLE_SESSIYA;
-  const finalBlock = isProba ? REELS_FINAL_PROBA : REELS_FINAL_SESSIYA;
   const block8 = isProba ? REELS_BLOCK8_PROBA : REELS_BLOCK8_SESSIYA;
   const workStep3 = isProba ? REELS_WORK_STEP_3_PROBA : REELS_WORK_STEP_3_SESSIYA;
   const heroFooter = isProba ? REELS_HERO_FOOTER_PROBA : REELS_HERO_FOOTER_SESSIYA;
-
-  const faqItems = [
-    ...copy.thematicFaq,
-    ...REELS_SHARED_FAQ,
-    isProba ? REELS_PROBA_FAQ : REELS_SESSIYA_FAQ,
-  ];
+  const faqItems = faqListFor(resolved);
+  const formSubmitLabel = isProba ? REELS_FORM_TITLE_PROBA : REELS_FORM_TITLE_SESSIYA;
 
   const formRef = useRef<HTMLDivElement>(null);
   const [showSticky, setShowSticky] = useState(false);
@@ -95,7 +77,12 @@ const ReelsLandingPage = ({ config }: Props) => {
 
   const Cta = ({ blockNum }: { blockNum: number }) => (
     <div className="pt-4">
-      <ReelsCtaButton offer={offer} topic={topic} label={ctaLabel} block={blockNum} />
+      <ReelsCtaButton
+        offer={offer}
+        topic={topic}
+        label={resolved.ctaByBlock[blockNum]}
+        block={blockNum}
+      />
     </div>
   );
 
@@ -107,13 +94,13 @@ const ReelsLandingPage = ({ config }: Props) => {
       <div className="border border-border rounded-2xl p-5 bg-bg3 text-[16px]">
         Очно в Москве, 90 минут: {formatPriceRub(SESSION_PRICE_OFFLINE_RUB)} ₽
       </div>
-      <p className="text-[13px] text-muted-foreground">{REELS_BLOCK7_SESSIYA.priceCaption}</p>
+      <p className="text-[13px] text-muted-foreground">{resolved.block7PriceCaption}</p>
     </div>
   );
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-24">
-      <PageMeta title={pageTitle} description={subtitle} path={path} robots="noindex, nofollow" />
+      <PageMeta title={pageTitle} description={resolved.subtitle} path={path} robots="noindex, nofollow" />
 
       <header className="px-5 py-4 border-b border-border flex items-center justify-center">
         <Link to="/" className="text-[15px] font-bold tracking-wide">
@@ -125,9 +112,9 @@ const ReelsLandingPage = ({ config }: Props) => {
         {/* 1 Hero */}
         <section className={sectionClass}>
           <h1 className="text-[clamp(28px,6.5vw,38px)] font-extrabold leading-[1.12] tracking-tight">
-            {copy.h1}
+            {resolved.h1}
           </h1>
-          <p className={bodyClass}>{subtitle}</p>
+          <p className={bodyClass}>{resolved.subtitle}</p>
           {!isProba ? <SessiyaPriceCards /> : null}
           <Cta blockNum={1} />
           <p className="text-[13px] text-center text-muted-foreground">{heroFooter}</p>
@@ -136,35 +123,37 @@ const ReelsLandingPage = ({ config }: Props) => {
 
         {/* 2 Узнаёте себя? */}
         <section className={sectionClass}>
-          <h2 className={h2Class}>{copy.painsTitle}</h2>
+          <h2 className={h2Class}>{resolved.painsTitle}</h2>
           <ul className="space-y-3 text-[17px] text-muted-foreground leading-relaxed list-disc pl-5 max-w-[36ch]">
-            {copy.pains.map((pain) => (
+            {resolved.pains.map((pain) => (
               <li key={pain}>{pain}</li>
             ))}
           </ul>
-          <p className="text-[17px] text-foreground/90 leading-relaxed max-w-[36ch]">{copy.painsClosing}</p>
+          <p className="text-[17px] text-foreground/90 leading-relaxed max-w-[36ch]">{resolved.painsClosing}</p>
           <Bridge blockNum={2} />
           <Cta blockNum={2} />
         </section>
 
         {/* 3 Почему не получается */}
         <section className={sectionClass}>
-          <h2 className={h2Class}>{copy.block3Title}</h2>
-          <p className={bodyClass}>{copy.block3Paragraphs[0]}</p>
-          <p className={bodyClass}>{copy.block3Paragraphs[1]}</p>
+          <h2 className={h2Class}>{resolved.block3Title}</h2>
+          <p className={bodyClass}>{resolved.block3Paragraphs[0]}</p>
+          <p className={bodyClass}>{resolved.block3Paragraphs[1]}</p>
           <Bridge blockNum={3} />
         </section>
 
         {/* 4 EMDR */}
         <section className={sectionClass}>
-          <h2 className={h2Class}>{copy.block4Title}</h2>
-          <p className={bodyClass}>{copy.block4Text}</p>
+          <h2 className={h2Class}>{resolved.block4Title}</h2>
+          <p className={bodyClass}>{resolved.block4Text}</p>
           <ul className="space-y-2 text-[17px] text-muted-foreground leading-relaxed list-disc pl-5 max-w-[36ch]">
-            {REELS_EMDR_BULLETS.map((item) => (
+            {resolved.emdrBullets.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>
-          <p className="text-[12px] text-muted-foreground leading-relaxed max-w-[36ch]">{REELS_EMDR_DISCLAIMER}</p>
+          {resolved.emdrDisclaimer ? (
+            <p className="text-[12px] text-muted-foreground leading-relaxed max-w-[36ch]">{resolved.emdrDisclaimer}</p>
+          ) : null}
           <Bridge blockNum={4} />
           <Cta blockNum={4} />
         </section>
@@ -197,9 +186,9 @@ const ReelsLandingPage = ({ config }: Props) => {
 
         {/* 6 Что вы получите */}
         <section className={sectionClass}>
-          <h2 className={h2Class}>{isProba ? REELS_BLOCK7_PROBA.title : REELS_BLOCK7_SESSIYA.title}</h2>
+          <h2 className={h2Class}>{resolved.block7Title}</h2>
           <ul className="space-y-3 text-[17px] text-muted-foreground leading-relaxed list-disc pl-5 max-w-[36ch]">
-            {(isProba ? REELS_BLOCK7_PROBA.items : REELS_BLOCK7_SESSIYA.items).map((item) => (
+            {resolved.block7Items.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>
@@ -239,22 +228,22 @@ const ReelsLandingPage = ({ config }: Props) => {
 
         {/* 10 Что будет, если ничего не менять */}
         <section className={sectionClass}>
-          <h2 className={h2Class}>{copy.block11Title}</h2>
-          <p className={bodyClass}>{copy.block11Text}</p>
+          <h2 className={h2Class}>{resolved.block11Title}</h2>
+          <p className={bodyClass}>{resolved.block11Text}</p>
           <p className="text-[13px] text-muted-foreground leading-relaxed pt-2">{REELS_BRIDGE_AFTER_BLOCK_10}</p>
         </section>
 
         {/* 11 Финал + форма */}
         <section ref={formRef} className={`${sectionClass} scroll-mt-6`}>
-          <h2 className={h2Class}>{finalBlock.title}</h2>
-          <p className={bodyClass}>{finalBlock.subtitle}</p>
+          <h2 className={h2Class}>{resolved.finalTitle}</h2>
+          <p className={bodyClass}>{resolved.finalSubtitle}</p>
 
           <ReelsLandingForm
             id={REELS_FORM_ANCHOR_ID}
             offer={offer}
             topic={topic}
             formTitle={formTitle}
-            submitLabel={ctaLabel}
+            submitLabel={formSubmitLabel}
             showSessionFormat={!isProba}
           />
           <ReelsMessengerRow offer={offer} topic={topic} />
@@ -282,7 +271,7 @@ const ReelsLandingPage = ({ config }: Props) => {
               document.getElementById(REELS_FORM_ANCHOR_ID)?.scrollIntoView({ behavior: "smooth", block: "start" });
             }}
           >
-            {ctaLabel}
+            {resolved.stickyCta}
           </button>
         </div>
       ) : null}
