@@ -15,7 +15,7 @@ import {
   REELS_TOPIC_COPY,
 } from "@/data/reelsLandingTopics";
 
-export const REELS_CTA_PROBA_FREE = "Записаться на бесплатную пробную сессию";
+export const REELS_CTA_PROBA_FREE = "Записаться на бесплатную 30 минутную пробную сессию";
 
 const RAZVOD_PAIN_PARENTS =
   "Что скажут родители и знакомые? Неудобно рассказывать, а держать в себе нет сил.";
