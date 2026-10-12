@@ -167,9 +167,17 @@ function morozova_amocrm_utm_meta(string $utmSource): array
         'max' => ['label' => 'MAX', 'account' => 'max.ru/se13417616_biz'],
         'dzen' => ['label' => 'Дзен', 'account' => 'dzen.ru/morozova_emdr'],
         'b17' => ['label' => 'B17', 'account' => 'b17.ru/morozova_natalia'],
+        'yb1' => ['label' => 'Яндекс Бизнес', 'account' => ''],
+        'yandex_business' => ['label' => 'Яндекс Бизнес', 'account' => ''],
+        'gbp1' => ['label' => 'Google Business · запись', 'account' => ''],
+        'gbp2' => ['label' => 'Google Business · сайт', 'account' => ''],
+        'google_business' => ['label' => 'Google Business', 'account' => ''],
+        'gmb' => ['label' => 'Google Business', 'account' => ''],
         'fb' => ['label' => 'Facebook', 'account' => ''],
         'chatgpt.com' => ['label' => 'ChatGPT', 'account' => ''],
         'chatgpt' => ['label' => 'ChatGPT', 'account' => ''],
+        'instagram' => ['label' => 'Instagram (рилс)', 'account' => ''],
+        'tiktok' => ['label' => 'TikTok (рилс)', 'account' => ''],
     ];
 
     if (isset($map[$key])) {
@@ -216,12 +224,63 @@ function morozova_amocrm_source_label(string $utmSource): string
  *   session_format?: string|null
  * } $input
  */
+function morozova_amocrm_normalize_messenger(string $channel): string
+{
+    if ($channel === '') {
+        return '';
+    }
+    $lower = mb_strtolower($channel);
+    if ($lower === 'max') {
+        return 'MAX';
+    }
+
+    return $channel;
+}
+
+function morozova_amocrm_is_messenger_field_error(string $error): bool
+{
+    $error = mb_strtolower($error);
+    return str_contains($error, 'messenger')
+        || str_contains($error, 'preferred')
+        || str_contains($error, 'enum')
+        || str_contains($error, 'список');
+}
+
+/**
+ * @param array<string, mixed> $config
+ * @param array<string, mixed> $input
+ */
 function morozova_amocrm_send_lead(array $config, array $input): bool
 {
     if (empty($config['enabled'])) {
         return false;
     }
 
+    $withMessenger = true;
+    for ($attempt = 0; $attempt < 2; $attempt++) {
+        $result = morozova_amocrm_send_lead_attempt($config, $input, $withMessenger);
+        if ($result) {
+            return true;
+        }
+        if (!$withMessenger) {
+            break;
+        }
+        $lastError = $GLOBALS['morozova_amocrm_last_error'] ?? '';
+        if (!is_string($lastError) || !morozova_amocrm_is_messenger_field_error($lastError)) {
+            break;
+        }
+        $withMessenger = false;
+    }
+
+    return false;
+}
+
+/**
+ * @param array<string, mixed> $config
+ * @param array<string, mixed> $input
+ */
+function morozova_amocrm_send_lead_attempt(array $config, array $input, bool $withMessengerField): bool
+{
     if (!function_exists('morozova_crm_split_name') || !function_exists('morozova_crm_parse_contact')) {
         foreach (['morozova-crm-webhook.php', 'crm-webhook.php'] as $helperFile) {
             $helpers = __DIR__ . '/' . $helperFile;
@@ -237,7 +296,9 @@ function morozova_amocrm_send_lead(array $config, array $input): bool
 
     $sourceSite = trim((string) ($input['source_site'] ?? ''));
     $leadSource = trim((string) ($input['lead_source'] ?? 'Сайт'));
-    $preferredChannel = trim((string) ($input['preferred_channel'] ?? ''));
+    $preferredChannel = morozova_amocrm_normalize_messenger(
+        trim((string) ($input['preferred_channel'] ?? ''))
+    );
 
     $noteLines = [];
     if ($sourceSite !== '') {
@@ -268,8 +329,28 @@ function morozova_amocrm_send_lead(array $config, array $input): bool
     }
 
     $userMessage = trim((string) ($input['message'] ?? ''));
+    $reels = $input['reels'] ?? null;
+    $isReels = is_array($reels) && !empty($reels['is_reels']);
 
-    $leadName = 'Заявка: ' . trim($nameParts['firstName'] . ' ' . $nameParts['lastName']);
+    if ($isReels) {
+        require_once __DIR__ . '/morozova-reels-lead.php';
+        $leadName = morozova_reels_lead_title(
+            $nameParts['firstName'],
+            $nameParts['lastName'],
+            $reels
+        );
+        if ($userMessage === '') {
+            $userMessage = 'Заявка с рилс-лендинга';
+        }
+        if ($trafficLabel === '' || $trafficLabel === 'Прямой заход') {
+            $trafficLabel = morozova_reels_traffic_label($utmSource, $utmMedium);
+        }
+        if ($utmCampaign === '' && !empty($reels['offer'])) {
+            $utmCampaign = (string) $reels['offer'];
+        }
+    } else {
+        $leadName = 'Заявка: ' . trim($nameParts['firstName'] . ' ' . $nameParts['lastName']);
+    }
 
     $contactPayload = [
         'first_name' => $nameParts['firstName'],
@@ -290,13 +371,28 @@ function morozova_amocrm_send_lead(array $config, array $input): bool
         ];
     }
 
+    $tagNames = [];
+    if ($isReels && is_array($reels['tags'] ?? null)) {
+        foreach ($reels['tags'] as $tagName) {
+            $tagName = trim((string) $tagName);
+            if ($tagName !== '') {
+                $tagNames[] = $tagName;
+            }
+        }
+    } else {
+        $tagNames[] = $leadSource;
+    }
+
+    $tagsPayload = [];
+    foreach ($tagNames as $tagName) {
+        $tagsPayload[] = ['name' => $tagName];
+    }
+
     $leadPayload = [
         'name' => $leadName,
         '_embedded' => [
             'contacts' => [$contactPayload],
-            'tags' => [
-                ['name' => $leadSource],
-            ],
+            'tags' => $tagsPayload,
         ],
     ];
 
@@ -312,7 +408,7 @@ function morozova_amocrm_send_lead(array $config, array $input): bool
     morozova_amocrm_set_custom_field($leadPayload, $config, 'request_field_id', $userMessage);
     $messengerFieldId = (int) ($config['messenger_field_id'] ?? 0);
     if ($preferredChannel !== '') {
-        if ($messengerFieldId > 0) {
+        if ($withMessengerField && $messengerFieldId > 0) {
             morozova_amocrm_set_custom_field($leadPayload, $config, 'messenger_field_id', $preferredChannel);
         } else {
             $noteLines[] = 'Мессенджер: ' . $preferredChannel;
@@ -324,6 +420,19 @@ function morozova_amocrm_send_lead(array $config, array $input): bool
     morozova_amocrm_set_custom_field($leadPayload, $config, 'utm_campaign_field_id', $utmCampaign);
     morozova_amocrm_set_custom_field($leadPayload, $config, 'utm_medium_field_id', $utmMedium);
     morozova_amocrm_set_custom_field($leadPayload, $config, 'traffic_account_field_id', $trafficAccount);
+    $visitorGeo = trim((string) ($input['visitor_geo'] ?? ''));
+    morozova_amocrm_set_custom_field($leadPayload, $config, 'visitor_geo_field_id', $visitorGeo);
+
+    $utmContent = trim((string) ($input['utm_content'] ?? ''));
+    $utmTerm = trim((string) ($input['utm_term'] ?? ''));
+    if ($isReels) {
+        morozova_amocrm_set_custom_field($leadPayload, $config, 'reels_offer_field_id', (string) ($reels['offer_label'] ?? ''));
+        morozova_amocrm_set_custom_field($leadPayload, $config, 'reels_topic_field_id', (string) ($reels['topic_label'] ?? ''));
+        morozova_amocrm_set_custom_field($leadPayload, $config, 'reels_page_field_id', (string) ($reels['page_path'] ?? ''));
+        morozova_amocrm_set_custom_field($leadPayload, $config, 'reels_utm_content_field_id', $utmContent);
+        morozova_amocrm_set_custom_field($leadPayload, $config, 'reels_utm_term_field_id', $utmTerm);
+    }
+
     morozova_amocrm_set_field_code($leadPayload, 'UTM_SOURCE', $utmSource);
     morozova_amocrm_set_field_code($leadPayload, 'UTM_MEDIUM', $utmMedium);
     morozova_amocrm_set_field_code($leadPayload, 'UTM_CAMPAIGN', $utmCampaign);
@@ -343,9 +452,11 @@ function morozova_amocrm_send_lead(array $config, array $input): bool
 
     $create = morozova_amocrm_api_request($config, 'POST', '/api/v4/leads/complex', [$leadPayload]);
     if (!$create['ok']) {
+        $GLOBALS['morozova_amocrm_last_error'] = (string) $create['error'];
         error_log('morozova_amocrm complex failed: ' . $create['error']);
         return false;
     }
+    $GLOBALS['morozova_amocrm_last_error'] = '';
 
     $leadId = null;
     if (is_array($create['data'])) {

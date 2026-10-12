@@ -89,10 +89,32 @@ function morozova_utm_source_meta(string $utmSource): array
         'dzen' => ['label' => 'Дзен', 'account' => 'dzen.ru/morozova_emdr'],
         'b17' => ['label' => 'B17', 'account' => 'b17.ru/morozova_natalia'],
         'fb' => ['label' => 'Facebook', 'account' => ''],
+        'chatgpt.com' => ['label' => 'ChatGPT', 'account' => ''],
+        'chatgpt' => ['label' => 'ChatGPT', 'account' => ''],
+        'yandex' => ['label' => 'Яндекс', 'account' => ''],
+        'google' => ['label' => 'Google', 'account' => ''],
+        'bing' => ['label' => 'Bing', 'account' => ''],
+        'duckduckgo' => ['label' => 'DuckDuckGo', 'account' => ''],
+        'telegram' => ['label' => 'Telegram', 'account' => ''],
+        'instagram' => ['label' => 'Instagram', 'account' => ''],
+        'tiktok' => ['label' => 'TikTok', 'account' => ''],
+        'direct' => ['label' => 'Прямой заход / сайт', 'account' => ''],
     ];
 
     if (isset($map[$key])) {
         return $map[$key];
+    }
+
+    if (str_contains($key, 'chatgpt')) {
+        return ['label' => 'ChatGPT', 'account' => ''];
+    }
+
+    if (str_contains($key, 'yandex')) {
+        return ['label' => 'Яндекс', 'account' => ''];
+    }
+
+    if ($key === '' || $key === 'site') {
+        return ['label' => 'Прямой заход / сайт', 'account' => ''];
     }
 
     return ['label' => $utmSource, 'account' => ''];
@@ -145,6 +167,8 @@ function morozova_build_notify_text(
     string $utmCampaign,
     string $utmMedium,
     string $landingPath,
+    string $referrer = '',
+    string $visitorGeo = '',
 ): string {
     $sourceLabel = morozova_notify_source_label($utmSource);
     $lines = [
@@ -171,8 +195,48 @@ function morozova_build_notify_text(
     if ($landingPath !== '') {
         $lines[] = '🔗 Страница: ' . $landingPath;
     }
+    if ($referrer !== '') {
+        $lines[] = '↩️ Referrer: ' . $referrer;
+    }
+    if ($visitorGeo !== '') {
+        $lines[] = str_starts_with($visitorGeo, 'Россия')
+            ? '🌍 Гео (IP): ' . $visitorGeo
+            : '🌍 Гео (IP при заявке): ' . $visitorGeo;
+    }
 
     return implode("\n", $lines);
+}
+
+function morozova_ensure_referrer_column(PDO $pdo): void
+{
+    static $checked = false;
+    if ($checked) {
+        return;
+    }
+
+    try {
+        $pdo->exec('ALTER TABLE form_submissions ADD COLUMN referrer VARCHAR(512) NULL AFTER landing_path');
+    } catch (Throwable $e) {
+        // duplicate column is fine
+    }
+
+    $checked = true;
+}
+
+function morozova_ensure_visitor_geo_column(PDO $pdo): void
+{
+    static $checked = false;
+    if ($checked) {
+        return;
+    }
+
+    try {
+        $pdo->exec('ALTER TABLE form_submissions ADD COLUMN visitor_geo VARCHAR(128) NULL AFTER referrer');
+    } catch (Throwable $e) {
+        // duplicate column is fine
+    }
+
+    $checked = true;
 }
 
 $raw = file_get_contents('php://input');
@@ -189,10 +253,66 @@ $contact = trim((string)($data['contact'] ?? ''));
 $message = trim((string)($data['message'] ?? ''));
 $website = trim((string)($data['website'] ?? ''));
 $preferredChannel = trim((string)($data['preferredChannel'] ?? ''));
-$utmSource = morozova_trim_field((string)($data['utm_source'] ?? ''), 64);
-$utmCampaign = morozova_trim_field((string)($data['utm_campaign'] ?? ''), 128);
-$utmMedium = morozova_trim_field((string)($data['utm_medium'] ?? ''), 64);
-$landingPath = morozova_trim_field((string)($data['landing_path'] ?? ''), 512);
+require_once __DIR__ . '/morozova-traffic-source.php';
+require_once __DIR__ . '/morozova-visitor-geo.php';
+
+$siteDomain = trim((string)($config['site_domain'] ?? 'morozovanatalia.ru'));
+$attribution = morozova_traffic_resolve_attribution([
+    'utm_source' => (string)($data['utm_source'] ?? ''),
+    'utm_campaign' => (string)($data['utm_campaign'] ?? ''),
+    'utm_medium' => (string)($data['utm_medium'] ?? ''),
+    'landing_path' => (string)($data['landing_path'] ?? ''),
+    'referrer' => (string)($data['referrer'] ?? ''),
+], $siteDomain);
+
+$utmSource = morozova_trim_field($attribution['utm_source'], 64);
+$utmCampaign = morozova_trim_field($attribution['utm_campaign'], 128);
+$utmMedium = morozova_trim_field($attribution['utm_medium'], 64);
+$utmContent = morozova_trim_field((string) ($data['utm_content'] ?? ''), 128);
+$utmTerm = morozova_trim_field((string) ($data['utm_term'] ?? ''), 128);
+$landingPath = morozova_trim_field($attribution['landing_path'], 512);
+$referrer = morozova_trim_field($attribution['referrer'], 512);
+$sourceInferred = !empty($attribution['source_inferred']);
+
+require_once __DIR__ . '/morozova-reels-lead.php';
+$reelsCtx = morozova_reels_parse_submission(
+    array_merge($data, [
+        'landing_path' => $landingPath,
+        'utm_content' => $utmContent,
+        'utm_term' => $utmTerm,
+    ]),
+    $message
+);
+if ($reelsCtx['is_reels']) {
+    if ($utmContent === '' && $reelsCtx['utm_content'] !== '') {
+        $utmContent = morozova_trim_field($reelsCtx['utm_content'], 128);
+    }
+    if ($utmTerm === '' && $reelsCtx['utm_term'] !== '') {
+        $utmTerm = morozova_trim_field($reelsCtx['utm_term'], 128);
+    }
+    if ($landingPath === '' && $reelsCtx['page_path'] !== '') {
+        $landingPath = morozova_trim_field($reelsCtx['page_path'], 512);
+    }
+    if ($utmCampaign === '' && $reelsCtx['offer'] !== '') {
+        $utmCampaign = morozova_trim_field($reelsCtx['offer'], 128);
+    }
+}
+
+$amoUserMessage = $message;
+$isReelsLead = !empty($reelsCtx['is_reels']);
+if ($isReelsLead) {
+    $amoUserMessage = $reelsCtx['user_message'];
+    if ($amoUserMessage === '') {
+        $amoUserMessage = sprintf(
+            'Заявка с рилс-лендинга: %s, %s',
+            $reelsCtx['offer_label'],
+            $reelsCtx['topic_label']
+        );
+    }
+}
+
+$visitorGeoData = morozova_resolve_visitor_geo();
+$visitorGeo = morozova_trim_field($visitorGeoData['label'], 128);
 
 if ($website !== '') {
     echo json_encode(['success' => true]);
@@ -216,6 +336,9 @@ $logContext = [
     'contact' => $contact,
     'utm_source' => $utmSource !== '' ? $utmSource : null,
     'utm_campaign' => $utmCampaign !== '' ? $utmCampaign : null,
+    'referrer' => $referrer !== '' ? $referrer : null,
+    'source_inferred' => $sourceInferred,
+    'visitor_geo' => $visitorGeo !== '' ? $visitorGeo : null,
 ];
 
 $dbOk = false;
@@ -236,9 +359,12 @@ try {
         ]
     );
 
+    morozova_ensure_referrer_column($pdo);
+    morozova_ensure_visitor_geo_column($pdo);
+
     $stmt = $pdo->prepare(
-        'INSERT INTO form_submissions (name, contact, message, utm_source, utm_campaign, utm_medium, landing_path)
-         VALUES (:name, :contact, :message, :utm_source, :utm_campaign, :utm_medium, :landing_path)'
+        'INSERT INTO form_submissions (name, contact, message, utm_source, utm_campaign, utm_medium, landing_path, referrer, visitor_geo)
+         VALUES (:name, :contact, :message, :utm_source, :utm_campaign, :utm_medium, :landing_path, :referrer, :visitor_geo)'
     );
     $stmt->execute([
         ':name' => $name,
@@ -248,6 +374,8 @@ try {
         ':utm_campaign' => $utmCampaign !== '' ? $utmCampaign : null,
         ':utm_medium' => $utmMedium !== '' ? $utmMedium : null,
         ':landing_path' => $landingPath !== '' ? $landingPath : null,
+        ':referrer' => $referrer !== '' ? $referrer : null,
+        ':visitor_geo' => $visitorGeo !== '' ? $visitorGeo : null,
     ]);
     $dbOk = true;
 } catch (Throwable $e) {
@@ -258,18 +386,30 @@ try {
     error_log('DB error: ' . $e->getMessage());
 }
 
-$siteDomain = trim((string)($config['site_domain'] ?? 'morozovanatalia.ru'));
-$notifyText = morozova_build_notify_text(
-    $siteDomain,
-    $name,
-    $contact,
-    $message,
-    $preferredChannel,
-    $utmSource,
-    $utmCampaign,
-    $utmMedium,
-    $landingPath,
-);
+if ($isReelsLead) {
+    $notifyText = morozova_build_reels_max_notify_text(
+        $reelsCtx,
+        $name,
+        $contact,
+        $preferredChannel,
+        $utmSource,
+        $utmMedium,
+    );
+} else {
+    $notifyText = morozova_build_notify_text(
+        $siteDomain,
+        $name,
+        $contact,
+        $message,
+        $preferredChannel,
+        $utmSource,
+        $utmCampaign,
+        $utmMedium,
+        $landingPath,
+        $referrer,
+        $visitorGeo,
+    );
+}
 
 $maxOk = false;
 $maxNotifyPath = __DIR__ . '/max-notify.php';
@@ -293,22 +433,47 @@ if (file_exists($amoCrmPath)) {
         if ($landingPath !== '') {
             $amoMetadata[] = 'landing: ' . $landingPath;
         }
+        if ($referrer !== '') {
+            $amoMetadata[] = 'referrer: ' . $referrer;
+        }
+        if ($sourceInferred) {
+            $amoMetadata[] = 'source: inferred from referrer';
+        }
+        if ($visitorGeo !== '') {
+            $amoMetadata[] = 'geo (IP): ' . $visitorGeo;
+        }
 
-        $amoOk = morozova_amocrm_send_lead($amoConfig, [
+        $amoPayload = [
             'name' => $name,
             'contact' => $contact,
-            'message' => $message,
+            'message' => $amoUserMessage,
             'metadata' => $amoMetadata,
             'source_site' => $siteDomain,
             'lead_source' => morozova_crm_lead_source($utmSource),
             'utm_source' => $utmSource !== '' ? $utmSource : null,
             'utm_medium' => $utmMedium !== '' ? $utmMedium : null,
             'utm_campaign' => $utmCampaign !== '' ? $utmCampaign : null,
+            'utm_content' => $utmContent !== '' ? $utmContent : null,
+            'utm_term' => $utmTerm !== '' ? $utmTerm : null,
             'preferred_channel' => $preferredChannel !== '' ? $preferredChannel : null,
-        ]);
+            'visitor_geo' => $visitorGeo !== '' ? $visitorGeo : null,
+        ];
+        if ($isReelsLead) {
+            $amoPayload['reels'] = $reelsCtx;
+            if ($reelsCtx['session_format'] !== '') {
+                $amoPayload['session_format'] = $reelsCtx['session_format'];
+            }
+        }
+
+        $amoOk = morozova_amocrm_send_lead($amoConfig, $amoPayload);
 
         if (!$amoOk) {
-            morozova_form_log('warn', 'amocrm_send_failed', ['context' => $logContext]);
+            $amoErr = $GLOBALS['morozova_amocrm_last_error'] ?? '';
+            morozova_form_log('warn', 'amocrm_send_failed', [
+                'context' => $logContext,
+                'amo_error' => is_string($amoErr) && $amoErr !== '' ? $amoErr : null,
+                'reels' => $isReelsLead,
+            ]);
         }
     }
 }
