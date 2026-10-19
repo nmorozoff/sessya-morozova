@@ -1,27 +1,36 @@
 <?php
 /**
- * Сторож формы — вызывать из планировщика Timeweb (curl/wget по URL).
- * Секрет: заголовок X-Morozova-Internal-Secret или ?secret= (как lookup-submissions).
+ * Сторож формы — Timeweb cron:
+ * - CLI: php /полный/путь/api/form-watch-cron.php (секрет не нужен, config.php рядом)
+ * - HTTP: заголовок X-Morozova-Internal-Secret (hash_equals)
  */
 declare(strict_types=1);
 
-header('Content-Type: application/json; charset=utf-8');
+$isCli = php_sapi_name() === 'cli';
+
+if (!$isCli) {
+    header('Content-Type: application/json; charset=utf-8');
+}
 
 $configPath = __DIR__ . '/config.php';
 if (!file_exists($configPath)) {
-    http_response_code(503);
-    echo json_encode(['ok' => false, 'error' => 'no_config']);
-    exit;
+    if (!$isCli) {
+        http_response_code(503);
+    }
+    echo json_encode(['ok' => false, 'error' => 'no_config'], JSON_UNESCAPED_UNICODE) . ($isCli ? "\n" : '');
+    exit(1);
 }
 
 $config = require $configPath;
-$secret = trim((string) ($config['internal_api_secret'] ?? ''));
-$provided = trim((string) ($_SERVER['HTTP_X_MOROZOVA_INTERNAL_SECRET'] ?? $_GET['secret'] ?? ''));
 
-if ($secret === '' || $provided !== $secret) {
-    http_response_code(403);
-    echo json_encode(['ok' => false, 'error' => 'forbidden']);
-    exit;
+if (!$isCli) {
+    $secret = (string) ($config['internal_api_secret'] ?? '');
+    $provided = (string) ($_SERVER['HTTP_X_MOROZOVA_INTERNAL_SECRET'] ?? '');
+    if ($secret === '' || !hash_equals($secret, $provided)) {
+        http_response_code(403);
+        echo json_encode(['ok' => false, 'error' => 'forbidden'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
 }
 
 require_once __DIR__ . '/morozova-health.php';
@@ -108,4 +117,6 @@ echo json_encode([
     'health' => $health,
     'sent' => $sent,
     'ts' => date('c'),
-], JSON_UNESCAPED_UNICODE);
+], JSON_UNESCAPED_UNICODE) . ($isCli ? "\n" : '');
+
+exit($healthOk ? 0 : 1);
