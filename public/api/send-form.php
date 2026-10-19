@@ -444,6 +444,12 @@ try {
     error_log('DB error: ' . $e->getMessage());
 }
 
+$maxOk = false;
+$telegramOk = false;
+$amoOk = false;
+$crmWebhookOk = false;
+
+try {
 $backupOk = morozova_form_append_backup([
     'source' => 'send-form',
     'submission_id' => $submissionId,
@@ -486,7 +492,6 @@ if ($isReelsLead && function_exists('morozova_build_reels_max_notify_text')) {
     );
 }
 
-$maxOk = false;
 $maxNotifyPath = __DIR__ . '/max-notify.php';
 if (file_exists($maxNotifyPath)) {
     require_once $maxNotifyPath;
@@ -497,7 +502,6 @@ if (file_exists($maxNotifyPath)) {
     }
 }
 
-$amoOk = false;
 $amoCrmPath = __DIR__ . '/morozova-amocrm.php';
 if (file_exists($amoCrmPath)) {
     require_once $amoCrmPath;
@@ -554,7 +558,6 @@ if (file_exists($amoCrmPath)) {
     }
 }
 
-$telegramOk = false;
 $telegramToken = trim((string)($config['telegram_bot_token'] ?? ''));
 $telegramChatId = trim((string)($config['telegram_chat_id'] ?? ''));
 if ($telegramToken !== '' && $telegramChatId !== '') {
@@ -589,7 +592,6 @@ if ($telegramToken !== '' && $telegramChatId !== '') {
     }
 }
 
-$crmWebhookOk = false;
 $crmWebhookPath = __DIR__ . '/crm-webhook.php';
 if (file_exists($crmWebhookPath)) {
     require_once $crmWebhookPath;
@@ -633,6 +635,14 @@ if (file_exists($crmWebhookPath)) {
             morozova_form_log('warn', 'crm_webhook_failed', ['context' => $logContext]);
         }
     }
+}
+
+} catch (Throwable $e) {
+    morozova_form_log('error', 'handler_exception', [
+        'error' => $e->getMessage(),
+        'context' => $logContext,
+    ]);
+    morozova_form_max_ops_alert($config, 'исключение при обработке: ' . $e->getMessage());
 }
 
 $anySaved = $dbOk || $backupOk;
