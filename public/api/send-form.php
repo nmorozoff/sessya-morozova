@@ -23,6 +23,9 @@ if (!file_exists($configPath)) {
 
 $config = require $configPath;
 
+require_once __DIR__ . '/morozova-form-resilience.php';
+morozova_form_register_shutdown_handler();
+
 /**
  * @param array<string, mixed> $context
  */
@@ -98,6 +101,9 @@ function morozova_utm_source_meta(string $utmSource): array
         'telegram' => ['label' => 'Telegram', 'account' => ''],
         'instagram' => ['label' => 'Instagram', 'account' => ''],
         'tiktok' => ['label' => 'TikTok', 'account' => ''],
+        'yb1' => ['label' => 'Яндекс Бизнес', 'account' => ''],
+        'ym1' => ['label' => 'Яндекс Карты', 'account' => ''],
+        'gis1' => ['label' => '2ГИС', 'account' => ''],
         'direct' => ['label' => 'Прямой заход / сайт', 'account' => ''],
     ];
 
@@ -134,6 +140,32 @@ function morozova_notify_source_label(string $utmSource): string
 /**
  * Маппинг utm_source → enum leadSource в Twenty CRM (crm-bridge).
  */
+function morozova_form_bool(mixed $value): bool
+{
+    if (is_bool($value)) {
+        return $value;
+    }
+    if (is_int($value) || is_float($value)) {
+        return (int) $value === 1;
+    }
+
+    $value = strtolower(trim((string) $value));
+
+    return in_array($value, ['1', 'true', 'yes', 'on'], true);
+}
+
+function morozova_wants_trial_session(array $data, string $message): bool
+{
+    if (array_key_exists('wantsTrialSession', $data)) {
+        return morozova_form_bool($data['wantsTrialSession']);
+    }
+    if (array_key_exists('wants_trial_session', $data)) {
+        return morozova_form_bool($data['wants_trial_session']);
+    }
+
+    return str_contains($message, 'Записаться на бесплатную пробную сессию');
+}
+
 function morozova_crm_lead_source(string $utmSource): string
 {
     $key = strtolower(trim($utmSource));
@@ -169,6 +201,7 @@ function morozova_build_notify_text(
     string $landingPath,
     string $referrer = '',
     string $visitorGeo = '',
+    bool $wantsTrialSession = false,
 ): string {
     $sourceLabel = morozova_notify_source_label($utmSource);
     $lines = [
@@ -182,6 +215,9 @@ function morozova_build_notify_text(
         $lines[] = '📞 Предпочитает звонок';
     } elseif ($preferredChannel !== '') {
         $lines[] = "💬 Предпочитает {$preferredChannel}";
+    }
+    if ($wantsTrialSession) {
+        $lines[] = '✅ Пробная сессия: отмечена галочка (бесплатно, 30 мин)';
     }
     if ($message !== '') {
         $lines[] = "💬 Сообщение: {$message}";
@@ -253,17 +289,18 @@ $contact = trim((string)($data['contact'] ?? ''));
 $message = trim((string)($data['message'] ?? ''));
 $website = trim((string)($data['website'] ?? ''));
 $preferredChannel = trim((string)($data['preferredChannel'] ?? ''));
-require_once __DIR__ . '/morozova-traffic-source.php';
-require_once __DIR__ . '/morozova-visitor-geo.php';
+$wantsTrialSession = morozova_wants_trial_session($data, $message);
+$hasTrafficModule = morozova_form_safe_require('morozova-traffic-source.php');
+$hasVisitorGeoModule = morozova_form_safe_require('morozova-visitor-geo.php');
 
 $siteDomain = trim((string)($config['site_domain'] ?? 'morozovanatalia.ru'));
-$attribution = morozova_traffic_resolve_attribution([
+$attribution = $hasTrafficModule ? morozova_traffic_resolve_attribution([
     'utm_source' => (string)($data['utm_source'] ?? ''),
     'utm_campaign' => (string)($data['utm_campaign'] ?? ''),
     'utm_medium' => (string)($data['utm_medium'] ?? ''),
     'landing_path' => (string)($data['landing_path'] ?? ''),
     'referrer' => (string)($data['referrer'] ?? ''),
-], $siteDomain);
+], $siteDomain) : morozova_form_attribution_fallback($data);
 
 $utmSource = morozova_trim_field($attribution['utm_source'], 64);
 $utmCampaign = morozova_trim_field($attribution['utm_campaign'], 128);
@@ -274,16 +311,31 @@ $landingPath = morozova_trim_field($attribution['landing_path'], 512);
 $referrer = morozova_trim_field($attribution['referrer'], 512);
 $sourceInferred = !empty($attribution['source_inferred']);
 
-require_once __DIR__ . '/morozova-reels-lead.php';
-$reelsCtx = morozova_reels_parse_submission(
-    array_merge($data, [
-        'landing_path' => $landingPath,
-        'utm_content' => $utmContent,
-        'utm_term' => $utmTerm,
-    ]),
-    $message
-);
-if ($reelsCtx['is_reels']) {
+$reelsCtx = [
+    'is_reels' => false,
+    'offer' => '',
+    'topic' => '',
+    'offer_label' => '',
+    'topic_label' => '',
+    'page_path' => $landingPath,
+    'utm_content' => $utmContent,
+    'utm_term' => $utmTerm,
+    'session_format' => '',
+    'user_message' => $message,
+    'tags' => [],
+];
+if (file_exists(__DIR__ . '/morozova-reels-lead.php')) {
+    require_once __DIR__ . '/morozova-reels-lead.php';
+    $reelsCtx = morozova_reels_parse_submission(
+        array_merge($data, [
+            'landing_path' => $landingPath,
+            'utm_content' => $utmContent,
+            'utm_term' => $utmTerm,
+        ]),
+        $message
+    );
+}
+if (!empty($reelsCtx['is_reels'])) {
     if ($utmContent === '' && $reelsCtx['utm_content'] !== '') {
         $utmContent = morozova_trim_field($reelsCtx['utm_content'], 128);
     }
@@ -311,7 +363,9 @@ if ($isReelsLead) {
     }
 }
 
-$visitorGeoData = morozova_resolve_visitor_geo();
+$visitorGeoData = $hasVisitorGeoModule
+    ? morozova_resolve_visitor_geo()
+    : morozova_form_visitor_geo_fallback();
 $visitorGeo = morozova_trim_field($visitorGeoData['label'], 128);
 
 if ($website !== '') {
@@ -334,6 +388,7 @@ if (mb_strlen($name) > 255 || mb_strlen($contact) > 255) {
 $logContext = [
     'name' => $name,
     'contact' => $contact,
+    'wants_trial_session' => $wantsTrialSession,
     'utm_source' => $utmSource !== '' ? $utmSource : null,
     'utm_campaign' => $utmCampaign !== '' ? $utmCampaign : null,
     'referrer' => $referrer !== '' ? $referrer : null,
@@ -342,6 +397,8 @@ $logContext = [
 ];
 
 $dbOk = false;
+$backupOk = false;
+$submissionId = null;
 
 try {
     $pdo = new PDO(
@@ -378,6 +435,7 @@ try {
         ':visitor_geo' => $visitorGeo !== '' ? $visitorGeo : null,
     ]);
     $dbOk = true;
+    $submissionId = (int) $pdo->lastInsertId();
 } catch (Throwable $e) {
     morozova_form_log('error', 'database_insert_failed', [
         'error' => $e->getMessage(),
@@ -386,7 +444,23 @@ try {
     error_log('DB error: ' . $e->getMessage());
 }
 
-if ($isReelsLead) {
+$backupOk = morozova_form_append_backup([
+    'source' => 'send-form',
+    'submission_id' => $submissionId,
+    'name' => $name,
+    'contact' => $contact,
+    'message' => $message,
+    'utm_source' => $utmSource,
+    'utm_campaign' => $utmCampaign,
+    'utm_medium' => $utmMedium,
+    'landing_path' => $landingPath,
+    'referrer' => $referrer,
+    'visitor_geo' => $visitorGeo,
+    'wants_trial_session' => $wantsTrialSession,
+    'db_ok' => $dbOk,
+]);
+
+if ($isReelsLead && function_exists('morozova_build_reels_max_notify_text')) {
     $notifyText = morozova_build_reels_max_notify_text(
         $reelsCtx,
         $name,
@@ -408,6 +482,7 @@ if ($isReelsLead) {
         $landingPath,
         $referrer,
         $visitorGeo,
+        $wantsTrialSession,
     );
 }
 
@@ -457,6 +532,7 @@ if (file_exists($amoCrmPath)) {
             'utm_term' => $utmTerm !== '' ? $utmTerm : null,
             'preferred_channel' => $preferredChannel !== '' ? $preferredChannel : null,
             'visitor_geo' => $visitorGeo !== '' ? $visitorGeo : null,
+            'wants_trial_session' => $wantsTrialSession,
         ];
         if ($isReelsLead) {
             $amoPayload['reels'] = $reelsCtx;
@@ -559,29 +635,66 @@ if (file_exists($crmWebhookPath)) {
     }
 }
 
-if (!$dbOk && !$maxOk && !$telegramOk && !$amoOk && !$crmWebhookOk) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Submission failed']);
-    exit;
+$anySaved = $dbOk || $backupOk;
+if (!$anySaved) {
+    morozova_form_max_ops_alert($config, 'не удалось сохранить заявку ни в базу, ни в файл');
+    morozova_form_send_json(500, [
+        'success' => false,
+        'error' => 'Не удалось сохранить заявку. Попробуйте ещё раз или напишите в мессенджер.',
+    ]);
 }
 
-if (!$dbOk || !$maxOk || !$telegramOk || !$amoOk) {
+$amoEnabled = false;
+if (file_exists(__DIR__ . '/morozova-amocrm.php')) {
+    $amoEnabled = !empty(($config['amocrm'] ?? [])['enabled']);
+}
+
+$failParts = [];
+if (!$dbOk) {
+    $failParts[] = 'база';
+}
+if (!$backupOk) {
+    $failParts[] = 'резервный файл';
+}
+if (!$maxOk) {
+    $failParts[] = 'MAX-уведомление';
+}
+if ($amoEnabled && !$amoOk) {
+    $failParts[] = 'amoCRM';
+}
+if (!$telegramOk && trim((string) ($config['telegram_bot_token'] ?? '')) !== '') {
+    $failParts[] = 'Telegram';
+}
+
+if ($failParts !== []) {
     morozova_form_log('warn', 'partial_submission', [
         'db_ok' => $dbOk,
+        'backup_ok' => $backupOk,
         'max_ok' => $maxOk,
         'telegram_ok' => $telegramOk,
         'amo_ok' => $amoOk,
         'crm_webhook_ok' => $crmWebhookOk,
         'context' => $logContext,
     ]);
+    morozova_form_notify_partial_failures($failParts, $config);
 }
 
-echo json_encode([
+$response = [
     'success' => true,
     'saved' => [
         'database' => $dbOk,
+        'backup_file' => $backupOk,
         'max' => $maxOk,
         'telegram' => $telegramOk,
         'crm' => $amoOk,
     ],
-]);
+];
+if ($submissionId !== null && $submissionId > 0) {
+    $response['submission_id'] = $submissionId;
+}
+$amoLeadId = $GLOBALS['morozova_amocrm_last_lead_id'] ?? null;
+if (is_int($amoLeadId) && $amoLeadId > 0) {
+    $response['amo_lead_id'] = $amoLeadId;
+}
+
+echo json_encode($response, JSON_UNESCAPED_UNICODE);

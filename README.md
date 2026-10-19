@@ -80,7 +80,7 @@ npm run deploy:blog:upload   # только FTP блога
 | `FTP_PASSWORD` | Пароль FTP |
 | `FTP_SERVER_DIR` | Путь к сайту (обычно `/public_html/`) |
 
-> **Важно:** `api/config.php` на сервере не перезаписывается при деплое — настройте его один раз вручную.
+> **Важно:** `api/config.php` и `api/max.config.php` не в git. При `npm run deploy:api` config **скачивается с сервера**, подмешиваются amo/internal из `amocrm.secrets.env`, пароль БД и Telegram с сервера сохраняются. Полный цикл: preflight → FTP всего `public/api/` → smoke-тест. См. `docs/form-api-workflow.md`.
 
 ## Просмотр заявок
 

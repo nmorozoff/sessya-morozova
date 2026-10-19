@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Точечный деплой amoCRM API + патч config.php на сервере (без mirror dist/).
- * Секреты: CRM/amocrm.secrets.env (путь через AMO_SECRETS_ENV).
+ * Деплой всего public/api/ (кроме секретов на сервере) + патч config.php.
+ * Preflight и smoke — из package.json deploy:api.
  */
 import { spawn } from "node:child_process";
 import {
@@ -14,13 +14,19 @@ import {
 } from "node:fs";
 import { basename, join, resolve } from "node:path";
 import { tmpdir } from "node:os";
+import { listApiDeployFiles } from "./api-preflight.mjs";
 
-const ROOT = resolve(".");
+const ROOT = resolve(import.meta.dirname, "..");
 const ENV_PATH = resolve(ROOT, ".ftp-deploy.env");
 const DEFAULT_SECRETS = resolve(
   ROOT,
   "../CRM и Онлайн запись психолога/amocrm.secrets.env",
 );
+
+const SITE_BASE =
+  process.env.SMOKE_FORM_URL?.replace(/\/$/, "") ||
+  process.env.VITE_SITE_URL?.replace(/\/$/, "") ||
+  "https://www.morozovanatalia.ru";
 
 function loadEnvFile(path) {
   const env = {};
@@ -75,7 +81,6 @@ function runLftp(script) {
   });
 }
 
-/** Примитивный парсер return [ 'k' => 'v', ... ] для плоских строковых ключей. */
 function parsePhpFlatStrings(content) {
   const out = {};
   const re = /'([a-z0-9_]+)'\s*=>\s*'((?:\\'|[^'])*)'/gi;
@@ -147,6 +152,7 @@ function patchConfigContent(original, secrets) {
       reels_utm_content_field_id: Number(secrets.AMO_REELS_UTM_CONTENT_FIELD_ID || 0),
       reels_utm_term_field_id: Number(secrets.AMO_REELS_UTM_TERM_FIELD_ID || 0),
       reels_page_field_id: Number(secrets.AMO_REELS_PAGE_FIELD_ID || 0),
+      wants_trial_field_id: Number(secrets.AMO_WANTS_TRIAL_FIELD_ID || 0),
     },
     crm_webhook_url: "",
     crm_webhook_secret: "",
@@ -162,6 +168,28 @@ function patchConfigContent(original, secrets) {
   return buildConfigPhp(config);
 }
 
+async function verifyRemoteApiFiles(files) {
+  const bad = [];
+  for (const { remote } of files) {
+    if (!remote.endsWith(".php")) {
+      continue;
+    }
+    const url = `${SITE_BASE}/${remote}`;
+    try {
+      const res = await fetch(url, { method: "GET", redirect: "follow" });
+      if (res.status === 404) {
+        bad.push(`${remote} → HTTP 404`);
+      }
+    } catch (e) {
+      bad.push(`${remote} → ${e.message}`);
+    }
+  }
+  if (bad.length > 0) {
+    throw new Error(`HTTP-проверка после заливки:\n${bad.join("\n")}`);
+  }
+  console.log(`[amo-deploy] HTTP OK: ${files.filter((f) => f.remote.endsWith(".php")).length} PHP на ${SITE_BASE}`);
+}
+
 async function main() {
   const ftpEnv = loadEnvFile(ENV_PATH);
   const secretsPath = process.env.AMO_SECRETS_ENV || DEFAULT_SECRETS;
@@ -175,35 +203,30 @@ async function main() {
   const password = ftpEnv.FTP_PASSWORD;
   const remoteDir = normalizeRemoteDir(ftpEnv.FTP_SERVER_DIR);
 
-  const workDir = mkdtempSync(join(tmpdir(), "amo-deploy-"));
-  const remoteConfig = join(workDir, "config.php");
-  const patchedConfig = join(workDir, "config.patched.php");
-
-  const puts = [
-    ["public/api/send-form.php", "api/send-form.php"],
-    ["public/api/morozova-amocrm.php", "api/morozova-amocrm.php"],
-    ["public/api/morozova-reels-lead.php", "api/morozova-reels-lead.php"],
-    ["public/api/morozova-traffic-source.php", "api/morozova-traffic-source.php"],
-    ["public/api/morozova-visitor-geo.php", "api/morozova-visitor-geo.php"],
-    ["public/api/backfill-amocrm-utm.php", "api/backfill-amocrm-utm.php"],
-    ["public/api/patch-submission-attribution.php", "api/patch-submission-attribution.php"],
-    ["public/api/max-notify.php", "api/max-notify.php"],
+  const apiFiles = listApiDeployFiles();
+  const extraStatic = [
     ["public/amocrm/callback.php", "amocrm/callback.php"],
     ["public/amocrm/callback/index.php", "amocrm/callback/index.php"],
     ["public/amocrm/.htaccess", "amocrm/.htaccess"],
     ["public/.htaccess", ".htaccess"],
   ];
 
-  for (const [local] of puts) {
+  const puts = [...apiFiles, ...extraStatic];
+
+  for (const { local } of puts) {
     if (!existsSync(resolve(ROOT, local))) {
       throw new Error(`Нет файла: ${local}`);
     }
   }
 
+  const workDir = mkdtempSync(join(tmpdir(), "amo-deploy-"));
+  const remoteConfig = join(workDir, "config.php");
+  const patchedConfig = join(workDir, "config.patched.php");
+
   const open = `open -u ${lftpQuote(`${user},${password}`)} ${lftpQuote(normalizeServer(server))}`;
   const cd = `cd ${lftpQuote(remoteDir)}`;
 
-  console.log("[amo-deploy] Скачиваю api/config.php с сервера...");
+  console.log("[amo-deploy] Скачиваю api/config.php с сервера (не перетираем БД/Telegram вручную)...");
   await runLftp(
     [
       "set cmd:fail-exit true",
@@ -222,12 +245,12 @@ async function main() {
 
   const putCmds = puts
     .map(
-      ([local, remote]) =>
+      ({ local, remote }) =>
         `put ${lftpQuote(resolve(ROOT, local))} -o ${remote}`,
     )
     .join("; ");
 
-  console.log("[amo-deploy] Загружаю PHP + обновлённый config.php...");
+  console.log(`[amo-deploy] Загружаю ${puts.length} файлов (весь public/api без config.php/max.config.php)...`);
   await runLftp(
     [
       "set cmd:fail-exit true",
@@ -236,6 +259,8 @@ async function main() {
       open,
       cd,
       "mkdir -f api",
+      "mkdir -f api/data",
+      "mkdir -f api/logs",
       "mkdir -f amocrm/callback",
       putCmds,
       `put ${lftpQuote(patchedConfig)} -o api/config.php`,
@@ -244,7 +269,9 @@ async function main() {
   );
 
   rmSync(workDir, { recursive: true, force: true });
-  console.log("[amo-deploy] Готово (config.php обновлён на сервере).");
+  console.log("[amo-deploy] FTP готово. config.php: с сервера + merge amo/internal из amocrm.secrets.env.");
+
+  await verifyRemoteApiFiles(apiFiles);
 }
 
 main().catch((err) => {

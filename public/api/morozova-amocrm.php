@@ -89,6 +89,33 @@ function morozova_amocrm_api_request(array $config, string $method, string $path
  * @param array<string, mixed> $payload
  * @param array<string, mixed> $config
  */
+function morozova_amocrm_set_checkbox_field(array &$payload, array $config, string $configKey, bool $checked): void
+{
+    if (!$checked) {
+        return;
+    }
+
+    $fieldId = (int) ($config[$configKey] ?? 0);
+    if ($fieldId <= 0) {
+        return;
+    }
+
+    if (!isset($payload['custom_fields_values']) || !is_array($payload['custom_fields_values'])) {
+        $payload['custom_fields_values'] = [];
+    }
+
+    $payload['custom_fields_values'][] = [
+        'field_id' => $fieldId,
+        'values' => [
+            ['value' => true],
+        ],
+    ];
+}
+
+/**
+ * @param array<string, mixed> $payload
+ * @param array<string, mixed> $config
+ */
 function morozova_amocrm_set_custom_field(array &$payload, array $config, string $configKey, string $value): void
 {
     $value = trim($value);
@@ -178,6 +205,9 @@ function morozova_amocrm_utm_meta(string $utmSource): array
         'chatgpt' => ['label' => 'ChatGPT', 'account' => ''],
         'instagram' => ['label' => 'Instagram (рилс)', 'account' => ''],
         'tiktok' => ['label' => 'TikTok (рилс)', 'account' => ''],
+        'yb1' => ['label' => 'Яндекс Бизнес', 'account' => ''],
+        'ym1' => ['label' => 'Яндекс Карты', 'account' => ''],
+        'gis1' => ['label' => '2ГИС', 'account' => ''],
     ];
 
     if (isset($map[$key])) {
@@ -422,6 +452,11 @@ function morozova_amocrm_send_lead_attempt(array $config, array $input, bool $wi
     morozova_amocrm_set_custom_field($leadPayload, $config, 'traffic_account_field_id', $trafficAccount);
     $visitorGeo = trim((string) ($input['visitor_geo'] ?? ''));
     morozova_amocrm_set_custom_field($leadPayload, $config, 'visitor_geo_field_id', $visitorGeo);
+    $wantsTrialSession = !empty($input['wants_trial_session']);
+    morozova_amocrm_set_checkbox_field($leadPayload, $config, 'wants_trial_field_id', $wantsTrialSession);
+    if ($wantsTrialSession) {
+        $noteLines[] = 'Пробная сессия: отмечена галочка';
+    }
 
     $utmContent = trim((string) ($input['utm_content'] ?? ''));
     $utmTerm = trim((string) ($input['utm_term'] ?? ''));
@@ -464,6 +499,10 @@ function morozova_amocrm_send_lead_attempt(array $config, array $input, bool $wi
         if (is_array($embedded) && !empty($embedded['leads'][0]['id'])) {
             $leadId = (int) $embedded['leads'][0]['id'];
         }
+    }
+
+    if ($leadId !== null) {
+        $GLOBALS['morozova_amocrm_last_lead_id'] = $leadId;
     }
 
     if ($leadId === null || $noteLines === []) {
