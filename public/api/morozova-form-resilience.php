@@ -24,6 +24,23 @@ function morozova_form_ensure_data_dir(): bool
     return @mkdir($dir, 0755, true);
 }
 
+/** Разрешённые поля резерва (без токенов, config, сырого POST). */
+const MOROZOVA_FORM_BACKUP_ALLOWED_KEYS = [
+    'source',
+    'submission_id',
+    'name',
+    'contact',
+    'message',
+    'utm_source',
+    'utm_campaign',
+    'utm_medium',
+    'landing_path',
+    'referrer',
+    'visitor_geo',
+    'wants_trial_session',
+    'db_ok',
+];
+
 /**
  * @param array<string, mixed> $record
  */
@@ -33,7 +50,14 @@ function morozova_form_append_backup(array $record): bool
         return false;
     }
 
-    $record['stored_at'] = date('c');
+    $safe = [];
+    foreach (MOROZOVA_FORM_BACKUP_ALLOWED_KEYS as $key) {
+        if (array_key_exists($key, $record)) {
+            $safe[$key] = $record[$key];
+        }
+    }
+    $safe['stored_at'] = date('c');
+    $record = $safe;
     $line = json_encode($record, JSON_UNESCAPED_UNICODE);
     if ($line === false) {
         return false;

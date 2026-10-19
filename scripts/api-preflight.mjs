@@ -80,7 +80,7 @@ for (const file of phpFiles) {
     if (!rel || !rel.endsWith(".php")) {
       continue;
     }
-    const target = resolve(API_DIR, rel);
+    const target = resolve(API_DIR, rel.replace(/^\//, ""));
     if (!existsSync(target)) {
       missingDeps.push({ from: file, target: rel });
     }

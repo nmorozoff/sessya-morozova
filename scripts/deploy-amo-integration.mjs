@@ -90,6 +90,37 @@ function parsePhpFlatStrings(content) {
   return out;
 }
 
+function formatBackupStamp() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+}
+
+/** Скачанный config.php должен содержать критичные секреты до любой перезаписи. */
+function assertServerConfigDownloaded(content) {
+  if (!content || content.trim().length < 40) {
+    throw new Error(
+      "config.php не скачан или пустой — деплой остановлен, config на сервере не изменён.",
+    );
+  }
+  const flat = parsePhpFlatStrings(content);
+  const missing = [];
+  if (!String(flat.db_pass ?? "").trim()) {
+    missing.push("db_pass");
+  }
+  if (!String(flat.access_token ?? "").trim()) {
+    missing.push("amocrm access_token");
+  }
+  if (!String(flat.internal_api_secret ?? "").trim()) {
+    missing.push("internal_api_secret");
+  }
+  if (missing.length > 0) {
+    throw new Error(
+      `В скачанном config.php нет: ${missing.join(", ")}. Деплой остановлен, config не трогаем.`,
+    );
+  }
+}
+
 function phpExport(value, indent = 0) {
   const pad = "    ".repeat(indent);
   if (value === null) return "null";
@@ -226,7 +257,37 @@ async function main() {
   const open = `open -u ${lftpQuote(`${user},${password}`)} ${lftpQuote(normalizeServer(server))}`;
   const cd = `cd ${lftpQuote(remoteDir)}`;
 
-  console.log("[amo-deploy] Скачиваю api/config.php с сервера (не перетираем БД/Telegram вручную)...");
+  console.log("[amo-deploy] Скачиваю api/config.php с сервера...");
+  let configDownloadOk = false;
+  try {
+    await runLftp(
+      [
+        "set cmd:fail-exit true",
+        "set ftp:ssl-allow no",
+        "set ftp:passive-mode true",
+        open,
+        cd,
+        `get api/config.php -o ${lftpQuote(remoteConfig)}`,
+        "bye",
+      ].join("; ") + "\n",
+    );
+    configDownloadOk = existsSync(remoteConfig);
+  } catch (e) {
+    throw new Error(
+      `Не удалось скачать api/config.php: ${e.message}. Деплой остановлен, config на сервере не изменён.`,
+    );
+  }
+  if (!configDownloadOk) {
+    throw new Error(
+      "config.php не появился после FTP get — деплой остановлен, config не трогаем.",
+    );
+  }
+
+  const original = readFileSync(remoteConfig, "utf8");
+  assertServerConfigDownloaded(original);
+
+  const backupRemote = `api/config.php.bak-${formatBackupStamp()}`;
+  console.log(`[amo-deploy] Бэкап на сервере: ${backupRemote}`);
   await runLftp(
     [
       "set cmd:fail-exit true",
@@ -234,12 +295,11 @@ async function main() {
       "set ftp:passive-mode true",
       open,
       cd,
-      `get api/config.php -o ${lftpQuote(remoteConfig)}`,
+      `put ${lftpQuote(remoteConfig)} -o ${backupRemote}`,
       "bye",
     ].join("; ") + "\n",
   );
 
-  const original = readFileSync(remoteConfig, "utf8");
   const patched = patchConfigContent(original, secrets);
   writeFileSync(patchedConfig, patched, { mode: 0o600 });
 

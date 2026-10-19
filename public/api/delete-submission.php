@@ -1,6 +1,6 @@
 <?php
 /**
- * Удаление тестовой заявки из БД (smoke / ручная очистка).
+ * Удаление smoke-заявок из БД (только внутренний smoke/cleanup).
  * POST JSON: { "id": 123 } + заголовок X-Morozova-Internal-Secret
  */
 declare(strict_types=1);
@@ -14,10 +14,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $config = require __DIR__ . '/config.php';
-$secret = trim((string) ($config['internal_api_secret'] ?? ''));
-$provided = trim((string) ($_SERVER['HTTP_X_MOROZOVA_INTERNAL_SECRET'] ?? ''));
+$secret = (string) ($config['internal_api_secret'] ?? '');
+$provided = (string) ($_SERVER['HTTP_X_MOROZOVA_INTERNAL_SECRET'] ?? '');
 
-if ($secret === '' || $provided !== $secret) {
+if ($secret === '' || !hash_equals($secret, $provided)) {
     http_response_code(403);
     echo json_encode(['ok' => false, 'error' => 'forbidden']);
     exit;
@@ -44,8 +44,16 @@ try {
         $config['db_pass'] ?? '',
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
-    $stmt = $pdo->prepare('DELETE FROM form_submissions WHERE id = :id');
-    $stmt->execute([':id' => $id]);
+    $stmt = $pdo->prepare(
+        "DELETE FROM form_submissions
+         WHERE id = :id
+           AND name LIKE :name_prefix
+           AND created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)"
+    );
+    $stmt->execute([
+        ':id' => $id,
+        ':name_prefix' => 'Тест smoke%',
+    ]);
     echo json_encode(['ok' => true, 'deleted' => $stmt->rowCount() > 0], JSON_UNESCAPED_UNICODE);
 } catch (Throwable $e) {
     http_response_code(500);

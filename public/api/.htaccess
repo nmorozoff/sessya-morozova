@@ -1,3 +1,6 @@
 <Files "config.php">
   Require all denied
 </Files>
+<FilesMatch "^config\.php\.bak-.+">
+  Require all denied
+</FilesMatch>
