@@ -47,13 +47,13 @@ try {
     $stmt = $pdo->prepare(
         "DELETE FROM form_submissions
          WHERE id = :id
-           AND name LIKE :name_prefix
+           AND (
+             name LIKE 'Тест smoke%'
+             OR name = 'Тест после деплоя (удалить)'
+           )
            AND created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)"
     );
-    $stmt->execute([
-        ':id' => $id,
-        ':name_prefix' => 'Тест smoke%',
-    ]);
+    $stmt->execute([':id' => $id]);
     echo json_encode(['ok' => true, 'deleted' => $stmt->rowCount() > 0], JSON_UNESCAPED_UNICODE);
 } catch (Throwable $e) {
     http_response_code(500);

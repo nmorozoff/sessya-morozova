@@ -116,19 +116,68 @@ ok(`удалено из БД id=${submissionId}`);
 const amoLeadId = postJson.amo_lead_id;
 const subdomain = secrets.AMO_SUBDOMAIN;
 const token = secrets.AMO_ACCESS_TOKEN;
-if (amoLeadId && subdomain && token) {
-  const delAmo = await fetch(
-    `https://${subdomain}.amocrm.ru/api/v4/leads/${amoLeadId}`,
-    {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    },
+async function amoDeleteLeadAndContacts(leadId) {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  };
+  const leadRes = await fetch(
+    `https://${subdomain}.amocrm.ru/api/v4/leads/${leadId}?with=contacts`,
+    { headers: { Authorization: `Bearer ${token}` } },
   );
-  if (delAmo.status >= 200 && delAmo.status < 300) {
-    ok(`удалена сделка amo ${amoLeadId}`);
+  const leadJson = leadRes.ok ? await leadRes.json() : null;
+  const contactIds =
+    leadJson?._embedded?.contacts?.map((c) => c.id).filter(Boolean) ?? [];
+
+  const delLead = await fetch(`https://${subdomain}.amocrm.ru/api/v4/leads`, {
+    method: "PATCH",
+    headers,
+    body: JSON.stringify([{ id: leadId, is_deleted: true }]),
+  });
+  if (delLead.status >= 200 && delLead.status < 300) {
+    ok(`сделка amo ${leadId} помечена удалённой`);
   } else {
-    const t = await delAmo.text();
-    console.warn(`[smoke-form] WARN: amo delete HTTP ${delAmo.status}: ${t.slice(0, 120)}`);
+    console.warn(
+      `[smoke-form] WARN: amo patch lead HTTP ${delLead.status}: ${(await delLead.text()).slice(0, 120)}`,
+    );
+  }
+  if (contactIds.length > 0) {
+    const delContacts = await fetch(
+      `https://${subdomain}.amocrm.ru/api/v4/contacts`,
+      {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify(
+          contactIds.map((id) => ({ id, is_deleted: true })),
+        ),
+      },
+    );
+    if (delContacts.status >= 200 && delContacts.status < 300) {
+      ok(`контакты amo помечены удалёнными: ${contactIds.join(", ")}`);
+    } else {
+      console.warn(
+        `[smoke-form] WARN: amo patch contacts HTTP ${delContacts.status}`,
+      );
+    }
+  }
+}
+
+if (amoLeadId && subdomain && token) {
+  await amoDeleteLeadAndContacts(amoLeadId);
+} else if (subdomain && token) {
+  const q = encodeURIComponent("Тест smoke");
+  const search = await fetch(
+    `https://${subdomain}.amocrm.ru/api/v4/leads?query=${q}&limit=3`,
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+  if (search.ok) {
+    const data = await search.json();
+    const leads = data?._embedded?.leads ?? [];
+    for (const lead of leads) {
+      if (String(lead.name || "").includes("Тест smoke")) {
+        await amoDeleteLeadAndContacts(lead.id);
+      }
+    }
   }
 }
 

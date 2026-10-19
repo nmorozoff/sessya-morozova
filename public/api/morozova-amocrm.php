@@ -495,9 +495,15 @@ function morozova_amocrm_send_lead_attempt(array $config, array $input, bool $wi
 
     $leadId = null;
     if (is_array($create['data'])) {
-        $embedded = $create['data']['_embedded'] ?? null;
-        if (is_array($embedded) && !empty($embedded['leads'][0]['id'])) {
-            $leadId = (int) $embedded['leads'][0]['id'];
+        if (isset($create['data'][0]['id'])) {
+            $leadId = (int) $create['data'][0]['id'];
+        } else {
+            $embedded = $create['data']['_embedded'] ?? null;
+            if (is_array($embedded) && !empty($embedded['leads'][0]['id'])) {
+                $leadId = (int) $embedded['leads'][0]['id'];
+            } elseif (!empty($create['data']['id'])) {
+                $leadId = (int) $create['data']['id'];
+            }
         }
     }
 

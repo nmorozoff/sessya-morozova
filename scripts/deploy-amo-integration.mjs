@@ -236,10 +236,10 @@ async function main() {
 
   const apiFiles = listApiDeployFiles();
   const extraStatic = [
-    ["public/amocrm/callback.php", "amocrm/callback.php"],
-    ["public/amocrm/callback/index.php", "amocrm/callback/index.php"],
-    ["public/amocrm/.htaccess", "amocrm/.htaccess"],
-    ["public/.htaccess", ".htaccess"],
+    { local: "public/amocrm/callback.php", remote: "amocrm/callback.php" },
+    { local: "public/amocrm/callback/index.php", remote: "amocrm/callback/index.php" },
+    { local: "public/amocrm/.htaccess", remote: "amocrm/.htaccess" },
+    { local: "public/.htaccess", remote: ".htaccess" },
   ];
 
   const puts = [...apiFiles, ...extraStatic];
