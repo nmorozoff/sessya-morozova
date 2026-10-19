@@ -25,6 +25,37 @@ declare(strict_types=1);
  */
 function morozova_amocrm_api_request(array $config, string $method, string $path, ?array $body = null): array
 {
+    if (is_file(__DIR__ . '/morozova-amocrm-tokens.php')) {
+        require_once __DIR__ . '/morozova-amocrm-tokens.php';
+        $config = morozova_amocrm_merge_token_config($config);
+        $ensure = morozova_amocrm_ensure_access_token($config);
+        $config = $ensure['config'];
+    }
+
+    $result = morozova_amocrm_api_request_http($config, $method, $path, $body);
+
+    if (
+        !$result['ok']
+        && (int) ($result['status'] ?? 0) === 401
+        && function_exists('morozova_amocrm_refresh_available')
+        && morozova_amocrm_refresh_available($config)
+    ) {
+        $refresh = morozova_amocrm_refresh_access_token($config);
+        if (!empty($refresh['ok'])) {
+            $config = morozova_amocrm_merge_token_config($config);
+            $result = morozova_amocrm_api_request_http($config, $method, $path, $body);
+        }
+    }
+
+    return $result;
+}
+
+/**
+ * @param array<string, mixed> $config
+ * @return array{ok: bool, status: int, data: mixed, error: string}
+ */
+function morozova_amocrm_api_request_http(array $config, string $method, string $path, ?array $body = null): array
+{
     $subdomain = trim((string) ($config['subdomain'] ?? ''));
     $token = trim((string) ($config['access_token'] ?? ''));
 

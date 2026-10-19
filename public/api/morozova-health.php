@@ -12,6 +12,7 @@ function morozova_health_required_php_files(): array
         'send-form.php',
         'morozova-form-resilience.php',
         'morozova-amocrm.php',
+        'morozova-amocrm-tokens.php',
         'morozova-reels-lead.php',
         'morozova-traffic-source.php',
         'morozova-visitor-geo.php',
@@ -35,6 +36,7 @@ function morozova_health_run(array $config): array
         $checks[] = [
             'name' => 'file:' . $file,
             'ok' => is_file($path),
+            'alarm' => true,
             'detail' => is_file($path) ? 'present' : 'missing',
         ];
     }
@@ -43,6 +45,7 @@ function morozova_health_run(array $config): array
     $checks[] = [
         'name' => 'config',
         'ok' => is_file($configPath),
+        'alarm' => true,
         'detail' => is_file($configPath) ? 'readable' : 'missing',
     ];
 
@@ -65,22 +68,18 @@ function morozova_health_run(array $config): array
     } catch (Throwable $e) {
         $dbDetail = 'error';
     }
-    $checks[] = ['name' => 'database', 'ok' => $dbOk, 'detail' => $dbDetail];
+    $checks[] = ['name' => 'database', 'ok' => $dbOk, 'alarm' => true, 'detail' => $dbDetail];
 
-    $amoOk = false;
-    $amoDetail = 'disabled';
     $amoConfig = is_array($config['amocrm'] ?? null) ? $config['amocrm'] : [];
-    if (!empty($amoConfig['enabled'])) {
-        if (is_file(__DIR__ . '/morozova-amocrm.php')) {
-            require_once __DIR__ . '/morozova-amocrm.php';
-            $resp = morozova_amocrm_api_request($amoConfig, 'GET', '/api/v4/account');
-            $amoOk = !empty($resp['ok']);
-            $amoDetail = $amoOk ? 'token_ok' : 'token_or_api_fail';
-        } else {
-            $amoDetail = 'module_missing';
-        }
+    if (!empty($amoConfig['enabled']) && is_file(__DIR__ . '/morozova-amocrm-tokens.php')) {
+        require_once __DIR__ . '/morozova-amocrm-tokens.php';
+        $amoCheck = morozova_amocrm_health_check($amoConfig);
+    } elseif (!empty($amoConfig['enabled'])) {
+        $amoCheck = ['name' => 'amocrm', 'ok' => false, 'alarm' => true, 'detail' => 'tokens_module_missing'];
+    } else {
+        $amoCheck = ['name' => 'amocrm', 'ok' => true, 'alarm' => false, 'detail' => 'disabled'];
     }
-    $checks[] = ['name' => 'amocrm', 'ok' => $amoOk || $amoDetail === 'disabled', 'detail' => $amoDetail];
+    $checks[] = $amoCheck;
 
     $maxOk = false;
     $maxDetail = 'not_configured';
@@ -97,6 +96,7 @@ function morozova_health_run(array $config): array
     $checks[] = [
         'name' => 'max_notify',
         'ok' => $maxOk,
+        'alarm' => false,
         'detail' => $maxDetail,
     ];
 
@@ -104,6 +104,7 @@ function morozova_health_run(array $config): array
     $checks[] = [
         'name' => 'backup_dir',
         'ok' => is_dir($backupDir) && is_writable($backupDir),
+        'alarm' => true,
         'detail' => is_dir($backupDir) ? (is_writable($backupDir) ? 'writable' : 'not_writable') : 'missing',
     ];
 

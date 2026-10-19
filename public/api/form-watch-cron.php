@@ -36,6 +36,23 @@ if (!$isCli) {
 require_once __DIR__ . '/morozova-health.php';
 require_once __DIR__ . '/morozova-form-resilience.php';
 
+/**
+ * @param array{ok: bool, checks: list<array<string, mixed>>} $health
+ */
+function morozova_form_watch_log_amocrm_failures(array $health, int $attempt): void
+{
+    foreach ($health['checks'] as $c) {
+        if (($c['name'] ?? '') !== 'amocrm' || !empty($c['ok'])) {
+            continue;
+        }
+        morozova_form_log('error', 'health_amocrm_fail', [
+            'attempt' => $attempt,
+            'detail' => trim((string) ($c['detail'] ?? '')),
+            'http_status' => $c['http_status'] ?? null,
+        ]);
+    }
+}
+
 $statePath = morozova_form_data_dir() . '/form-watch-state.json';
 /** @var array<string, mixed> $state */
 $state = [];
@@ -54,6 +71,18 @@ $dayKey = $nowMsk->format('Y-m-d');
 
 $health = morozova_health_run($config);
 $healthOk = $health['ok'];
+$healthRetried = false;
+
+if (!$healthOk) {
+    morozova_form_watch_log_amocrm_failures($health, 1);
+    sleep(60);
+    $health = morozova_health_run($config);
+    $healthOk = $health['ok'];
+    $healthRetried = true;
+    if (!$healthOk) {
+        morozova_form_watch_log_amocrm_failures($health, 2);
+    }
+}
 
 $lastAlertHour = (string) ($state['last_alert_hour'] ?? '');
 $wasDown = !empty($state['was_down']);
@@ -63,11 +92,14 @@ if (!$healthOk) {
     if ($lastAlertHour !== $hourKey) {
         $failed = [];
         foreach ($health['checks'] as $c) {
-            if (!$c['ok']) {
-                $failed[] = $c['name'];
+            if (!$c['ok'] && ($c['alarm'] ?? true)) {
+                $detail = trim((string) ($c['detail'] ?? ''));
+                $failed[] = $detail !== '' ? $c['name'] . ': ' . $detail : $c['name'];
             }
         }
-        morozova_form_max_ops_alert($config, 'health FAIL: ' . implode(', ', $failed));
+        if ($failed !== []) {
+            morozova_form_max_ops_alert($config, 'health FAIL: ' . implode('; ', $failed));
+        }
         $state['last_alert_hour'] = $hourKey;
         $state['was_down'] = true;
         $sent[] = 'alert_down';
@@ -114,6 +146,7 @@ file_put_contents($statePath, json_encode($state, JSON_UNESCAPED_UNICODE | JSON_
 
 echo json_encode([
     'ok' => $healthOk,
+    'health_retried' => $healthRetried,
     'health' => $health,
     'sent' => $sent,
     'ts' => date('c'),

@@ -164,8 +164,13 @@ function patchConfigContent(original, secrets) {
     internal_api_secret: secrets.INTERNAL_API_SECRET,
     amocrm: {
       enabled: true,
-      subdomain: secrets.AMO_SUBDOMAIN,
-      access_token: secrets.AMO_ACCESS_TOKEN,
+      subdomain: secrets.AMO_SUBDOMAIN || flat.subdomain || "",
+      client_id: secrets.AMO_INTEGRATION_ID || flat.client_id || "",
+      client_secret: secrets.AMO_CLIENT_SECRET || flat.client_secret || "",
+      redirect_uri:
+        flat.redirect_uri || "https://www.morozovanatalia.ru/amocrm/callback/",
+      access_token: flat.access_token || "",
+      refresh_token: flat.refresh_token || secrets.AMO_REFRESH_TOKEN || "",
       pipeline_id: Number(secrets.AMO_PIPELINE_ID),
       status_id: Number(secrets.AMO_STATUS_ID),
       format_field_id: Number(secrets.AMO_FORMAT_FIELD_ID || 0),
