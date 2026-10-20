@@ -13,6 +13,8 @@ const DIST = resolve("dist");
 const PORT = 4173;
 const BASE = `http://127.0.0.1:${PORT}`;
 const SITE_URL = normalizeSiteUrl(process.env.VITE_SITE_URL);
+const MAX_ROUTE_ATTEMPTS = 3; // 1 проход + до 2 повторов
+const PREVIEW_START_TIMEOUT_MS = 60_000;
 
 const MIN_BLOG_H2 = Number(process.env.PRERENDER_BLOG_MIN_H2 || 5);
 const MIN_BLOG_BODY_CHARS = Number(process.env.PRERENDER_BLOG_MIN_BODY_CHARS || 2000);
@@ -28,45 +30,87 @@ function isBlogPostRoute(route) {
   return route.startsWith("/blog/") && route !== "/blog" && !route.startsWith("/blog/page/");
 }
 
-function startPreview() {
-  return new Promise((resolvePromise, reject) => {
-    const proc = spawn(
-      process.platform === "win32" ? "npx.cmd" : "npx",
-      ["vite", "preview", "--host", "127.0.0.1", "--port", String(PORT), "--strictPort"],
-      {
-        cwd: resolve(import.meta.dirname, ".."),
-        stdio: ["ignore", "pipe", "pipe"],
-        env: { ...process.env, VITE_SITE_URL: SITE_URL },
-      },
-    );
+function isConnectionError(err) {
+  const message = err instanceof Error ? err.message : String(err);
+  return (
+    message.includes("ERR_CONNECTION_REFUSED") ||
+    message.includes("net::ERR_CONNECTION_REFUSED") ||
+    message.includes("ECONNREFUSED")
+  );
+}
 
-    let ready = false;
+class PreviewServer {
+  constructor() {
+    this.proc = null;
+    this.alive = false;
+  }
 
-    const onData = (data) => {
-      const text = data.toString();
-      if (
-        !ready &&
-        (text.includes(BASE) ||
-          text.includes(`localhost:${PORT}`) ||
-          text.includes("Local:") ||
-          text.includes("ready in"))
-      ) {
-        ready = true;
-        resolvePromise(proc);
-      }
-    };
+  async start() {
+    await this.stop();
 
-    proc.stdout.on("data", onData);
-    proc.stderr.on("data", onData);
-    proc.on("error", reject);
-    proc.on("exit", (code) => {
-      if (!ready) reject(new Error(`vite preview exited with code ${code ?? "unknown"}`));
+    return new Promise((resolvePromise, reject) => {
+      const proc = spawn(
+        process.platform === "win32" ? "npx.cmd" : "npx",
+        ["vite", "preview", "--host", "127.0.0.1", "--port", String(PORT), "--strictPort"],
+        {
+          cwd: resolve(import.meta.dirname, ".."),
+          stdio: ["ignore", "pipe", "pipe"],
+          env: { ...process.env, VITE_SITE_URL: SITE_URL },
+        },
+      );
+
+      this.proc = proc;
+      this.alive = false;
+      let ready = false;
+
+      const onData = (data) => {
+        const text = data.toString();
+        if (
+          !ready &&
+          (text.includes(BASE) ||
+            text.includes(`localhost:${PORT}`) ||
+            text.includes("Local:") ||
+            text.includes("ready in"))
+        ) {
+          ready = true;
+          this.alive = true;
+          resolvePromise();
+        }
+      };
+
+      proc.stdout.on("data", onData);
+      proc.stderr.on("data", onData);
+      proc.on("error", reject);
+      proc.on("exit", (code) => {
+        this.alive = false;
+        if (!ready) reject(new Error(`vite preview exited with code ${code ?? "unknown"}`));
+      });
+
+      setTimeout(() => {
+        if (!ready) reject(new Error("vite preview did not start within 60s"));
+      }, PREVIEW_START_TIMEOUT_MS);
     });
+  }
 
-    setTimeout(() => {
-      if (!ready) reject(new Error("vite preview did not start within 60s"));
-    }, 60_000);
-  });
+  async restart() {
+    console.warn("[prerender] Перезапуск vite preview…");
+    await this.start();
+    await new Promise((r) => setTimeout(r, 1500));
+  }
+
+  async ensureRunning() {
+    if (!this.alive || !this.proc || this.proc.exitCode != null) {
+      await this.restart();
+    }
+  }
+
+  stop() {
+    if (this.proc) {
+      this.proc.kill("SIGTERM");
+      this.proc = null;
+    }
+    this.alive = false;
+  }
 }
 
 function outputPath(route) {
@@ -152,6 +196,15 @@ async function waitForPageContent(page, route) {
   await new Promise((r) => setTimeout(r, 300));
 }
 
+async function waitForNotFoundContent(page) {
+  await page.waitForSelector("h1", { timeout: 60_000 });
+  await page.waitForFunction(
+    () => document.body?.innerText?.includes("Страница не найдена"),
+    { timeout: 30_000 },
+  );
+  await new Promise((r) => setTimeout(r, 300));
+}
+
 async function launchBrowser(puppeteer) {
   const launchOptions = {
     headless: true,
@@ -171,6 +224,82 @@ async function launchBrowser(puppeteer) {
   throw lastError;
 }
 
+async function renderRouteOnce(browser, preview, route, { is404 = false } = {}) {
+  const path = is404 ? NOT_FOUND_PRERENDER_PATH : route;
+  const url = `${BASE}${withTrailingSlash(path)}`;
+  await preview.ensureRunning();
+
+  const page = await browser.newPage();
+  try {
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 120_000 });
+    if (is404) {
+      await waitForNotFoundContent(page);
+      const html = await page.content();
+      writeFileSync(resolve(DIST, "404.html"), html, "utf-8");
+      console.log("[prerender] Wrote dist/404.html");
+      return;
+    }
+
+    await waitForPageContent(page, route);
+    const html = await page.content();
+    const out = outputPath(route);
+    mkdirSync(dirname(out), { recursive: true });
+    writeFileSync(out, html, "utf-8");
+  } finally {
+    await page.close();
+  }
+}
+
+async function renderRouteWithRetries(browser, preview, route, options = {}) {
+  const label = options.is404 ? "404.html" : route;
+  let lastError;
+
+  for (let attempt = 1; attempt <= MAX_ROUTE_ATTEMPTS; attempt++) {
+    try {
+      if (attempt > 1) {
+        console.log(`[prerender] Повтор ${attempt}/${MAX_ROUTE_ATTEMPTS}: ${label}`);
+      } else if (!options.is404) {
+        console.log(`[prerender] ${route}`);
+      } else {
+        console.log(`[prerender] 404.html (via ${NOT_FOUND_PRERENDER_PATH})`);
+      }
+
+      await renderRouteOnce(browser, preview, route, options);
+      return { ok: true, attempts: attempt };
+    } catch (err) {
+      lastError = err;
+      const message = err instanceof Error ? err.message : String(err);
+      console.error(`[prerender] FAILED ${label} (попытка ${attempt}/${MAX_ROUTE_ATTEMPTS}): ${message}`);
+
+      if (isConnectionError(err)) {
+        preview.alive = false;
+        if (attempt < MAX_ROUTE_ATTEMPTS) {
+          await preview.restart();
+        }
+      }
+    }
+  }
+
+  return {
+    ok: false,
+    attempts: MAX_ROUTE_ATTEMPTS,
+    message: lastError instanceof Error ? lastError.message : String(lastError),
+  };
+}
+
+function printSummary({ routeTotal, routeOk, notFoundOk, failures }) {
+  const extra = notFoundOk ? 1 : 0;
+  const total = routeTotal + 1;
+  const ok = routeOk + (notFoundOk ? 1 : 0);
+  console.log(`[prerender] Сводка: собрано ${ok} из ${total} (маршруты ${routeOk}/${routeTotal}, 404.html: ${notFoundOk ? "OK" : "FAIL"})`);
+  if (failures.length > 0) {
+    console.error("[prerender] Не удалось:");
+    for (const f of failures) {
+      console.error(`  - ${f.label}: ${f.message}`);
+    }
+  }
+}
+
 async function prerender() {
   if (!existsSync(DIST)) {
     console.error("[prerender] dist/ not found. Run vite build first.");
@@ -183,75 +312,46 @@ async function prerender() {
     ? process.env.PRERENDER_ONLY.split(",").map((route) => route.trim()).filter(Boolean)
     : PRERENDER_ROUTES;
 
-  console.log(`[prerender] Rendering ${routes.length} routes...`);
-  const server = await startPreview();
+  console.log(`[prerender] Rendering ${routes.length} routes (+ 404.html)...`);
+
+  const preview = new PreviewServer();
+  await preview.start();
   await new Promise((r) => setTimeout(r, 2000));
 
   const browser = await launchBrowser(puppeteer);
   const failures = [];
+  let routeOk = 0;
+  let notFoundOk = false;
 
   try {
     for (const route of routes) {
-      const url = `${BASE}${withTrailingSlash(route)}`;
-      console.log(`[prerender] ${route}`);
-      const page = await browser.newPage();
-      try {
-        await page.goto(url, { waitUntil: "domcontentloaded", timeout: 120_000 });
-        await waitForPageContent(page, route);
-
-        const html = await page.content();
-        const out = outputPath(route);
-        mkdirSync(dirname(out), { recursive: true });
-        writeFileSync(out, html, "utf-8");
-      } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        console.error(`[prerender] FAILED ${route}: ${message}`);
-        failures.push({ route, message });
-        if (isBlogPostRoute(route)) {
-          throw new Error(`Blog post prerender blocked: ${route} — ${message}`);
-        }
-      } finally {
-        await page.close();
+      const result = await renderRouteWithRetries(browser, preview, route);
+      if (result.ok) {
+        routeOk += 1;
+      } else {
+        failures.push({ label: route, message: result.message ?? "unknown error" });
       }
     }
 
-    await prerenderNotFoundPage(browser);
-
+    const notFoundResult = await renderRouteWithRetries(browser, preview, NOT_FOUND_PRERENDER_PATH, {
+      is404: true,
+    });
+    notFoundOk = notFoundResult.ok;
+    if (!notFoundOk) {
+      failures.push({ label: "404.html", message: notFoundResult.message ?? "unknown error" });
+    }
+  } finally {
     await browser.close();
-    server.kill("SIGTERM");
-  } catch (err) {
-    await browser?.close?.();
-    server.kill("SIGTERM");
-    throw err;
+    preview.stop();
   }
 
+  printSummary({ routeTotal: routes.length, routeOk, notFoundOk, failures });
+
   if (failures.length > 0) {
-    console.error(`[prerender] ${failures.length} route(s) failed (non-blog)`);
     process.exit(1);
   }
 
   console.log("[prerender] Done.");
-}
-
-async function prerenderNotFoundPage(browser) {
-  const url = `${BASE}${withTrailingSlash(NOT_FOUND_PRERENDER_PATH)}`;
-  console.log(`[prerender] 404.html (via ${NOT_FOUND_PRERENDER_PATH})`);
-  const page = await browser.newPage();
-  try {
-    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 120_000 });
-    await page.waitForSelector("h1", { timeout: 60_000 });
-    await page.waitForFunction(
-      () => document.body?.innerText?.includes("Страница не найдена"),
-      { timeout: 30_000 },
-    );
-    await new Promise((r) => setTimeout(r, 300));
-
-    const html = await page.content();
-    writeFileSync(resolve(DIST, "404.html"), html, "utf-8");
-    console.log("[prerender] Wrote dist/404.html");
-  } finally {
-    await page.close();
-  }
 }
 
 prerender().catch((err) => {
