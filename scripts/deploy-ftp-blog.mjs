@@ -27,9 +27,9 @@ import {
 import { basename, join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { assertContentBlogCommitted } from "./assert-content-blog-committed.mjs";
-import { submitIndexNowFromSitemap } from "./indexnow.mjs";
 
 const ROOT = resolve(".");
+const INDEXNOW_MODULE = resolve(ROOT, "scripts/indexnow.mjs");
 const ENV_PATH = resolve(ROOT, ".ftp-deploy.env");
 const DIST = resolve(ROOT, "dist");
 
@@ -275,6 +275,35 @@ function runLftpUpload({ server, user, password, serverDir, slug }) {
   });
 }
 
+async function runIndexNowAfterDeploy(siteUrl, slug) {
+  if (!existsSync(INDEXNOW_MODULE)) {
+    console.warn(
+      "\n⚠️  [deploy-blog] INDEXNOW WARNING: scripts/indexnow.mjs отсутствует в репозитории.\n" +
+        "    Пинги в поисковики НЕ отправлены. Сделайте git pull origin main после merge модуля\n" +
+        "    из сайт-воркфлоу, затем повторите deploy:blog или npm run indexnow.\n",
+    );
+    return { skipped: true, reason: "missing scripts/indexnow.mjs" };
+  }
+  try {
+    const { submitIndexNowFromSitemap } = await import("./indexnow.mjs");
+    const inResult = await submitIndexNowFromSitemap(siteUrl, { slug });
+    if (inResult.skipped) {
+      console.warn(`[deploy-blog] IndexNow пропущен: ${inResult.reason}`);
+    } else {
+      console.log(
+        `[deploy-blog] IndexNow: HTTP ${inResult.httpStatus}, URL: ${inResult.urlCount}`,
+      );
+    }
+    return inResult;
+  } catch (inErr) {
+    console.warn(
+      "[deploy-blog] ⚠️  IndexNow не отправлен (деплой OK):",
+      inErr.message || inErr,
+    );
+    return { skipped: true, reason: String(inErr.message || inErr) };
+  }
+}
+
 async function main() {
   assertContentBlogCommitted("deploy-blog");
 
@@ -307,18 +336,7 @@ async function main() {
     try {
       await runLftpUpload({ server, user, password, serverDir, slug: args.slug });
       console.log("[deploy-blog] Готово (blog-only). api/ и index.html не затронуты.");
-      try {
-        const inResult = await submitIndexNowFromSitemap(siteUrl, { slug: args.slug });
-        if (inResult.skipped) {
-          console.log(`[deploy-blog] IndexNow пропущен: ${inResult.reason}`);
-        } else {
-          console.log(
-            `[deploy-blog] IndexNow: HTTP ${inResult.httpStatus}, URL: ${inResult.urlCount}`,
-          );
-        }
-      } catch (inErr) {
-        console.warn("[deploy-blog] IndexNow не отправлен (деплой OK):", inErr.message || inErr);
-      }
+      await runIndexNowAfterDeploy(siteUrl, args.slug);
       return;
     } catch (err) {
       lastError = err;
