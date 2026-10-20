@@ -1,0 +1,28 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://www.morozovanatalia.ru/blog/gore-zamorozhennoe-emdr/#article",
+      "headline": "Горе, спрятанное на годы: почему боль возвращается, когда вроде бы всё давно прошло",
+      "description": "Елена рассказывала про свою тревогу, и в какой-то момент между делом бросила: «Бабушка умерла тринадцать лет назад, я её почти не вспоминаю». Тут за окном кто-т",
+      "datePublished": "2026-10-20",
+      "dateModified": "2026-10-20",
+      "inLanguage": "ru",
+      "url": "https://www.morozovanatalia.ru/blog/gore-zamorozhennoe-emdr/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.morozovanatalia.ru/blog/gore-zamorozhennoe-emdr/"
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://www.morozovanatalia.ru/blog-assets/gore-zamorozhennoe-emdr/cover/cover.png"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Наталья Морозова",
+        "jobTitle": "Психолог, EMDR-терапевт"
+      }
+    }
+  ]
+}
