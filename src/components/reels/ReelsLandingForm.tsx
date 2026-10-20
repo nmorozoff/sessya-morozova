@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import FormLegalConsentCheckbox from "@/components/FormLegalConsentCheckbox";
 import type { ReelsOfferId, ReelsTopicId } from "@/data/reelsLandingTopics";
 import {
   REELS_SUCCESS_PROBA,
@@ -23,6 +24,7 @@ type Props = {
   formTitle: string;
   submitLabel: string;
   showSessionFormat?: boolean;
+  showTitle?: boolean;
 };
 
 const ReelsLandingForm = ({
@@ -32,6 +34,7 @@ const ReelsLandingForm = ({
   formTitle,
   submitLabel,
   showSessionFormat,
+  showTitle = true,
 }: Props) => {
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
@@ -116,7 +119,7 @@ const ReelsLandingForm = ({
       className="bg-bg3 border border-border rounded-2xl p-6 sm:p-8 flex flex-col gap-4 scroll-mt-24"
       onSubmit={handleSubmit}
     >
-      <h3 className="text-xl font-bold">{formTitle}</h3>
+      {showTitle ? <h3 className="text-xl font-bold">{formTitle}</h3> : null}
 
       <label className="flex flex-col gap-1.5">
         <span className="text-[13px] text-muted-foreground">Как вас зовут</span>
@@ -184,38 +187,12 @@ const ReelsLandingForm = ({
 
       <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
 
-      <label className="flex items-start gap-3 cursor-pointer text-[13px] text-muted-foreground leading-snug mt-1">
-        <input
-          type="checkbox"
-          checked={agreed}
-          onChange={(e) => setAgreed(e.target.checked)}
-          className="mt-0.5 h-4 w-4 shrink-0 rounded border border-foreground/20 accent-primary"
-          required
-        />
-        <span>
-          Я согласен(-на) с{" "}
-          <a href="/privacy-policy/" target="_blank" className="underline hover:text-foreground transition-colors">
-            политикой конфиденциальности
-          </a>
-          , с условиями{" "}
-          <a href="/offer/" target="_blank" className="underline hover:text-foreground transition-colors">
-            публичной оферты
-          </a>
-          , даю своё{" "}
-          <a href="/privacy/" target="_blank" className="underline hover:text-foreground transition-colors">
-            согласие на обработку персональных данных
-          </a>{" "}
-          и{" "}
-          <a href="/advertising-consent/" target="_blank" className="underline hover:text-foreground transition-colors">
-            согласие на получение рекламной рассылки
-          </a>
-        </span>
-      </label>
+      <FormLegalConsentCheckbox checked={agreed} onChange={setAgreed} required />
 
       <button
         type="submit"
         disabled={loading || !agreed}
-        className="min-h-12 w-full bg-primary text-primary-foreground py-4 rounded-[10px] text-[15px] font-bold disabled:opacity-50"
+        className="min-h-12 w-full bg-primary text-primary-foreground px-3 py-4 rounded-[10px] text-[15px] font-bold text-center leading-snug disabled:opacity-50"
       >
         {loading ? "Отправляю…" : submitLabel}
       </button>

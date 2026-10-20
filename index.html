@@ -25,26 +25,44 @@
     <meta name="twitter:image" content="%VITE_SITE_URL%/og-image.jpg" />
 
     <script>
-      window.YandexRotorSettings = { WaiterEnabled: true };
+      // SPA: WaiterEnabled ломает открытие из WebView Яндекс Карт/Поиска (бесконечная загрузка).
+      window.YandexRotorSettings = { WaiterEnabled: false };
     </script>
     <script>
       (function () {
         try {
           var key = "morozova_utm_v1";
+          var entryKey = "morozova_entry_captured_v1";
           var params = new URLSearchParams(location.search);
           var source = (params.get("utm_source") || "").trim().slice(0, 128);
           var campaign = (params.get("utm_campaign") || "").trim().slice(0, 128);
           var medium = (params.get("utm_medium") || "").trim().slice(0, 128);
-          if (!source && !campaign && !medium) return;
-          var payload = JSON.stringify({
-            utm_source: source || undefined,
-            utm_campaign: campaign || undefined,
-            utm_medium: medium || undefined,
-            landing_path: location.pathname,
+          var prev = {};
+          try {
+            var raw = sessionStorage.getItem(key) || localStorage.getItem(key);
+            if (raw) prev = JSON.parse(raw) || {};
+          } catch (e) {}
+          var payload = Object.assign({}, prev, {
+            landing_path: prev.landing_path || location.pathname,
             captured_at: Date.now(),
           });
-          try { sessionStorage.setItem(key, payload); } catch (e) {}
-          try { localStorage.setItem(key, payload); } catch (e) {}
+          if (sessionStorage.getItem(entryKey) !== "1") {
+            try { sessionStorage.setItem(entryKey, "1"); } catch (e) {}
+            payload.landing_path = location.pathname;
+            var ref = (document.referrer || "").trim();
+            if (ref && ref.indexOf("morozovanatalia.ru") === -1 && ref.indexOf("morozova-natalya.ru") === -1) {
+              payload.entry_referrer = ref.slice(0, 128);
+            }
+          }
+          if (source) payload.utm_source = source;
+          if (campaign) payload.utm_campaign = campaign;
+          if (medium) payload.utm_medium = medium;
+          if (source || campaign || medium) {
+            payload.landing_path = location.pathname;
+          }
+          var json = JSON.stringify(payload);
+          try { sessionStorage.setItem(key, json); } catch (e) {}
+          try { localStorage.setItem(key, json); } catch (e) {}
         } catch (e) {}
       })();
     </script>

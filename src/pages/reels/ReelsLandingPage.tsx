@@ -16,10 +16,11 @@ import {
   REELS_BRIDGE_AFTER_BLOCK,
   REELS_BRIDGE_AFTER_BLOCK_10,
   REELS_FORM_ANCHOR_ID,
-  REELS_FORM_TITLE_PROBA,
-  REELS_FORM_TITLE_SESSIYA,
+  REELS_FORM_BOTTOM_ID,
+  REELS_FORM_HERO_ID,
   REELS_HERO_FOOTER_PROBA,
   REELS_HERO_FOOTER_SESSIYA,
+  REELS_LANDING_HEADER_TITLE,
   REELS_WORK_STEP_1,
   REELS_WORK_STEP_2,
   REELS_WORK_STEP_3_PROBA,
@@ -34,20 +35,22 @@ import {
 
 type Props = { config: ReelsLandingPageConfig };
 
-const sectionClass = "flex flex-col gap-5";
+const sectionClass = "flex flex-col gap-6";
 const h2Class = "text-[clamp(26px,5.5vw,32px)] font-extrabold leading-tight tracking-tight";
 const bodyClass = "text-[17px] text-muted-foreground leading-relaxed max-w-[36ch]";
+const bridgeClass = "text-[13px] text-muted-foreground leading-relaxed max-w-[36ch]";
+/** Одинаковые «поля» между смысловым блоком и следующим заголовком */
+const transitionWrapClass = "flex flex-col gap-5 py-10 md:py-11 w-full max-w-[36ch]";
+const mainClass = "max-w-xl mx-auto px-5 py-10 flex flex-col";
 
 const ReelsLandingPage = ({ config }: Props) => {
   const resolved = resolveReelsLanding(config);
   const { path, topic, offer } = resolved;
   const isProba = offer === "proba";
-  const formTitle = isProba ? REELS_FORM_TITLE_PROBA : REELS_FORM_TITLE_SESSIYA;
   const block8 = isProba ? REELS_BLOCK8_PROBA : REELS_BLOCK8_SESSIYA;
   const workStep3 = isProba ? REELS_WORK_STEP_3_PROBA : REELS_WORK_STEP_3_SESSIYA;
   const heroFooter = isProba ? REELS_HERO_FOOTER_PROBA : REELS_HERO_FOOTER_SESSIYA;
   const faqItems = faqListFor(resolved);
-  const formSubmitLabel = isProba ? REELS_FORM_TITLE_PROBA : REELS_FORM_TITLE_SESSIYA;
 
   const formRef = useRef<HTMLDivElement>(null);
   const [showSticky, setShowSticky] = useState(false);
@@ -71,20 +74,32 @@ const ReelsLandingPage = ({ config }: Props) => {
     ? `Пробная сессия | ${topic === "razvod" ? "развод" : "утрата"}`
     : `Сессия 90 минут | ${topic === "razvod" ? "развод" : "утрата"}`;
 
-  const Bridge = ({ blockNum }: { blockNum: number }) => (
-    <p className="text-[13px] text-muted-foreground leading-relaxed pt-2">{REELS_BRIDGE_AFTER_BLOCK[blockNum]}</p>
-  );
+  const BlockTransition = ({
+    blockNum,
+    text,
+    withCta = false,
+  }: {
+    blockNum?: number;
+    text?: string;
+    withCta?: boolean;
+  }) => {
+    const bridgeText = text ?? (blockNum != null ? REELS_BRIDGE_AFTER_BLOCK[blockNum] : "");
+    if (!bridgeText && !withCta) return null;
 
-  const Cta = ({ blockNum }: { blockNum: number }) => (
-    <div className="pt-4">
-      <ReelsCtaButton
-        offer={offer}
-        topic={topic}
-        label={resolved.ctaByBlock[blockNum]}
-        block={blockNum}
-      />
-    </div>
-  );
+    return (
+      <div className={transitionWrapClass}>
+        {bridgeText ? <p className={bridgeClass}>{bridgeText}</p> : null}
+        {withCta && blockNum != null ? (
+          <ReelsCtaButton
+            offer={offer}
+            topic={topic}
+            label={resolved.ctaByBlock[blockNum]}
+            block={blockNum}
+          />
+        ) : null}
+      </div>
+    );
+  };
 
   const SessiyaPriceCards = ({ className = "" }: { className?: string }) => (
     <div className={`grid gap-3 ${className}`}>
@@ -102,24 +117,36 @@ const ReelsLandingPage = ({ config }: Props) => {
     <div className="min-h-screen bg-background text-foreground pb-24">
       <PageMeta title={pageTitle} description={resolved.subtitle} path={path} robots="noindex, nofollow" />
 
-      <header className="px-5 py-4 border-b border-border flex items-center justify-center">
-        <Link to="/" className="text-[15px] font-bold tracking-wide">
-          Наталья Морозова
+      <header className="px-5 py-4 border-b border-border flex items-center justify-center text-center">
+        <Link
+          to="/"
+          className="text-[13px] sm:text-[15px] font-bold tracking-wide leading-snug max-w-[36ch] text-balance"
+        >
+          {REELS_LANDING_HEADER_TITLE}
         </Link>
       </header>
 
-      <main className="max-w-xl mx-auto px-5 py-10 flex flex-col gap-20 md:gap-24">
+      <main className={mainClass}>
         {/* 1 Hero */}
-        <section className={sectionClass}>
+        <section ref={formRef} className={`${sectionClass} scroll-mt-6`}>
           <h1 className="text-[clamp(28px,6.5vw,38px)] font-extrabold leading-[1.12] tracking-tight">
             {resolved.h1}
           </h1>
           <p className={bodyClass}>{resolved.subtitle}</p>
           {!isProba ? <SessiyaPriceCards /> : null}
-          <Cta blockNum={1} />
-          <p className="text-[13px] text-center text-muted-foreground">{heroFooter}</p>
-          <Bridge blockNum={1} />
+          <ReelsLandingForm
+            id={REELS_FORM_HERO_ID}
+            offer={offer}
+            topic={topic}
+            formTitle={resolved.formTitle}
+            submitLabel={resolved.formSubmitLabel}
+            showSessionFormat={!isProba}
+            showTitle={false}
+          />
+          <p className="text-[13px] text-center text-muted-foreground max-w-[36ch] w-full mx-auto">{heroFooter}</p>
         </section>
+
+        <BlockTransition blockNum={1} />
 
         {/* 2 Узнаёте себя? */}
         <section className={sectionClass}>
@@ -130,17 +157,18 @@ const ReelsLandingPage = ({ config }: Props) => {
             ))}
           </ul>
           <p className="text-[17px] text-foreground/90 leading-relaxed max-w-[36ch]">{resolved.painsClosing}</p>
-          <Bridge blockNum={2} />
-          <Cta blockNum={2} />
         </section>
+
+        <BlockTransition blockNum={2} withCta />
 
         {/* 3 Почему не получается */}
         <section className={sectionClass}>
           <h2 className={h2Class}>{resolved.block3Title}</h2>
           <p className={bodyClass}>{resolved.block3Paragraphs[0]}</p>
           <p className={bodyClass}>{resolved.block3Paragraphs[1]}</p>
-          <Bridge blockNum={3} />
         </section>
+
+        <BlockTransition blockNum={3} />
 
         {/* 4 EMDR */}
         <section className={sectionClass}>
@@ -154,9 +182,9 @@ const ReelsLandingPage = ({ config }: Props) => {
           {resolved.emdrDisclaimer ? (
             <p className="text-[12px] text-muted-foreground leading-relaxed max-w-[36ch]">{resolved.emdrDisclaimer}</p>
           ) : null}
-          <Bridge blockNum={4} />
-          <Cta blockNum={4} />
         </section>
+
+        <BlockTransition blockNum={4} withCta />
 
         {/* 5 Кто ведёт */}
         <section className={sectionClass}>
@@ -181,8 +209,9 @@ const ReelsLandingPage = ({ config }: Props) => {
               </li>
             ))}
           </ul>
-          <Bridge blockNum={5} />
         </section>
+
+        <BlockTransition blockNum={5} />
 
         {/* 6 Что вы получите */}
         <section className={sectionClass}>
@@ -192,10 +221,10 @@ const ReelsLandingPage = ({ config }: Props) => {
               <li key={item}>{item}</li>
             ))}
           </ul>
-          {!isProba ? <SessiyaPriceCards className="mt-2" /> : null}
-          <Bridge blockNum={6} />
-          <Cta blockNum={6} />
+          {!isProba ? <SessiyaPriceCards /> : null}
         </section>
+
+        <BlockTransition blockNum={6} withCta />
 
         {/* 7 Как это проходит */}
         <section className={sectionClass}>
@@ -208,42 +237,45 @@ const ReelsLandingPage = ({ config }: Props) => {
               </li>
             ))}
           </ol>
-          <Bridge blockNum={7} />
         </section>
+
+        <BlockTransition blockNum={7} />
 
         {/* 8 Если не подойдёт */}
         <section className={sectionClass}>
           <h2 className={h2Class}>{block8.title}</h2>
           <p className={bodyClass}>{block8.text}</p>
-          <Bridge blockNum={8} />
         </section>
+
+        <BlockTransition blockNum={8} />
 
         {/* 9 FAQ */}
         <section className={sectionClass}>
           <h2 className={h2Class}>Частые вопросы</h2>
           <ReelsFaqAccordion items={faqItems} offer={offer} topic={topic} />
-          <Bridge blockNum={9} />
-          <Cta blockNum={9} />
         </section>
+
+        <BlockTransition blockNum={9} withCta />
 
         {/* 10 Что будет, если ничего не менять */}
         <section className={sectionClass}>
           <h2 className={h2Class}>{resolved.block11Title}</h2>
           <p className={bodyClass}>{resolved.block11Text}</p>
-          <p className="text-[13px] text-muted-foreground leading-relaxed pt-2">{REELS_BRIDGE_AFTER_BLOCK_10}</p>
         </section>
 
+        <BlockTransition text={REELS_BRIDGE_AFTER_BLOCK_10} />
+
         {/* 11 Финал + форма */}
-        <section ref={formRef} className={`${sectionClass} scroll-mt-6`}>
+        <section className={`${sectionClass} scroll-mt-6`}>
           <h2 className={h2Class}>{resolved.finalTitle}</h2>
           <p className={bodyClass}>{resolved.finalSubtitle}</p>
 
           <ReelsLandingForm
-            id={REELS_FORM_ANCHOR_ID}
+            id={REELS_FORM_BOTTOM_ID}
             offer={offer}
             topic={topic}
-            formTitle={formTitle}
-            submitLabel={formSubmitLabel}
+            formTitle={resolved.formTitle}
+            submitLabel={resolved.formSubmitLabel}
             showSessionFormat={!isProba}
           />
           <ReelsMessengerRow offer={offer} topic={topic} />
@@ -254,7 +286,7 @@ const ReelsLandingPage = ({ config }: Props) => {
             </div>
           ) : null}
 
-          <p className="text-[12px] text-muted-foreground leading-relaxed pt-4">
+          <p className="text-[12px] text-muted-foreground leading-relaxed">
             Если вам сейчас очень плохо или есть мысли причинить себе вред, позвоните{" "}
             <a href="tel:112" className="underline">112</a>. Сессия не заменяет экстренную помощь.
           </p>
@@ -265,7 +297,7 @@ const ReelsLandingPage = ({ config }: Props) => {
         <div className="fixed bottom-0 left-0 right-0 z-40 p-3 bg-background/95 border-t border-border backdrop-blur-md md:hidden">
           <button
             type="button"
-            className="w-full min-h-12 bg-primary text-primary-foreground rounded-[10px] font-bold text-[15px]"
+            className="w-full min-h-12 bg-primary text-primary-foreground rounded-[10px] font-bold text-[15px] text-center leading-snug px-3"
             onClick={() => {
               trackCtaClick({ offer, topic, block: 0 });
               document.getElementById(REELS_FORM_ANCHOR_ID)?.scrollIntoView({ behavior: "smooth", block: "start" });

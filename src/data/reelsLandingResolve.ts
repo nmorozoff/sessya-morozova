@@ -3,12 +3,12 @@ import type { FaqItem, ReelsOfferId, ReelsTopicId } from "@/data/reelsLandingTop
 import {
   REELS_BLOCK7_PROBA,
   REELS_BLOCK7_SESSIYA,
-  REELS_CTA_PROBA,
   REELS_CTA_SESSIYA,
   REELS_EMDR_BULLETS,
   REELS_EMDR_DISCLAIMER,
   REELS_FINAL_PROBA,
   REELS_FINAL_SESSIYA,
+  REELS_FORM_TITLE_SESSIYA,
   REELS_PROBA_FAQ,
   REELS_SESSIYA_FAQ,
   REELS_SHARED_FAQ,
@@ -59,23 +59,15 @@ function sharedFaqFor(path: string): FaqItem[] {
   return base;
 }
 
-function ctaLabelsForPath(path: string, offer: ReelsOfferId): Record<number, string> {
-  const proba = REELS_CTA_PROBA;
-  const free = REELS_CTA_PROBA_FREE;
+function ctaLabelsForPath(_path: string, offer: ReelsOfferId): Record<number, string> {
   const sessiya = REELS_CTA_SESSIYA;
 
   if (offer === "sessiya") {
     return { 1: sessiya, 2: sessiya, 4: sessiya, 6: sessiya, 9: sessiya };
   }
 
-  switch (path) {
-    case "/probnaya-razvod/":
-      return { 1: free, 2: proba, 4: free, 6: proba, 9: free };
-    case "/probnaya-poterya/":
-      return { 1: proba, 2: proba, 4: free, 6: free, 9: free };
-    default:
-      return { 1: proba, 2: proba, 4: proba, 6: proba, 9: proba };
-  }
+  const probaCta = REELS_CTA_PROBA_FREE;
+  return { 1: probaCta, 2: probaCta, 4: probaCta, 6: probaCta, 9: probaCta };
 }
 
 export type ResolvedReelsLanding = {
@@ -105,6 +97,8 @@ export type ResolvedReelsLanding = {
   finalSubtitle: string;
   ctaByBlock: Record<number, string>;
   stickyCta: string;
+  formTitle: string;
+  formSubmitLabel: string;
 };
 
 export function resolveReelsLanding(config: ReelsLandingPageConfig): ResolvedReelsLanding {
@@ -142,7 +136,9 @@ export function resolveReelsLanding(config: ReelsLandingPageConfig): ResolvedRee
       : REELS_BLOCK7_SESSIYA.items;
 
   const ctaByBlock = ctaLabelsForPath(path, offer);
-  const stickyCta = isProba ? ctaByBlock[1] : REELS_CTA_SESSIYA;
+  const stickyCta = isProba ? REELS_CTA_PROBA_FREE : REELS_CTA_SESSIYA;
+  const formTitle = isProba ? REELS_CTA_PROBA_FREE : REELS_FORM_TITLE_SESSIYA;
+  const formSubmitLabel = formTitle;
 
   let finalSubtitle = isProba ? REELS_FINAL_PROBA.subtitle : REELS_FINAL_SESSIYA.subtitle;
   if (path === "/probnaya-razvod/") {
@@ -178,6 +174,8 @@ export function resolveReelsLanding(config: ReelsLandingPageConfig): ResolvedRee
     finalSubtitle,
     ctaByBlock,
     stickyCta,
+    formTitle,
+    formSubmitLabel,
   };
 }
 

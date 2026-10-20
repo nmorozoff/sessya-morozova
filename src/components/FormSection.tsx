@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { getFormAttribution } from "@/lib/utm";
+import FormLegalConsentCheckbox from "@/components/FormLegalConsentCheckbox";
 import Reveal from "./Reveal";
 
 const SuccessOverlay = ({ onClose }: { onClose: () => void }) => (
@@ -28,9 +29,12 @@ const ContactForm = () => {
   const [contact, setContact] = useState("");
   const [message, setMessage] = useState("");
   const [preferredChannel, setPreferredChannel] = useState("");
+  const [wantsTrialSession, setWantsTrialSession] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  const TRIAL_SESSION_NOTE = "Записаться на бесплатную пробную сессию";
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,6 +46,12 @@ const ContactForm = () => {
 
     setLoading(true);
     try {
+      const messageParts = [
+        wantsTrialSession ? TRIAL_SESSION_NOTE : "",
+        message.trim(),
+      ].filter(Boolean);
+      const outboundMessage = messageParts.join("\n\n");
+
       const res = await fetch("/api/send-form.php", {
         method: "POST",
         headers: {
@@ -50,8 +60,9 @@ const ContactForm = () => {
         body: JSON.stringify({
           name: name.trim(),
           contact: contact.trim(),
-          message: message.trim(),
+          message: outboundMessage,
           preferredChannel,
+          wantsTrialSession,
           website: "",
           ...getFormAttribution(),
         }),
@@ -68,6 +79,7 @@ const ContactForm = () => {
       setContact("");
       setMessage("");
       setPreferredChannel("");
+      setWantsTrialSession(false);
     } catch {
       toast.error("Не удалось отправить заявку. Попробуйте ещё раз или напишите через контакты внизу страницы.");
     } finally {
@@ -124,24 +136,16 @@ const ContactForm = () => {
         className="hidden"
         aria-hidden="true"
       />
-      <label className="flex items-start gap-3 cursor-pointer text-[13px] text-muted-foreground leading-snug mt-1">
+      <label className="flex items-start gap-3 cursor-pointer text-[13px] text-muted-foreground leading-snug">
         <input
           type="checkbox"
-          checked={agreed}
-          onChange={(e) => setAgreed(e.target.checked)}
+          checked={wantsTrialSession}
+          onChange={(e) => setWantsTrialSession(e.target.checked)}
           className="mt-0.5 h-4 w-4 shrink-0 rounded border border-foreground/20 accent-primary"
         />
-        <span>
-          Я согласен(-на) с{" "}
-          <a href="/privacy-policy/" target="_blank" className="underline hover:text-foreground transition-colors">политикой конфиденциальности</a>,{" "}
-          с условиями{" "}
-          <a href="/offer/" target="_blank" className="underline hover:text-foreground transition-colors">публичной оферты</a>,{" "}
-          даю своё{" "}
-          <a href="/privacy/" target="_blank" className="underline hover:text-foreground transition-colors">согласие на обработку персональных данных</a>{" "}
-          и{" "}
-          <a href="/advertising-consent/" target="_blank" className="underline hover:text-foreground transition-colors">согласие на получение рекламной рассылки</a>
-        </span>
+        <span>{TRIAL_SESSION_NOTE}</span>
       </label>
+      <FormLegalConsentCheckbox checked={agreed} onChange={setAgreed} />
       <button
         type="submit"
         disabled={loading || !agreed}

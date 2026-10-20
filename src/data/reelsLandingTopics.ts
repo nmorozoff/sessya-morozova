@@ -257,6 +257,9 @@ export const REELS_MESSENGER_INTRO = "Если удобнее написать �
 /** Три пункта образования на лендингах рилсов (без бизнес-блоков) */
 export const REELS_ABOUT_CREDENTIALS_LANDING = REELS_ABOUT_CREDENTIALS.slice(0, 3);
 
+/** Шапка на noindex-лендингах для рилсов (ссылка на главную). */
+export const REELS_LANDING_HEADER_TITLE = "Морозова Наталья, психолог, ЕМДР терапевт";
+
 export const REELS_HERO_FOOTER_PROBA = "Без обязательств продолжать.";
 export const REELS_HERO_FOOTER_SESSIYA = "Всё конфиденциально.";
 
@@ -274,4 +277,7 @@ export const REELS_BRIDGE_AFTER_BLOCK: Record<number, string> = {
 
 export const REELS_BRIDGE_AFTER_BLOCK_10 = "Сделайте один шаг: оставьте заявку.";
 
-export const REELS_FORM_ANCHOR_ID = "zapis";
+/** Куда ведут CTA и липкая кнопка (форма в hero). */
+export const REELS_FORM_HERO_ID = "reels-form-hero";
+export const REELS_FORM_BOTTOM_ID = "zapis";
+export const REELS_FORM_ANCHOR_ID = REELS_FORM_HERO_ID;

@@ -16,7 +16,7 @@ type Props = {
 
 const ReelsMessengerRow = ({ offer, topic }: Props) => {
   return (
-    <div className="flex flex-col gap-2.5 pt-2">
+    <div className="flex flex-col gap-2.5">
       <p className="text-[12px] text-center text-muted-foreground">{REELS_MESSENGER_INTRO}</p>
       <div className="flex flex-wrap gap-2 justify-center">
         {BOOKING_CHANNELS.map((channel) => (

@@ -20,7 +20,7 @@ const ReelsCtaButton = ({ offer, topic, label, block, className = "" }: Props) =
     <button
       type="button"
       onClick={scrollToForm}
-      className={`min-h-12 w-full bg-primary text-primary-foreground px-8 py-3.5 rounded-[10px] text-[16px] font-bold hover:bg-accent transition-all ${className}`}
+      className={`min-h-12 w-full bg-primary text-primary-foreground px-3 py-3.5 rounded-[10px] text-[15px] font-bold text-center leading-snug hover:bg-accent transition-all ${className}`}
     >
       {label}
     </button>
