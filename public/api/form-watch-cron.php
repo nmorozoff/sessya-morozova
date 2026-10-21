@@ -23,6 +23,30 @@ if (!file_exists($configPath)) {
 
 $config = require $configPath;
 
+if ($isCli && in_array('--preview-daily', $argv ?? [], true)) {
+    require_once __DIR__ . '/morozova-form-resilience.php';
+    require_once __DIR__ . '/morozova-health.php';
+    try {
+        $pdo = new PDO(
+            sprintf(
+                'mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4',
+                $config['db_host'] ?? 'localhost',
+                $config['db_port'] ?? '3306',
+                $config['db_name'] ?? ''
+            ),
+            $config['db_user'] ?? '',
+            $config['db_pass'] ?? '',
+            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+        );
+        $stats = morozova_health_submissions_last_24h($pdo);
+        echo morozova_form_daily_report_message($stats) . "\n";
+        exit(0);
+    } catch (Throwable $e) {
+        fwrite(STDERR, 'preview_daily_failed: ' . $e->getMessage() . "\n");
+        exit(1);
+    }
+}
+
 if (!$isCli) {
     $secret = (string) ($config['internal_api_secret'] ?? '');
     $provided = (string) ($_SERVER['HTTP_X_MOROZOVA_INTERNAL_SECRET'] ?? '');
@@ -128,12 +152,8 @@ if ($nowMsk->format('H') === '21' && $lastDaily !== $dayKey) {
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
         $stats = morozova_health_submissions_last_24h($pdo);
-        $n = $stats['count'];
-        $text = "Форма жива, заявок за сутки: {$n}";
-        if ($stats['zero_streak'] >= 3) {
-            $text .= " (три дня подряд без заявок — проверьте форму и рекламу)";
-        }
-        morozova_form_max_ops_alert($config, $text);
+        $text = morozova_form_daily_report_message($stats);
+        morozova_form_max_ops_daily_report($config, $text);
         $state['last_daily_report'] = $dayKey;
         $sent[] = 'daily_report';
     } catch (Throwable $e) {

@@ -49,7 +49,9 @@ try {
          WHERE id = :id
            AND (
              name LIKE 'Тест smoke%'
+             OR name LIKE 'Тест reels UTM%'
              OR name = 'Тест после деплоя (удалить)'
+             OR (name LIKE 'Тест%' AND message LIKE '[smoke:%')
            )
            AND created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)"
     );

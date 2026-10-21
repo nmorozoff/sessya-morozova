@@ -120,22 +120,29 @@ function morozova_health_run(array $config): array
 }
 
 /**
- * @return array{count: int, zero_streak: int}
+ * @return array{count: int, test_count: int, zero_streak: int}
  */
 function morozova_health_submissions_last_24h(PDO $pdo): array
 {
+    require_once __DIR__ . '/morozova-form-resilience.php';
+    $testSql = morozova_form_submission_is_test_sql();
+
     $stmt = $pdo->query(
-        "SELECT COUNT(*) AS c FROM form_submissions
-         WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 DAY)
-           AND name NOT LIKE 'Тест smoke%'"
+        "SELECT
+            SUM(CASE WHEN NOT {$testSql} THEN 1 ELSE 0 END) AS real_c,
+            SUM(CASE WHEN {$testSql} THEN 1 ELSE 0 END) AS test_c
+         FROM form_submissions
+         WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 DAY)"
     );
-    $count = (int) ($stmt->fetchColumn() ?: 0);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+    $count = (int) ($row['real_c'] ?? 0);
+    $testCount = (int) ($row['test_c'] ?? 0);
 
     $zeroStreak = 0;
     $dayStmt = $pdo->prepare(
         "SELECT COUNT(*) FROM form_submissions
          WHERE DATE(created_at) = DATE(DATE_SUB(NOW(), INTERVAL :days DAY))
-           AND name NOT LIKE 'Тест smoke%'"
+           AND NOT {$testSql}"
     );
     for ($i = 0; $i < 3; $i++) {
         $dayStmt->execute([':days' => $i]);
@@ -146,5 +153,5 @@ function morozova_health_submissions_last_24h(PDO $pdo): array
         }
     }
 
-    return ['count' => $count, 'zero_streak' => $zeroStreak];
+    return ['count' => $count, 'test_count' => $testCount, 'zero_streak' => $zeroStreak];
 }

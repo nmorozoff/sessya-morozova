@@ -111,6 +111,11 @@ function morozova_form_register_shutdown_handler(): void
 /**
  * @param array<string, mixed> $config
  */
+function morozova_form_submission_is_test_sql(): string
+{
+    return "(name LIKE 'Тест%' OR LOWER(name) LIKE '%smoke%' OR message LIKE '[smoke:%')";
+}
+
 function morozova_form_max_ops_alert(array $config, string $text): bool
 {
     if (!morozova_form_safe_require('max-notify.php')) {
@@ -119,6 +124,40 @@ function morozova_form_max_ops_alert(array $config, string $text): bool
     $maxConfig = morozova_max_load_config($config);
     $prefix = '⚠️ Сбой формы: ';
     return morozova_max_send_message($maxConfig, $prefix . $text);
+}
+
+/**
+ * Ежедневный отчёт сторожа (21:00 МСК) — без префикса «сбой».
+ *
+ * @param array<string, mixed> $config
+ */
+function morozova_form_max_ops_daily_report(array $config, string $text): bool
+{
+    if (!morozova_form_safe_require('max-notify.php')) {
+        return false;
+    }
+    $maxConfig = morozova_max_load_config($config);
+    return morozova_max_send_message($maxConfig, $text);
+}
+
+/**
+ * Текст ежедневного отчёта по статистике morozova_health_submissions_last_24h().
+ *
+ * @param array{count: int, test_count: int, zero_streak: int} $stats
+ */
+function morozova_form_daily_report_message(array $stats): string
+{
+    $n = (int) ($stats['count'] ?? 0);
+    $m = (int) ($stats['test_count'] ?? 0);
+    $text = "✅ Форма работает.\nЗаявок за сутки: {$n}";
+    if ($m > 0) {
+        $text .= "\nтестовых: {$m}";
+    }
+    if ((int) ($stats['zero_streak'] ?? 0) >= 3) {
+        $text .= "\n(три дня подряд без заявок — проверьте форму и рекламу)";
+    }
+
+    return $text;
 }
 
 /**
