@@ -113,7 +113,7 @@ function morozova_form_register_shutdown_handler(): void
  */
 function morozova_form_submission_is_test_sql(): string
 {
-    return "(name LIKE 'Тест%' OR LOWER(name) LIKE '%smoke%' OR message LIKE '[smoke:%')";
+    return "(LOWER(name) LIKE 'тест%' OR LOWER(name) LIKE '%smoke%' OR LOWER(message) LIKE '[smoke:%')";
 }
 
 function morozova_form_max_ops_alert(array $config, string $text): bool

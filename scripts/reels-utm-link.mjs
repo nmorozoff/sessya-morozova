@@ -2,8 +2,8 @@
 /**
  * Генерация UTM-ссылок для рилс-лендингов.
  *
- *   node scripts/reels-utm-link.mjs --page probnaya-razvod --platform instagram --reel basic --keyword ПРОБА
- *   node scripts/reels-utm-link.mjs --page sessiya-poterya --platform tiktok --medium bio --reel "emdr-razvod" --keyword СЕССИЯ
+ *   node scripts/reels-utm-link.mjs --page probnaya-razvod --platform instagram --reel basic --keyword proba
+ *   node scripts/reels-utm-link.mjs --page sessiya-poterya --platform tiktok --medium bio --reel "emdr-razvod" --keyword sessiya
  */
 import { parseArgs } from "node:util";
 
@@ -17,9 +17,20 @@ const PAGE_OFFER = {
 };
 
 const KEYWORD_PAGES = {
-  ПРОБА: ["probnaya-razvod", "probnaya-poterya"],
-  СЕССИЯ: ["sessiya-razvod", "sessiya-poterya"],
+  proba: ["probnaya-razvod", "probnaya-poterya"],
+  sessiya: ["sessiya-razvod", "sessiya-poterya"],
 };
+
+function normalizeKeyword(keyword) {
+  const raw = String(keyword).trim().toLowerCase();
+  if (raw === "proba" || raw === "проба") {
+    return "proba";
+  }
+  if (raw === "sessiya" || raw === "сессия") {
+    return "sessiya";
+  }
+  return raw.replace(/[^a-z0-9_-]/g, "") || raw;
+}
 
 function slugifyReel(name) {
   return String(name)
@@ -39,7 +50,7 @@ function buildLink({ page, platform, medium, reel, keyword }) {
     medium ||
     (plat === "instagram" ? "reels" : "bio");
   const content = slugifyReel(reel || "basic");
-  const term = keyword ? String(keyword).trim().toUpperCase() : offer === "proba" ? "ПРОБА" : "СЕССИЯ";
+  const term = keyword ? normalizeKeyword(keyword) : offer;
 
   const params = new URLSearchParams({
     utm_source: plat,
@@ -54,7 +65,7 @@ function buildLink({ page, platform, medium, reel, keyword }) {
 
 function printHelp() {
   console.log(`Использование:
-  node scripts/reels-utm-link.mjs --page <probnaya-razvod|...> --platform <instagram|tiktok> [--medium reels|bio] [--reel название] [--keyword ПРОБА|СЕССИЯ]
+  node scripts/reels-utm-link.mjs --page <probnaya-razvod|...> --platform <instagram|tiktok> [--medium reels|bio] [--reel название] [--keyword proba|sessiya]
 
   node scripts/reels-utm-link.mjs --table   # таблица basic для 4 страниц (IG reels + TikTok bio)
 
@@ -103,7 +114,7 @@ if (!values.page || !values.platform) {
 }
 
 if (values.keyword) {
-  const kw = String(values.keyword).trim().toUpperCase();
+  const kw = normalizeKeyword(values.keyword);
   const pages = KEYWORD_PAGES[kw];
   if (pages && !values.page) {
     for (const p of pages) {
