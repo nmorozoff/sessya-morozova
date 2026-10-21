@@ -33,6 +33,19 @@ React 18 + TypeScript, Vite, Tailwind CSS, React Router (чистые URL: /pani
 - Любое изменение API: `npm run preflight:api` → коммит → push → `npm run deploy:api` **только по слову «деплой»**.
 - После правок фронта формы — `deploy:site` и `npm run smoke:form`.
 - Новый `require`/`include` — только вместе с файлом в том же коммите. См. `shared/agent-pipeline-pitfalls.md`, `docs/form-api-workflow.md`.
+
+## Папки и git
+- CRM/API: правки и деплой **`npm run deploy:api`** только из
+  `/Users/natala/Documents/Проекты СURSOR/sessya-morozova`.
+- Excalibur (блог, контент-пайплайн) — только в `sessya-morozova-excalibur`.
+  Сайт-воркфлоу (сборка, `deploy:site`, `deploy:blog`) — только в `sessya-morozova`.
+  В чужую папку не заходить, из неё не собирать и не деплоить.
+- **`git push --force`** и **`git push --force-with-lease`** в `main` запрещены.
+  Ошибочный коммит на `main` — только **`git revert`**, новый коммит на tip.
+  **`git reset --hard` запрещён.**
+- Секреты (`config.php`, `max.config.php`, `*.secrets.env`, `.env`, `.ftp-deploy.env`)
+  не копировать между папками и не коммитить.
+
 Индексация SPA — prerender через Puppeteer при сборке (npm run build).
 НЕ предлагать переход на Next.js — это не используется в проекте.
 
