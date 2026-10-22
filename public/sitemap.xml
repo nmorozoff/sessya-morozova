@@ -151,13 +151,31 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://www.morozovanatalia.ru/blog/page/2/</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://www.morozovanatalia.ru/blog/gore-rasstavanie-emdr/</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://www.morozovanatalia.ru/blog/gore-razvod-kak-utrata-emdr/</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://www.morozovanatalia.ru/blog/gore-smert-roditelya-emdr/</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.morozovanatalia.ru/blog/gore-vnezapnaya-poterya-emdr/</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
