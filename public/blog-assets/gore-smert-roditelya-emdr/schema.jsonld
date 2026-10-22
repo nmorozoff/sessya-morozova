@@ -1,0 +1,29 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://www.morozovanatalia.ru/blog/gore-smert-roditelya-emdr/#article",
+      "headline": "Смерть родителя: боль, у которой нет возрастного ограничения",
+      "description": "Олег перед сном включал мамино голосовое сообщение. Одно, на сорок секунд: «Олежек, купи хлеба и позвони, как доедешь». Он слушал его раз за разом, лёжа в темно",
+      "datePublished": "2026-10-20",
+      "dateModified": "2026-10-20",
+      "inLanguage": "ru",
+      "url": "https://www.morozovanatalia.ru/blog/gore-smert-roditelya-emdr/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.morozovanatalia.ru/blog/gore-smert-roditelya-emdr/"
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://www.morozovanatalia.ru/blog-assets/gore-smert-roditelya-emdr/cover/cover.png"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Наталья Морозова",
+        "jobTitle": "Психолог, EMDR-терапевт"
+      },
+      "wordCount": 410
+    }
+  ]
+}
