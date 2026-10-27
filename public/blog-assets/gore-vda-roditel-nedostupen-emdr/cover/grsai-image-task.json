@@ -1,0 +1,11 @@
+{
+  "task_id": "11-c16e9f1a-301c-49cf-a9ea-adc07b94ccf9",
+  "source": "grsai-api",
+  "model": "gpt-image-2.5",
+  "status": "succeeded",
+  "resolution": "2K",
+  "aspect_ratio": "2048x1152",
+  "resolution_fallback_from": null,
+  "result_path": "memory/syndicate/dzen-gore/articles/gore-vda-roditel-nedostupen-emdr/cover/quad-mcp-result.json",
+  "updated_at_epoch": 1792402525
+}

@@ -1,0 +1,120 @@
+{
+  "agent": "excalibur-blog-cover-quad-split",
+  "status": "PASS",
+  "manifest": "cover/quad-manifest.json",
+  "split": {
+    "source_canvas": "memory/syndicate/dzen-gore/articles/gore-vda-roditel-nedostupen-emdr/cover/canvas-quad.png",
+    "source_size_px": [
+      1672,
+      940
+    ],
+    "panel_size_px": [
+      836,
+      470
+    ],
+    "split_meta": {
+      "split_mode": "mechanical_center",
+      "h_gutter_px": null,
+      "v_gutter_px": null,
+      "numpy_fallback": true
+    },
+    "output_size_px": [
+      1200,
+      675
+    ],
+    "outputs": {
+      "cover": {
+        "file": "cover/cover.png",
+        "quadrant": "top_left",
+        "box_px": {
+          "left": 0,
+          "top": 0,
+          "right": 836,
+          "bottom": 470
+        },
+        "raw_box_px": {
+          "left": 0,
+          "top": 0,
+          "right": 836,
+          "bottom": 470
+        },
+        "size_px": [
+          1200,
+          675
+        ],
+        "aspect_ratio": "16:9",
+        "alt": "Обложка: Горе взрослого ребёнка из семьи, где пили: оплакать родителя, который был жив, но недоступен",
+        "h2_anchor": null
+      },
+      "inline_1": {
+        "file": "cover/inline-01.png",
+        "quadrant": "top_right",
+        "box_px": {
+          "left": 836,
+          "top": 0,
+          "right": 1672,
+          "bottom": 470
+        },
+        "raw_box_px": {
+          "left": 836,
+          "top": 0,
+          "right": 1672,
+          "bottom": 470
+        },
+        "size_px": [
+          1200,
+          675
+        ],
+        "aspect_ratio": "16:9",
+        "alt": "Сравнительная таблица / UI-мокап: Двойное горе: любовь к родителю и ненависть к тому, что он делал",
+        "h2_anchor": "Двойное горе: любовь к родителю и ненависть к тому, что он делал"
+      },
+      "inline_2": {
+        "file": "cover/inline-02.png",
+        "quadrant": "bottom_left",
+        "box_px": {
+          "left": 0,
+          "top": 470,
+          "right": 836,
+          "bottom": 940
+        },
+        "raw_box_px": {
+          "left": 0,
+          "top": 470,
+          "right": 836,
+          "bottom": 940
+        },
+        "size_px": [
+          1200,
+          675
+        ],
+        "aspect_ratio": "16:9",
+        "alt": "Схема workflow / шаги: Как EMDR помогает вместить оба чувства",
+        "h2_anchor": "Как EMDR помогает вместить оба чувства"
+      },
+      "inline_3": {
+        "file": "cover/inline-03.png",
+        "quadrant": "bottom_right",
+        "box_px": {
+          "left": 836,
+          "top": 470,
+          "right": 1672,
+          "bottom": 940
+        },
+        "raw_box_px": {
+          "left": 836,
+          "top": 470,
+          "right": 1672,
+          "bottom": 940
+        },
+        "size_px": [
+          1200,
+          675
+        ],
+        "aspect_ratio": "16:9",
+        "alt": "Чеклист / printable board: Что часто остаётся у взрослых детей из семей с зависимостью",
+        "h2_anchor": "Что часто остаётся у взрослых детей из семей с зависимостью"
+      }
+    }
+  }
+}

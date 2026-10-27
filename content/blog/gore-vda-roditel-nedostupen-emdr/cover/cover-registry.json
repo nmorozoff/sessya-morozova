@@ -1,0 +1,50 @@
+{
+  "topic_id": "GR16",
+  "slug": null,
+  "cover_family": "brand_collage",
+  "style_preset": "emdr_editorial_collage_arthur_ru",
+  "pipeline": "quad_canvas_1x_grsai",
+  "file": "cover/cover.png",
+  "alt": "Обложка: Горе взрослого ребёнка из семьи, где пили: оплакать родителя, который был жив, но недоступен",
+  "aspect_ratio": "16:9",
+  "canvas_source": "cover/canvas-quad.png",
+  "generated_at": "2026-10-19T12:35:31+03:00",
+  "assets": [
+    {
+      "role": "cover",
+      "slot": "cover",
+      "file": "cover/cover.png",
+      "alt": "Обложка: Горе взрослого ребёнка из семьи, где пили: оплакать родителя, который был жив, но недоступен",
+      "h2_anchor": null,
+      "visual_type": "cover_meme_hero",
+      "aspect_ratio": "16:9"
+    },
+    {
+      "role": "inline",
+      "slot": "inline_1",
+      "file": "cover/inline-01.png",
+      "alt": "Сравнительная таблица / UI-мокап: Двойное горе: любовь к родителю и ненависть к тому, что он делал",
+      "h2_anchor": "Двойное горе: любовь к родителю и ненависть к тому, что он делал",
+      "visual_type": "comparison_table_ui",
+      "aspect_ratio": "16:9"
+    },
+    {
+      "role": "inline",
+      "slot": "inline_2",
+      "file": "cover/inline-02.png",
+      "alt": "Схема workflow / шаги: Как EMDR помогает вместить оба чувства",
+      "h2_anchor": "Как EMDR помогает вместить оба чувства",
+      "visual_type": "workflow_diagram",
+      "aspect_ratio": "16:9"
+    },
+    {
+      "role": "inline",
+      "slot": "inline_3",
+      "file": "cover/inline-03.png",
+      "alt": "Чеклист / printable board: Что часто остаётся у взрослых детей из семей с зависимостью",
+      "h2_anchor": "Что часто остаётся у взрослых детей из семей с зависимостью",
+      "visual_type": "checklist_board",
+      "aspect_ratio": "16:9"
+    }
+  ]
+}

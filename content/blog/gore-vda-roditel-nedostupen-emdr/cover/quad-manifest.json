@@ -1,0 +1,45 @@
+{
+  "topic_id": "GR16",
+  "slug": "gore-vda-roditel-nedostupen-emdr",
+  "canvas_file": "cover/canvas-quad.png",
+  "layout": "2x2",
+  "pipeline": "quad_canvas_1x_grsai",
+  "style_preset": "emdr_editorial_collage_arthur_ru",
+  "style_file": "memory/cover/quad-style-emdr-editorial-collage-ru.json",
+  "blog_hero": "memory/cover/blog-hero.json",
+  "inline_types_catalog": "memory/cover/inline-visual-types.json",
+  "cover_hook": "Горе взрослого ребёнка из семьи, где пили: оплакать родителя, который был жив, но недоступен",
+  "cover_family": "brand_collage",
+  "mcp_note": "ONE gpt-image-2 i2i (Grsai) + excalibur_blog_cover_quad_prompt.py — как BT21",
+  "slots": {
+    "cover": {
+      "quadrant": "top_left",
+      "role": "cover_editorial_hero",
+      "alt": "Обложка: Горе взрослого ребёнка из семьи, где пили: оплакать родителя, который был жив, но недоступен",
+      "outfit": "OUTFIT: soft white cotton button-down shirt, top button open, sleeves neatly rolled to forearm — NO jacket, NO sweater.",
+      "scene_hint": "Белый фон #FFFFFF; портрет Натальи из reference, OUTFIT: soft white cotton button-down shirt, top button open, sleeves neatly rolled to forearm — NO jacket, NO sweater. Do NOT use beige blazer with beige sweater. Do NOT stack two warm-neutral knit layers. Business professional attire only: high neckline, full sleeves, modest fit. No lingerie, no low cut, no evening wear. Face from reference only; do NOT copy clothing from reference photo.; спокойная бережная поза по теме горя; огромный кириллический hook «Горе взрослого ребёнка из семьи, где пили: оплакать родителя, который был жив, но недоступен»; жёлтый маркер #F5C400 на одном ключевом слове; phone-widget «запись к психологу»; torn paper, scotch tape, розовый стикер; без SEO-инфографики, без мемов, без pencil sketch",
+      "meme_caption_ru": "Горе взрослого ребёнка из семьи, где пили: оплакать родителя, который был жив,…"
+    },
+    "inline_1": {
+      "quadrant": "top_right",
+      "h2_anchor": "Двойное горе: любовь к родителю и ненависть к тому, что он делал",
+      "visual_type": "comparison_table_ui",
+      "scene_hint": "По теме «Двойное горе: любовь к родителю и ненависть к тому, что он делал»: Схема «Два образа»: слева «Трезвый родитель» (тёплый, смешной, любимый), справа «Пьющий родитель» (недоступный, пугающий, чужой). В центре ребёнок, держащий обе руки. Подпись: «Горе по обоим одноврем…; pasted card на белой бумаге #FFFFFF, скотч по углам, розовый стикер; без лица героя; НЕ SEO, НЕ GEO",
+      "alt": "Сравнительная таблица / UI-мокап: Двойное горе: любовь к родителю и ненависть к тому, что он делал"
+    },
+    "inline_2": {
+      "quadrant": "bottom_left",
+      "h2_anchor": "Как EMDR помогает вместить оба чувства",
+      "visual_type": "workflow_diagram",
+      "scene_hint": "По теме «Как EMDR помогает вместить оба чувства»: Схема «Что освобождается»: четыре блока по кругу: «Право любить», «Право злиться», «Право скучать», «Право отпустить вину». В центре фраза «Всё это можно чувствовать одновременно». Мягкие тона, чисты…; pasted card на белой бумаге #FFFFFF, скотч по углам, розовый стикер; без лица героя; НЕ SEO, НЕ GEO",
+      "alt": "Схема workflow / шаги: Как EMDR помогает вместить оба чувства"
+    },
+    "inline_3": {
+      "quadrant": "bottom_right",
+      "h2_anchor": "Что часто остаётся у взрослых детей из семей с зависимостью",
+      "visual_type": "checklist_board",
+      "scene_hint": "Схема «Что часто остаётся у взрослых детей из семей с зависимостью»: шесть коротких карточек: «Гиперответственность», «Страх конфликтов», «Выбор партнёров, которых нужно спасать», «Трудно просить», «…; pasted card на белой бумаге #FFFFFF, скотч по углам, розовый стикер; без лица героя; НЕ SEO, НЕ GEO",
+      "alt": "Чеклист / printable board: Что часто остаётся у взрослых детей из семей с зависимостью"
+    }
+  }
+}
