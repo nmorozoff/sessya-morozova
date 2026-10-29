@@ -1,0 +1,28 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://www.morozovanatalia.ru/blog/gore-otkaz-kompaniya-mechty-emdr/#article",
+      "headline": "Отказ в компании мечты: когда обида живёт годами",
+      "description": "Полина получила письмо в пятницу вечером: «Мы выбрали другого кандидата». До этого были три собеседования и месяцы подготовки. Она вымыла полы, хотя уже мыла их",
+      "datePublished": "2026-10-29",
+      "dateModified": "2026-10-29",
+      "inLanguage": "ru",
+      "url": "https://www.morozovanatalia.ru/blog/gore-otkaz-kompaniya-mechty-emdr/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.morozovanatalia.ru/blog/gore-otkaz-kompaniya-mechty-emdr/"
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://www.morozovanatalia.ru/blog-assets/gore-otkaz-kompaniya-mechty-emdr/cover/cover.png"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Наталья Морозова",
+        "jobTitle": "Психолог, EMDR-терапевт"
+      }
+    }
+  ]
+}
