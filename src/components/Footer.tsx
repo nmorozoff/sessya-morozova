@@ -1,4 +1,5 @@
 import { BookingMessengerIcons } from "@/components/BookingMessengerIcons";
+import { ProfilePlatformIcons } from "@/components/ProfilePlatformIcons";
 import { Link } from "react-router-dom";
 
 const SERVICE_LINKS = [
@@ -23,6 +24,7 @@ const Footer = () => {
             <span className="text-[11px] text-muted-foreground uppercase tracking-wide">Написать сейчас</span>
             <BookingMessengerIcons size="md" />
           </div>
+          <ProfilePlatformIcons className="w-full max-w-full" />
         </div>
 
         <nav className="flex flex-wrap justify-center gap-4 md:gap-6">
@@ -41,25 +43,6 @@ const Footer = () => {
         </nav>
       </div>
 
-      <div className="mt-8 pt-6 border-t border-border flex flex-col items-center gap-2">
-        <a
-          href="https://www.b17.ru/morozova_natalia/?prt=1337388"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="opacity-85 hover:opacity-100 transition-opacity"
-          aria-label="Профиль психолога Натальи Морозовой на B17.ru"
-        >
-          <img
-            src="https://www.b17.ru/img/b17_100x100_w_retina.png"
-            alt="Профиль на B17.ru — психолог Наталья Морозова, EMDR"
-            width={100}
-            height={100}
-            className="w-[100px] h-[100px]"
-            loading="lazy"
-          />
-        </a>
-        <span className="text-[11px] text-muted-foreground">Профиль на B17.ru</span>
-      </div>
     </footer>
   );
 };

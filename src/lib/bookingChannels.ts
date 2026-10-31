@@ -17,4 +17,4 @@ export const BOOKING_CHANNELS = [
   },
 ] as const;
 
-export const DZEN_CHANNEL_URL = "https://dzen.ru/morozova_emdr";
+export { DZEN_CHANNEL_URL } from "@/lib/profiles";

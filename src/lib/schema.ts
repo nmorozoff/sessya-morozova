@@ -1,4 +1,5 @@
-import { BOOKING_CHANNELS, DZEN_CHANNEL_URL } from "@/lib/bookingChannels";
+import { BOOKING_CHANNELS } from "@/lib/bookingChannels";
+import { getProfileSameAsUrls } from "@/lib/profiles";
 import { SITE_URL, canonicalUrl } from "@/lib/site";
 
 export const EMDR_TREATMENT = {
@@ -34,7 +35,7 @@ export const PRICING_OFFERS = [
   },
 ];
 
-export const BRAND_SAME_AS = ["https://www.b17.ru/morozova_natalia/", DZEN_CHANNEL_URL];
+export const BRAND_SAME_AS = getProfileSameAsUrls();
 
 export const BOOKING_CONTACT_TYPE = "запись на консультацию";
 
