@@ -3,16 +3,16 @@
   "@graph": [
     {
       "@type": "BlogPosting",
-      "@id": "https://morozova-natalya.ru/blog/gore-i-poterya-podderzhka/#article",
+      "@id": "https://www.morozovanatalia.ru/blog/gore-i-poterya-podderzhka/#article",
       "headline": "Как пройти через горе и утрату близкого с поддержкой психолога",
-      "description": "Горе после утраты – нормальная реакция, не слабость. Когда идти к психологу, чем стадии отличаются от экзамена и как EMDR помогает при травматической утрате.",
+      "description": "Чашка на столе остывает. В телефоне висит мамин номер. Вы уже знаете, что трубку никто не возьмёт. Прошло четыре месяца. На работе вы держитесь. Дома…",
       "datePublished": "2026-07-25",
       "dateModified": "2026-07-25",
       "inLanguage": "ru",
-      "url": "https://morozova-natalya.ru/blog/gore-i-poterya-podderzhka/",
+      "url": "https://www.morozovanatalia.ru/blog/gore-i-poterya-podderzhka/",
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://morozova-natalya.ru/blog/gore-i-poterya-podderzhka/"
+        "@id": "https://www.morozovanatalia.ru/blog/gore-i-poterya-podderzhka/"
       },
       "image": {
         "@type": "ImageObject",
@@ -63,7 +63,7 @@
     },
     {
       "@type": "FAQPage",
-      "@id": "https://morozova-natalya.ru/blog/gore-i-poterya-podderzhka/#faq",
+      "@id": "https://www.morozovanatalia.ru/blog/gore-i-poterya-podderzhka/#faq",
       "mainEntity": [
         {
           "@type": "Question",
@@ -118,7 +118,7 @@
           "name": "Когда срочно к врачу, а не только к психологу?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "При мыслях о самоповреждении, планах уйти из жизни, полной неспособности есть и спать несколько дней, тяжёлой интоксикации алкоголем или таблетками. Психолог – сопровождение горя. Врач – когда вопрос о безопасности и медикаментах."
+            "text": "При мыслях о самоповреждении, планах уйти из жизни, полной неспособности есть и спать несколько дней, тяжёлой интоксикации алкоголем или таблетками. Психолог – сопровождение горя. Врач – когда вопрос о безопасности и медикаментах. Если после прочтения хочется не гуглить дальше, а просто поговорить – запишитесь на бесплатную 30-минутную пробную сессию. Записаться на пробную сессию . Любовь не обязана исчезнуть, чтобы вы снова начали дышать. Иногда хватает одного человека, рядом с которым не нужно делать вид, что держитесь. Блог о психологии Натальи Морозовой, психолога, ЕМДР терапевта"
           }
         }
       ]

@@ -10,6 +10,7 @@ import {
 } from "node:fs";
 import { resolve } from "node:path";
 import { BLOG_POSTS_PER_PAGE } from "./blog-routes.mjs";
+import { mergeSchemaWithFaq } from "./blog-schema-faq.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const CONTENT_DIR = resolve(ROOT, "content/blog");
@@ -173,6 +174,11 @@ function syncPublicAssets(posts) {
         .replaceAll(`/wp-content/uploads/blog/${slug}`, `/blog-assets/${slug}`)
         .replaceAll("wp-content/uploads/blog/", "blog-assets/");
       schemaContent = enrichBlogSchema(schemaContent, bodyHtml);
+      schemaContent = mergeSchemaWithFaq(schemaContent, bodyHtml, {
+        slug,
+        siteUrl: SITE_URL,
+        description: post.description,
+      });
       writeFileSync(resolve(targetDir, "schema.jsonld"), schemaContent, "utf8");
     }
 

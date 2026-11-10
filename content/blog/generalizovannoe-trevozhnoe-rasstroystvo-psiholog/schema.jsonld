@@ -3,16 +3,16 @@
   "@graph": [
     {
       "@type": "BlogPosting",
-      "@id": "__SITE_BASE__/blog/generalizovannoe-trevozhnoe-rasstroystvo-psiholog/#article",
+      "@id": "https://www.morozovanatalia.ru/blog/generalizovannoe-trevozhnoe-rasstroystvo-psiholog/#article",
       "headline": "Генерализованное тревожное расстройство: когда тревога «про всё» — признаки и когда идти к психологу",
-      "description": "ГТР простыми словами: свободно плавающая тревога, симптомы, отличие от паники и фобий. GAD-7 как ориентир, психолог vs психиатр.",
+      "description": "Алексею 36 лет. Утром он проверяет почту до кофе — «вдруг клиент отказался». Днем держится уверенно, но вечером начинается изматывающее внутреннее кино…",
       "datePublished": "2026-08-13",
       "dateModified": "2026-08-13",
       "inLanguage": "ru",
-      "url": "__SITE_BASE__/blog/generalizovannoe-trevozhnoe-rasstroystvo-psiholog/",
+      "url": "https://www.morozovanatalia.ru/blog/generalizovannoe-trevozhnoe-rasstroystvo-psiholog/",
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "__SITE_BASE__/blog/generalizovannoe-trevozhnoe-rasstroystvo-psiholog/"
+        "@id": "https://www.morozovanatalia.ru/blog/generalizovannoe-trevozhnoe-rasstroystvo-psiholog/"
       },
       "image": {
         "@type": "ImageObject",
@@ -57,7 +57,7 @@
     },
     {
       "@type": "FAQPage",
-      "@id": "__SITE_BASE__/blog/generalizovannoe-trevozhnoe-rasstroystvo-psiholog/#faq",
+      "@id": "https://www.morozovanatalia.ru/blog/generalizovannoe-trevozhnoe-rasstroystvo-psiholog/#faq",
       "mainEntity": [
         {
           "@type": "Question",
@@ -112,7 +112,7 @@
           "name": "Как подготовиться к первой встрече с психологом?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Специальной подготовки не нужно. Достаточно сказать: «Я постоянно тревожусь, это мешает мне жить, я устал и хочу разобраться». Мы вместе распутаем этот клубок."
+            "text": "Специальной подготовки не нужно. Достаточно сказать: «Я постоянно тревожусь, это мешает мне жить, я устал и хочу разобраться». Мы вместе распутаем этот клубок. Если после прочтения хочется не гуглить дальше, а просто поговорить - запишитесь на бесплатную 30-минутную пробную сессию. Записаться на пробную сессию . Блог о психологии Натальи Морозовой, психолога, ЕМДР терапевта. Все истории публикуются только с разрешения клиентов. Все имена вымышленные. Все совпадения случайны."
           }
         }
       ]

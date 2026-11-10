@@ -3,16 +3,16 @@
   "@graph": [
     {
       "@type": "BlogPosting",
-      "@id": "__SITE_BASE__/blog/trevoga-pered-snom-psiholog/#article",
+      "@id": "https://www.morozovanatalia.ru/blog/trevoga-pered-snom-psiholog/#article",
       "headline": "Тревога перед сном: почему ночью всё обостряется и что может помочь",
-      "description": "Тревога перед сном – не слабость: вечером мозг без отвлечений, кортизол выше. Выгрузка на бумагу, 4-7-8, когда к психологу – без обещаний уснуть за минуты.",
+      "description": "Марина, 31 год, маркетолог. Днем на встречах держится уверенно. На часах 23:00. Ложится, закрывает глаза – и в голове вспыхивает: неотправленное письмо…",
       "datePublished": "2026-08-07",
       "dateModified": "2026-08-07",
       "inLanguage": "ru",
-      "url": "__SITE_BASE__/blog/trevoga-pered-snom-psiholog/",
+      "url": "https://www.morozovanatalia.ru/blog/trevoga-pered-snom-psiholog/",
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "__SITE_BASE__/blog/trevoga-pered-snom-psiholog/"
+        "@id": "https://www.morozovanatalia.ru/blog/trevoga-pered-snom-psiholog/"
       },
       "image": {
         "@type": "ImageObject",
@@ -57,7 +57,7 @@
     },
     {
       "@type": "FAQPage",
-      "@id": "__SITE_BASE__/blog/trevoga-pered-snom-psiholog/#faq",
+      "@id": "https://www.morozovanatalia.ru/blog/trevoga-pered-snom-psiholog/#faq",
       "mainEntity": [
         {
           "@type": "Question",
@@ -96,7 +96,7 @@
           "name": "Помогают ли травяные чаи и теплое молоко?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Они работают как часть успокаивающего ритуала, формируя привычку. Но физиологически они не способны остановить выброс кортизола, если вы активно руминируете о завтрашнем отчете."
+            "text": "Они работают как часть успокаивающего ритуала, формируя привычку. Но физиологически они не способны остановить выброс кортизола, если вы активно руминируете о завтрашнем отчете. Ночь не должна быть полем боя. Она может снова стать местом отдыха – не когда вы победите тревогу силой, а когда перестанете воевать с собой. Если после прочтения хочется не гуглить дальше, а просто поговорить – запишитесь на бесплатную 30-минутную пробную сессию. Записаться на пробную сессию . Блог о психологии Натальи Морозовой, психолога, ЕМДР терапевта."
           }
         }
       ]

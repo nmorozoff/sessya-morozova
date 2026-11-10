@@ -1,14 +1,61 @@
 {
   "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Почему глаза двигаются, когда вы вспоминаете плохое: REM-сон и EMDR",
-  "description": "Вы закрываете глаза и вспоминаете ссору, аварию, унизительный разговор — и вдруг замечаете: глаза сами бегают в стороны. Быстро. Как будто вы смотрите короткий…",
-  "datePublished": "2026-07-24",
-  "dateModified": "2026-07-24",
-  "author": {
-    "@type": "Person",
-    "name": "Наталья Морозова"
-  },
-  "url": "https://www.morozovanatalia.ru/blog/emdr-glaza-dvizhenie-rem/",
-  "wordCount": 629
+  "@graph": [
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Почему глаза двигаются, когда вы вспоминаете плохое: REM-сон и EMDR",
+      "description": "Вы закрываете глаза и вспоминаете ссору, аварию, унизительный разговор — и вдруг замечаете: глаза сами бегают в стороны. Быстро. Как будто вы смотрите…",
+      "datePublished": "2026-07-24",
+      "dateModified": "2026-07-24",
+      "author": {
+        "@type": "Person",
+        "name": "Наталья Морозова"
+      },
+      "url": "https://www.morozovanatalia.ru/blog/emdr-glaza-dvizhenie-rem/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.morozovanatalia.ru/blog/emdr-glaza-dvizhenie-rem/"
+      },
+      "wordCount": 629
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.morozovanatalia.ru/blog/emdr-glaza-dvizhenie-rem/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Это нормально — что глаза двигаются при воспоминании?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Да, такое бывает. Это связано с работой памяти и эмоций, а не с «сумасшествием». Если воспоминание мучительно и не отпускает — стоит обсудить со специалистом."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "EMDR — это гипноз?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Нет. Вы остаётесь в контакте с реальностью, можете остановить сессию. Гипнотическое погружение не требуется."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Сколько нужно сессий EMDR?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Зависит от эпизода. На один конкретный травматичный фрагмент часто 2–4 встречи. Сложные истории — дольше. Честный срок обсуждается на консультации."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Можно ли онлайн?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Да. Движения глаз, звуковая стимуляция и разговор адаптируются под видеосвязь. Нужны стабильный интернет и приватное место. Если хотите разобраться, подходит ли вам EMDR, — запишитесь на бесплатную 30-минутную пробную сессию . Ещё материалы — в Telegram-канале и на странице EMDR-терапии ."
+          }
+        }
+      ]
+    }
+  ]
 }

@@ -1,13 +1,84 @@
 {
   "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Травматический опыт: почему тело «помнит» то, что голова объяснила",
-  "description": "Травматический опыт — это не только «то, что нельзя забыть». Иногда вы уже всё объяснили себе и окружающим, а тело продолжает реагировать: вспышка страха, зажи…",
-  "datePublished": "2026-07-16",
-  "dateModified": "2026-07-16",
-  "author": {
-    "@type": "Person",
-    "name": "Наталья Морозова"
-  },
-  "url": "https://www.morozovanatalia.ru/blog/travmaticheskiy-opyt-emdr/"
+  "@graph": [
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Травматический опыт: почему тело «помнит» то, что голова объяснила",
+      "description": "Травматический опыт — это не только «то, что нельзя забыть». Иногда вы уже всё объяснили себе и окружающим, а тело продолжает реагировать: вспышка страха…",
+      "datePublished": "2026-07-16",
+      "dateModified": "2026-07-16",
+      "author": {
+        "@type": "Person",
+        "name": "Наталья Морозова"
+      },
+      "url": "https://www.morozovanatalia.ru/blog/travmaticheskiy-opyt-emdr/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.morozovanatalia.ru/blog/travmaticheskiy-opyt-emdr/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.morozovanatalia.ru/blog/travmaticheskiy-opyt-emdr/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Обязательно ли вспоминать всё подробно?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "В EMDR не требуется бесконечно рассказывать историю вслух. Работа идёт с выбранным фрагментом и ощущениями. Темп согласуется со специалистом."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "EMDR стирает память?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Нет. Речь о снижении эмоционального заряда, а не об удалении фактов."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Сколько нужно сессий?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Зависит от запроса и вашего темпа. Жёстких обещаний «за N встреч» этичный специалист не даёт."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Можно ли онлайн?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Да, формат адаптируют под видеосвязь. Пробная встреча обычно онлайн."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Это замена психиатра?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Нет. Психолог не назначает лекарства и не заменяет медицинскую помощь."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Что если мне станет плохо на сессии?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Специалист использует техники стабилизации и договор остановки. Об этом говорят заранее."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Гарантируется ли результат?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Нет. Это указано в публичной оферте практики."
+          }
+        }
+      ]
+    }
+  ]
 }

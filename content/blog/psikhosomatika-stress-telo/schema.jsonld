@@ -1,13 +1,84 @@
 {
   "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Психосоматика: когда тело сигналит, а врачи не находят причину",
-  "description": "Психосоматика — слово, за которым часто стоят месяцы обследований: анализы в норме, врачи разводят руками, а голова болит, живот сжимается, сон не восстанавлив…",
-  "datePublished": "2026-07-16",
-  "dateModified": "2026-07-16",
-  "author": {
-    "@type": "Person",
-    "name": "Наталья Морозова"
-  },
-  "url": "https://www.morozovanatalia.ru/blog/psikhosomatika-stress-telo/"
+  "@graph": [
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Психосоматика: когда тело сигналит, а врачи не находят причину",
+      "description": "Психосоматика — слово, за которым часто стоят месяцы обследований: анализы в норме, врачи разводят руками, а голова болит, живот сжимается, сон не…",
+      "datePublished": "2026-07-16",
+      "dateModified": "2026-07-16",
+      "author": {
+        "@type": "Person",
+        "name": "Наталья Морозова"
+      },
+      "url": "https://www.morozovanatalia.ru/blog/psikhosomatika-stress-telo/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.morozovanatalia.ru/blog/psikhosomatika-stress-telo/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.morozovanatalia.ru/blog/psikhosomatika-stress-telo/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Психолог или врач?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Сначала врач при телесных симптомах, чтобы исключить болезни. Психолог — для психологической части переживания, не для постановки диагноза."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Значит ли психосоматика, что я «придумываю»?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Нет. Ощущения реальны. Речь о связи психики и тела, а не о «симуляции»."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Поможет ли EMDR?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Метод обсуждается индивидуально, если есть связанный стрессовый или травматичный материал. Гарантий нет."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Можно ли онлайн?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Да, консультации доступны онлайн; очно — в Москве у метро Тургеневская / Чистые пруды и Ботанический сад."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Сколько длится сессия?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "90 минут основная; 30 минут — бесплатная пробная."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Нужно ли бросать лечение у врача?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Нет. Психолог не отменяет назначения врача."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Когда срочно к врачу?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "При острой боли, внезапной слабости, одышке, обмороке — экстренная медицинская помощь, не статья в интернете."
+          }
+        }
+      ]
+    }
+  ]
 }
