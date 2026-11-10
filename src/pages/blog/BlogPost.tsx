@@ -104,9 +104,6 @@ const BlogPost = () => {
                 {formatBlogDate(article?.publishedAt || manifestPost?.publishedAt || "")}
               </time>
               <h1 className="text-3xl sm:text-4xl font-black mt-3 mb-4">{title}</h1>
-              {description ? (
-                <p className="text-muted-foreground text-[15px] leading-relaxed">{description}</p>
-              ) : null}
             </header>
 
             {article?.bodyHtml ? <BlogArticleBody html={article.bodyHtml} /> : null}
