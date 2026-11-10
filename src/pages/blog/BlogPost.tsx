@@ -44,7 +44,9 @@ const BlogPost = () => {
 
   const path = sitePath(`/blog/${slug}`);
   const title = article?.title || manifestPost?.title || "Статья";
-  const description = article?.description || manifestPost?.description || "";
+  const seoDescription =
+    manifestPost?.description || article?.description || manifestPost?.excerpt || "";
+  const visibleLead = seoDescription;
   const pageTitle = title;
   const articleSchema = article
     ? article.schemaJsonLd || buildBlogPostingSchema(article, path)
@@ -79,7 +81,7 @@ const BlogPost = () => {
     <BlogLayout>
       <PageMeta
         title={pageTitle}
-        description={description}
+        description={seoDescription}
         path={path}
         ogImage={article?.coverImage || manifestPost?.coverImage}
         jsonLd={jsonLd}
@@ -104,6 +106,9 @@ const BlogPost = () => {
                 {formatBlogDate(article?.publishedAt || manifestPost?.publishedAt || "")}
               </time>
               <h1 className="text-3xl sm:text-4xl font-black mt-3 mb-4">{title}</h1>
+              {visibleLead ? (
+                <p className="text-muted-foreground text-[17px] leading-relaxed max-w-2xl">{visibleLead}</p>
+              ) : null}
             </header>
 
             {article?.bodyHtml ? <BlogArticleBody html={article.bodyHtml} /> : null}

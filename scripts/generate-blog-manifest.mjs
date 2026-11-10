@@ -31,8 +31,12 @@ function stripHtml(html) {
 
 function excerptFromHtml(html, maxLength = 160) {
   const text = stripHtml(html);
+  if (!text) return "";
   if (text.length <= maxLength) return text;
-  return `${text.slice(0, maxLength - 1).trimEnd()}…`;
+  let cut = text.slice(0, maxLength - 1).trimEnd();
+  const lastSpace = cut.lastIndexOf(" ");
+  if (lastSpace > 40) cut = cut.slice(0, lastSpace);
+  return `${cut.replace(/[.,;:-]+$/, "")}…`;
 }
 
 function countWords(html) {
@@ -122,11 +126,9 @@ function loadPosts() {
     const bodyHtml = readFileSync(htmlPath, "utf8");
     const meta = normalizeMeta(rawMeta, entry.name);
 
-    if (!meta.description) {
-      meta.description = excerptFromHtml(bodyHtml, 160);
-    }
-
-    meta.excerpt = excerptFromHtml(bodyHtml, 200);
+    // SEO description / лид для карточек: всегда из тела (цельное предложение, без обреза «на середине слова»).
+    meta.description = excerptFromHtml(bodyHtml, 160);
+    meta.excerpt = excerptFromHtml(bodyHtml, 280);
     posts.push({ ...meta, contentDir: articleDir });
   }
 
