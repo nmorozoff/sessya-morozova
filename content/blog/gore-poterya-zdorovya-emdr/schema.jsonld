@@ -1,0 +1,28 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://www.morozovanatalia.ru/blog/gore-poterya-zdorovya-emdr/#article",
+      "headline": "После диагноза: как пережить утрату здоровья и прежней жизни",
+      "description": "Алла сидела в коридоре поликлиники с картой в руках и перечитывала одно слово в заключении. Не смертельное. «С этим живут», - сказал врач. Но подумала она не о ",
+      "datePublished": "2026-11-07",
+      "dateModified": "2026-11-07",
+      "inLanguage": "ru",
+      "url": "https://www.morozovanatalia.ru/blog/gore-poterya-zdorovya-emdr/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.morozovanatalia.ru/blog/gore-poterya-zdorovya-emdr/"
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://www.morozovanatalia.ru/blog-assets/gore-poterya-zdorovya-emdr/cover/cover.png"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Наталья Морозова",
+        "jobTitle": "Психолог, EMDR-терапевт"
+      }
+    }
+  ]
+}

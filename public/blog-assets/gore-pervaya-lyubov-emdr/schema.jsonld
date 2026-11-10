@@ -1,0 +1,29 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://www.morozovanatalia.ru/blog/gore-pervaya-lyubov-emdr/#article",
+      "headline": "Первая любовь, которая не отпускает: почему через годы всё ещё «а вдруг»",
+      "description": "Павел до сих пор помнит запах её духов и маршрут от общежития до остановки, по которому они ходили вдвоём. Ему сорок. У него жена, ипотека, двое детей. А когда ",
+      "datePublished": "2026-11-09",
+      "dateModified": "2026-11-09",
+      "inLanguage": "ru",
+      "url": "https://www.morozovanatalia.ru/blog/gore-pervaya-lyubov-emdr/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.morozovanatalia.ru/blog/gore-pervaya-lyubov-emdr/"
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://www.morozovanatalia.ru/blog-assets/gore-pervaya-lyubov-emdr/cover/cover.png"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Наталья Морозова",
+        "jobTitle": "Психолог, EMDR-терапевт"
+      },
+      "wordCount": 970
+    }
+  ]
+}

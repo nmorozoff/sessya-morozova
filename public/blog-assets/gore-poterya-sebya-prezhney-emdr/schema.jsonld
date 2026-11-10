@@ -1,0 +1,29 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://www.morozovanatalia.ru/blog/gore-poterya-sebya-prezhney-emdr/#article",
+      "headline": "Потерянные годы: как пережить сожаление о выборе, который уже не изменить",
+      "description": "Андрей разбирал гараж и нашёл гитару. Ту самую, на которой играл в институте. Струны давно заржавели. Ему сорок шесть. Восемь лет назад он ушёл из группы, потом",
+      "datePublished": "2026-11-02",
+      "dateModified": "2026-11-02",
+      "inLanguage": "ru",
+      "url": "https://www.morozovanatalia.ru/blog/gore-poterya-sebya-prezhney-emdr/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.morozovanatalia.ru/blog/gore-poterya-sebya-prezhney-emdr/"
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://www.morozovanatalia.ru/blog-assets/gore-poterya-sebya-prezhney-emdr/cover/cover.png"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Наталья Морозова",
+        "jobTitle": "Психолог, EMDR-терапевт"
+      },
+      "wordCount": 993
+    }
+  ]
+}
