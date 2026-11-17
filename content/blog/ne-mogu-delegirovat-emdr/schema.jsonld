@@ -1,0 +1,28 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://www.morozovanatalia.ru/blog/ne-mogu-delegirovat-emdr/#article",
+      "headline": "Владелица сети салонов, которая всё делает сама: почему так трудно доверить работу команде",
+      "description": "Иногда собственник не может отпустить контроль не потому, что команда плохая. А потому, что когда-то он доверил, и это закончилось бедой. Жанне тридцать…",
+      "datePublished": "2026-11-17",
+      "dateModified": "2026-11-17",
+      "inLanguage": "ru",
+      "url": "https://www.morozovanatalia.ru/blog/ne-mogu-delegirovat-emdr/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.morozovanatalia.ru/blog/ne-mogu-delegirovat-emdr/"
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://www.morozovanatalia.ru/blog-assets/ne-mogu-delegirovat-emdr/cover/cover.png"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Наталья Морозова",
+        "jobTitle": "Психолог, EMDR-терапевт"
+      }
+    }
+  ]
+}
