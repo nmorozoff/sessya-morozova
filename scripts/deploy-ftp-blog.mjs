@@ -147,25 +147,56 @@ function assertBlogArtifacts(slug) {
   }
 }
 
-function buildLftpScript({ server, user, password, remoteDir, slug }) {
-  const commands = [
+function lftpBaseSettings() {
+  const passive =
+    (process.env.REACT_FTP_PASSIVE ?? process.env.FTP_PASSIVE ?? "true").toLowerCase() !== "false";
+  const maxRetries = String(Number(process.env.REACT_FTP_RETRIES || process.env.FTP_RETRIES || 8));
+  return [
     "set cmd:fail-exit true",
     "set cmd:verbose true",
     "set ftp:ssl-allow no",
-    "set ftp:passive-mode true",
-    "set net:max-retries 3",
-    "set net:reconnect-interval-base 5",
+    `set ftp:passive-mode ${passive ? "true" : "false"}`,
+    // Timeweb + VPN (Happ): EPSV/FEAT/MDTM ломают mirror (max-retries exceeded)
+    "set ftp:prefer-epsv no",
+    "set ftp:use-feat no",
+    "set ftp:use-mdtm no",
+    "set mirror:set-permissions no",
+    "set net:max-retries " + maxRetries,
+    "set net:reconnect-interval-base 3",
+    "set net:timeout 120",
+  ];
+}
+
+function mirrorUploadArgs() {
+  return ["mirror -R", "--parallel=1", "--verbose", "--ignore-time", "--no-perms", "--exclude-glob .DS_Store"];
+}
+
+function buildLftpScript({ server, user, password, remoteDir, slug }) {
+  const commands = [
+    ...lftpBaseSettings(),
     `open -u ${lftpQuote(`${user},${password}`)} ${lftpQuote(normalizeServer(server))}`,
     `cd ${lftpQuote(remoteDir)}`,
-    [
-      "mirror -R",
-      "--parallel=1",
-      "--verbose",
-      "--exclude-glob .DS_Store",
-      lftpQuote(resolve(DIST, "blog")),
-      "blog",
-    ].join(" "),
   ];
+
+  const blogDir = resolve(DIST, "blog");
+  const mirrorLine = (...parts) => [...mirrorUploadArgs(), ...parts].join(" ");
+
+  if (slug) {
+    const articleLocal = resolve(blogDir, slug);
+    if (existsSync(articleLocal)) {
+      commands.push(mirrorLine(lftpQuote(articleLocal), `blog/${slug}`));
+    }
+    const blogIndex = resolve(blogDir, "index.html");
+    if (existsSync(blogIndex)) {
+      commands.push(`put ${lftpQuote(blogIndex)} -o blog/index.html`);
+    }
+    const pageDir = resolve(blogDir, "page");
+    if (existsSync(pageDir)) {
+      commands.push(mirrorLine(lftpQuote(pageDir), "blog/page"));
+    }
+  } else {
+    commands.push(mirrorLine(lftpQuote(blogDir), "blog"));
+  }
 
   const assetsLocal = slug
     ? resolve(DIST, "blog-assets", slug)
@@ -175,16 +206,7 @@ function buildLftpScript({ server, user, password, remoteDir, slug }) {
     if (slug) {
       commands.push(`mkdir -f blog-assets`);
     }
-    commands.push(
-      [
-        "mirror -R",
-        "--parallel=1",
-        "--verbose",
-        "--exclude-glob .DS_Store",
-        lftpQuote(assetsLocal),
-        assetsRemote,
-      ].join(" "),
-    );
+    commands.push(mirrorLine(lftpQuote(assetsLocal), assetsRemote));
   } else if (slug) {
     console.warn(`[deploy-blog] WARN: dist/blog-assets/${slug} не найден — пропуск assets`);
   }
