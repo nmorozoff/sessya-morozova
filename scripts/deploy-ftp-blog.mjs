@@ -255,14 +255,19 @@ function runBuild(siteUrl) {
   });
 }
 
+function assertLftpScriptSafe(script) {
+  if (/(^|[;\s])-o\s+index\.html([\s;]|$)/m.test(script)) {
+    throw new Error("internal guard: корневой index.html (разрешён только blog/index.html)");
+  }
+  if (/\bmirror\b[^\n]*\sapi\//.test(script) || /\s-o\s+api\//.test(script)) {
+    throw new Error("internal guard: api/");
+  }
+}
+
 function runLftpUpload({ server, user, password, serverDir, slug }) {
   const remoteDir = normalizeRemoteDir(serverDir);
   const script = buildLftpScript({ server, user, password, remoteDir, slug });
-  for (const forbidden of FORBIDDEN_REMOTE_PREFIXES) {
-    if (script.includes(` ${forbidden}`) || script.includes(`/${forbidden}`)) {
-      throw new Error(`internal guard: script would touch forbidden path ${forbidden}`);
-    }
-  }
+  assertLftpScriptSafe(script);
   const { dir, scriptPath } = writeSecureLftpBatch(script);
   const blogFiles = countFiles(resolve(DIST, "blog"));
   const assetRoot = slug ? resolve(DIST, "blog-assets", slug) : resolve(DIST, "blog-assets");
