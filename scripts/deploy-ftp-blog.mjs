@@ -358,7 +358,6 @@ function rsyncOnce(src, dest, slug) {
   const args = [
     "-rltz",
     "--checksum",
-    "--chmod=D755,F644",
     "--timeout=90",
     "--itemize-changes",
     "--exclude=.DS_Store",
