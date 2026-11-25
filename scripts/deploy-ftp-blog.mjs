@@ -331,6 +331,88 @@ async function runIndexNowAfterDeploy(siteUrl, slug) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// rsync поверх SSH (основной транспорт с 25.11.2026; FTP Timeweb + VPN рвался).
+// Тот же узкий scope, что и FTP --slug: blog-assets/<slug>/, blog/<slug>/, blog/page/,
+// blog/index.html, sitemap.xml. Без --delete. Никогда: корневой index.html, api/, assets/.
+// Ключ: ~/.ssh/config Host timeweb-deploy (BatchMode, IdentitiesOnly).
+const RSYNC_BIN = process.env.REACT_RSYNC_BIN || "/usr/bin/rsync";
+const SSH_TARGET = process.env.REACT_SSH_TARGET || "timeweb-deploy";
+const SSH_ROOT = (process.env.REACT_SSH_ROOT || "public_html").replace(/\/+$/, "");
+
+function rsyncDestAllowed(dest, slug) {
+  const allowed = [
+    `blog-assets/${slug}/`,
+    `blog/${slug}/`,
+    "blog/page/",
+    "blog/index.html",
+    "sitemap.xml",
+  ];
+  return allowed.includes(dest) && !dest.includes("..");
+}
+
+function rsyncOnce(src, dest, slug) {
+  if (!rsyncDestAllowed(dest, slug)) {
+    throw new Error(`internal guard: rsync destination not allowed: ${dest}`);
+  }
+  const args = [
+    "-rltz",
+    "--checksum",
+    "--chmod=D755,F644",
+    "--timeout=90",
+    "--itemize-changes",
+    "--exclude=.DS_Store",
+    "-e",
+    "ssh -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4",
+    src,
+    `${SSH_TARGET}:${SSH_ROOT}/${dest}`,
+  ];
+  console.log(`[deploy-blog] rsync → ${SSH_ROOT}/${dest}`);
+  return new Promise((resolvePromise, reject) => {
+    const proc = spawn(RSYNC_BIN, args, { cwd: ROOT, stdio: "inherit" });
+    proc.on("error", reject);
+    proc.on("exit", (code) => {
+      if (code === 0) resolvePromise();
+      else reject(new Error(`rsync ${dest} завершился с кодом ${code}`));
+    });
+  });
+}
+
+async function uploadViaRsync(slug) {
+  if (!/^[a-z0-9-]+$/.test(slug)) throw new Error(`bad slug for rsync: ${slug}`);
+  const blogDir = resolve(DIST, "blog");
+  const plan = [];
+  const assets = resolve(DIST, "blog-assets", slug);
+  if (existsSync(assets)) plan.push([`${assets}/`, `blog-assets/${slug}/`]);
+  else console.warn(`[deploy-blog] WARN: dist/blog-assets/${slug} не найден — пропуск assets`);
+  plan.push([`${resolve(blogDir, slug)}/`, `blog/${slug}/`]);
+  if (existsSync(resolve(blogDir, "page"))) plan.push([`${resolve(blogDir, "page")}/`, "blog/page/"]);
+  plan.push([resolve(blogDir, "index.html"), "blog/index.html"]);
+  plan.push([resolve(DIST, "sitemap.xml"), "sitemap.xml"]);
+  console.log(`[deploy-blog] Whitelist rsync/SSH → ${SSH_TARGET}:${SSH_ROOT} (без --delete)`);
+  console.log("[deploy-blog] ЗАПРЕЩЕНО: api/, index.html, assets/, остальные корневые HTML");
+  for (const [src, dest] of plan) {
+    await rsyncOnce(src, dest, slug);
+  }
+}
+
+async function uploadViaRsyncWithRetries(slug) {
+  const attempts = Number(process.env.REACT_RSYNC_ATTEMPTS || 3);
+  let last;
+  for (let i = 1; i <= attempts; i++) {
+    try {
+      await uploadViaRsync(slug);
+      return;
+    } catch (err) {
+      last = err;
+      if (String(err.message || "").startsWith("internal guard")) throw err;
+      console.warn(`[deploy-blog] rsync попытка ${i}/${attempts} не удалась: ${err.message || err}`);
+      if (i < attempts) await new Promise((r) => setTimeout(r, 15_000));
+    }
+  }
+  throw last ?? new Error("rsync failed");
+}
+
 async function main() {
   assertContentBlogCommitted("deploy-blog");
 
@@ -355,6 +437,19 @@ async function main() {
   }
 
   assertBlogArtifacts(args.slug);
+
+  const transport = (process.env.REACT_BLOG_DEPLOY_TRANSPORT || "rsync").toLowerCase();
+  if (transport !== "ftp" && args.slug) {
+    try {
+      await uploadViaRsyncWithRetries(args.slug);
+      console.log("[deploy-blog] Готово (blog-only, rsync/SSH). api/ и index.html не затронуты.");
+      await runIndexNowAfterDeploy(siteUrl, args.slug);
+      return;
+    } catch (err) {
+      if (String(err.message || "").startsWith("internal guard")) throw err;
+      console.warn(`[deploy-blog] ⚠ rsync/SSH не удался (${err.message || err}) — fallback на FTP`);
+    }
+  }
 
   const maxAttempts = 3;
   const delayMs = Number(process.env.DEPLOY_OUTER_RETRY_DELAY_MS || 120_000);
