@@ -1,0 +1,28 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://www.morozovanatalia.ru/blog/styd-kak-vozduh-emdr/#article",
+      "headline": "«Мальчики так не делают»: как стыд за желания и чувства мешает мужчинам жить",
+      "description": "Иногда мужчина не может сказать, чего хочет, не потому что не знает. А потому что когда-то за желание его высмеяли. Захару тридцать один. Он инженер, у него…",
+      "datePublished": "2026-11-25",
+      "dateModified": "2026-11-25",
+      "inLanguage": "ru",
+      "url": "https://www.morozovanatalia.ru/blog/styd-kak-vozduh-emdr/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.morozovanatalia.ru/blog/styd-kak-vozduh-emdr/"
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://www.morozovanatalia.ru/blog-assets/styd-kak-vozduh-emdr/cover/cover.png"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Наталья Морозова",
+        "jobTitle": "Психолог, EMDR-терапевт"
+      }
+    }
+  ]
+}
