@@ -1,0 +1,28 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://www.morozovanatalia.ru/blog/malenkie-situacii-emdr/#article",
+      "headline": "Ничего страшного, а отпустить не могу: почему маленькие обиды и неловкости застревают надолго",
+      "description": "Есть фразы, которые человек забывает через минуту после того, как сказал. А тот, кому их сказали, носит их годами. Вове двадцать семь. Полгода назад тренер в…",
+      "datePublished": "2026-11-26",
+      "dateModified": "2026-11-26",
+      "inLanguage": "ru",
+      "url": "https://www.morozovanatalia.ru/blog/malenkie-situacii-emdr/",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.morozovanatalia.ru/blog/malenkie-situacii-emdr/"
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://www.morozovanatalia.ru/blog-assets/malenkie-situacii-emdr/cover/cover.png"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Наталья Морозова",
+        "jobTitle": "Психолог, EMDR-терапевт"
+      }
+    }
+  ]
+}
